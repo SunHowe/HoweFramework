@@ -1,0 +1,22 @@
+{
+    "name": "HoweFramework.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b1926041d758fa94faaa7449f41ae9a6",
+        "GUID:aa7c15e0f7e9f0f4dbba906448b7535a",
+        "GUID:4d1926c9df5b052469a1c63448b7609a",
+        "GUID:ffe4b97ba0144f94d8f23476a74bf2fb",
+        "GUID:af39456e6a3b4994f8bcbb4298527011"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,9 @@
+﻿/Library/
+/Temp/
+/UserSettings/
+/Logs/
+.vscode
+*.sln
+*.csproj
+/Bundles/
+.idea
