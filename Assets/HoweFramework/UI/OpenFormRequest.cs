@@ -7,7 +7,7 @@ namespace HoweFramework
     /// <summary>
     /// 打开UI请求。
     /// </summary>
-    public class OpenFormRequest : RequestBase
+    public sealed class OpenFormRequest : RequestBase
     {
         /// <summary>
         /// 设置响应事件。
@@ -83,6 +83,12 @@ namespace HoweFramework
             CancellationToken = default;
             m_Tcs = null;
             OnSetResponse = null;
+
+            if (UserData is IReference reference)
+            {
+                ReferencePool.Release(reference);
+            }
+
             UserData = null;
         }
     }
