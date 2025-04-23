@@ -31,6 +31,11 @@ namespace HoweFramework
         public const int RequestCanceled = 4;
 
         /// <summary>
+        /// 参数无效。
+        /// </summary>
+        public const int InvalidParam = 5;
+
+        /// <summary>
         /// 界面未打开。
         /// </summary>
         public const int UIFormNotOpen = 100;
@@ -104,6 +109,11 @@ namespace HoweFramework
         /// 资源加载器已销毁。
         /// </summary>
         public const int ResLoaderDisposed = 202;
+
+        /// <summary>
+        /// 资源未找到。
+        /// </summary>
+        public const int ResNotFound = 203;
 
         /// <summary>
         /// 流程状态机已经启动。

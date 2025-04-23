@@ -28,7 +28,7 @@ namespace GameMain
         {
             if (m_IsInited)
             {
-                ChangeProcedure((int)ProcedureId.LoadDataTable);
+                ChangeNextProcedure();
             }
         }
 

@@ -33,6 +33,8 @@ namespace GameMain.UI.Login
             TbBuffConfig.Instance.DataList.ForEach(buff => {
                 Log.Info($"Buff: {buff.Id} {buff.Name}");
             });
+
+            Log.Info($"GetText(demo_text_1): {LocalizationModule.Instance.GetText("demo_text_1")}");
         }
 
         /// <summary>

@@ -37,6 +37,7 @@ namespace GameMain
             {
                 new ProcedureSplash(),
                 new ProcedureLoadDataTable(),
+                new ProcedureLoadLocalization(),
                 new ProcedureLogin(),
             };
             

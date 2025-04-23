@@ -16,6 +16,11 @@ namespace GameMain
         LoadDataTable,
 
         /// <summary>
+        /// 加载本地化流程。
+        /// </summary>
+        LoadLocalization,
+
+        /// <summary>
         /// 登录流程。
         /// </summary>
         Login,

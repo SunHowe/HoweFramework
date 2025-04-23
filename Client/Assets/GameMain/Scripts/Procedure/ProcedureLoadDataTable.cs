@@ -53,7 +53,7 @@ namespace GameMain
                 return;
             }
             
-            ChangeProcedure((int)ProcedureId.Login);
+            ChangeNextProcedure();
         }
     }
 }
