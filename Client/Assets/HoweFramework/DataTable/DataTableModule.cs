@@ -46,24 +46,24 @@ namespace HoweFramework
         /// <summary>
         /// 使用同步的方式预加载配置表。
         /// </summary>
-        public void PreLoad()
+        public void Preload()
         {
             foreach (var dataTableSource in m_DataTableSourceList)
             {
-                dataTableSource.PreLoad();
+                dataTableSource.Preload();
             }
         }
 
         /// <summary>
         /// 使用异步的方式预加载配置表。
         /// </summary>
-        public async UniTask PreLoadAsync()
+        public async UniTask PreloadAsync()
         {
             using var uniTaskList = ReusableList<UniTask>.Create();
 
             foreach (var dataTableSource in m_DataTableSourceList)
             {
-                uniTaskList.Add(dataTableSource.PreLoadAsync());
+                uniTaskList.Add(dataTableSource.PreloadAsync());
             }
             
             await UniTask.WhenAll(uniTaskList);

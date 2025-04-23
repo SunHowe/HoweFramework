@@ -36,6 +36,7 @@ namespace GameMain
             var procedures = new ProcedureBase[]
             {
                 new ProcedureSplash(),
+                new ProcedureLoadDataTable(),
                 new ProcedureLogin(),
             };
             

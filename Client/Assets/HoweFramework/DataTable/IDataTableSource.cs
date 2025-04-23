@@ -17,11 +17,11 @@ namespace HoweFramework
         /// <summary>
         /// 使用同步的方式预加载配置表。
         /// </summary>
-        void PreLoad();
+        void Preload();
 
         /// <summary>
         /// 使用异步的方式预加载配置表。
         /// </summary>
-        UniTask PreLoadAsync();
+        UniTask PreloadAsync();
     }
 }

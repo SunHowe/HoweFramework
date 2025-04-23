@@ -1,5 +1,6 @@
 ﻿using System;
 using FairyGUI;
+using GameMain.Game;
 using HoweFramework;
 
 namespace GameMain.UI.Login
@@ -29,6 +30,9 @@ namespace GameMain.UI.Login
         /// </summary>
         public override void OnOpen()
         {
+            TbBuffConfig.Instance.DataList.ForEach(buff => {
+                Log.Info($"Buff: {buff.Id} {buff.Name}");
+            });
         }
 
         /// <summary>

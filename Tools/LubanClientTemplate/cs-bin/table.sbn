@@ -1,6 +1,6 @@
 using Luban;
 using Cysharp.Threading.Tasks;
-using UnityGameFramework.Runtime;
+using HoweFramework;
 
 {{ 
     key_type = __table.key_ttype
@@ -43,15 +43,22 @@ public partial class {{__name}} : IDataTable
     private readonly LoadDataTableAsyncFunc m_LoadDataTableAsyncFunc;
     private readonly {{__manager_name}} m_Manager;
     
+    public static {{__name}} Instance { get; private set; }
     public DataTableLoadStatus LoadStatus { get; private set; }
     
     public {{__name}}({{__manager_name}} manager, string dataTableName, LoadDataTableFunc loadDataTableFunc, LoadDataTableAsyncFunc loadDataTableAsyncFunc)
     {
+        Instance = this;
         m_Manager = manager;
         m_DataTableName = dataTableName;
         m_LoadDataTableFunc = loadDataTableFunc;
         m_LoadDataTableAsyncFunc = loadDataTableAsyncFunc;
         LoadStatus = DataTableLoadStatus.None;
+    }
+
+    public void Dispose()
+    {
+        Instance = null;
     }
     
     public void Load(bool autoResolveRef = true)

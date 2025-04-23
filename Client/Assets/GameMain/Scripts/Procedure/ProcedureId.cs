@@ -11,6 +11,11 @@ namespace GameMain
         Splash = 1,
 
         /// <summary>
+        /// 加载数据表流程。
+        /// </summary>
+        LoadDataTable,
+
+        /// <summary>
         /// 登录流程。
         /// </summary>
         Login,
