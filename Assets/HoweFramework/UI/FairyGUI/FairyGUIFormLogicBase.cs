@@ -58,6 +58,11 @@ namespace HoweFramework
         public DisposableGroup DisposableGroup { get; } = new DisposableGroup();
 
         /// <summary>
+        /// 当前处理的打开请求。
+        /// </summary>
+        public OpenFormRequest Request => UIForm.Request;
+
+        /// <summary>
         /// 界面框架组件。
         /// </summary>
         public GComponent Frame
