@@ -54,11 +54,8 @@ namespace HoweFramework
             }
             else if (typeof(T) == typeof(CommonResponse))
             {
-                // 不符合目标类型时，若期望的是通用响应包，则创建通用响应包实例返回。
-                response = ReferencePool.Acquire<T>();
-                response.ErrorCode = raw.ErrorCode;
-                raw.Dispose();
-                return response;
+                // 不符合目标类型时，若期望的是通用响应包，则创建通用响应包实例返回，并将原始响应包作为业务透传数据。
+                return CommonResponse.Create(raw.ErrorCode, raw) as T;
             }
             else
             {
