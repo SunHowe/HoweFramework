@@ -10,7 +10,7 @@ namespace HoweFramework
         /// <summary>
         /// 事件调度器。
         /// </summary>
-        private EventDispatcher m_EventDispatcher;
+        private IEventDispatcher m_EventDispatcher;
 
         /// <summary>
         /// 订阅事件。
@@ -52,9 +52,18 @@ namespace HoweFramework
             m_EventDispatcher.DispatchNow(sender, eventArgs);
         }
 
+        /// <summary>
+        /// 创建事件调度器。不需要使用时需要调用Dispose释放。
+        /// </summary>
+        /// <returns>事件调度器。</returns>
+        public IEventDispatcher CreateEventDispatcher()
+        {
+            return new EventDispatcher();
+        }
+
         protected override void OnInit()
         {
-            m_EventDispatcher = new EventDispatcher();
+            m_EventDispatcher = CreateEventDispatcher();
         }
 
         protected override void OnDestroy()
@@ -65,7 +74,7 @@ namespace HoweFramework
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
-            m_EventDispatcher.Tick();
+            m_EventDispatcher.Update();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace HoweFramework
     /// <summary>
     /// 事件调度器。
     /// </summary>
-    public sealed class EventDispatcher : IDisposable
+    internal sealed class EventDispatcher : IEventDispatcher
     {
         /// <summary>
         /// 事件处理器字典。
@@ -95,7 +95,7 @@ namespace HoweFramework
         /// <summary>
         /// 每帧更新。
         /// </summary>
-        public void Tick()
+        public void Update()
         {
             while (m_EventItemQueue.TryDequeue(out var eventItem))
             {
