@@ -20,6 +20,11 @@ namespace HoweFramework
 
         public override void Dispose()
         {
+            if (m_DebuggableSafeAreaComponent == null)
+            {
+                return;
+            }
+            
             UnityEngine.Object.Destroy(m_DebuggableSafeAreaComponent.gameObject);
         }
 
