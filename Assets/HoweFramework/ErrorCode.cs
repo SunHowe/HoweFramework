@@ -104,5 +104,20 @@ namespace HoweFramework
         /// 资源加载器已销毁。
         /// </summary>
         public const int ResLoaderDisposed = 202;
+
+        /// <summary>
+        /// 流程状态机已经启动。
+        /// </summary>
+        public const int ProcedureAlreadyLaunch = 301;
+
+        /// <summary>
+        /// 流程不存在。
+        /// </summary>
+        public const int ProcedureNotExist = 302;
+
+        /// <summary>
+        /// 流程状态机未运行。
+        /// </summary>
+        public const int ProcedureNotRunning = 303;
     }
 }

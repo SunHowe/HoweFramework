@@ -33,29 +33,17 @@ namespace GameMain
 
         private void OnGameAppInited()
         {
-            LaunchGame().Forget();
+            var procedures = new ProcedureBase[]
+            {
+                new ProcedureSplash(),
+                new ProcedureLogin(),
+            };
+            
+            ProcedureModule.Instance.Launch((int)ProcedureId.Splash, procedures);
         }
 
         private void OnGameAppDestroyed()
         {
-        }
-
-        private async UniTask LaunchGame()
-        {
-            await ResModule.Instance.UseYooAssetEditorSimulateMode();
-            await ResModule.Instance.RequestUpdatePackageManifest();
-
-            await UIModule.Instance.UseFairyGUI(new FairyGUISettings());
-            await UIModule.Instance.LoadFairyGUIPackagesAsync(UIConst.UIPackageMappingAssetPath);
-            UIModule.Instance.AddFairyGUIFormBindings(UIFormBindings.Bindings);
-            UIModule.Instance.AddFairyGUIComponentBindings(UIComponentBindings.Bindings);
-
-            for (UIGroupId i = 0; i < UIGroupId.Count; i++)
-            {
-                UIModule.Instance.CreateUIFormGroup((int)i, i.ToString());
-            }
-
-            await UIModule.Instance.OpenUIForm(UIFormId.LoginForm);
         }
 
         private AutoResetUniTaskCompletionSource m_NextTcs;
