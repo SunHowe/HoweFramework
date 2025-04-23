@@ -1,4 +1,6 @@
-﻿using HoweFramework;
+﻿using System;
+using FairyGUI;
+using HoweFramework;
 
 namespace GameMain.UI.Login
 {
@@ -12,6 +14,7 @@ namespace GameMain.UI.Login
         /// </summary>
         private void OnInitialize()
         {
+            m_LoginComp.LoginButton.onClick.Add(OnLoginButtonClick);
         }
 
         /// <summary>
@@ -54,6 +57,14 @@ namespace GameMain.UI.Login
         /// </summary>
         public override void OnInvisible()
         {
+        }
+
+        /// <summary>
+        /// 登录按钮点击回调。
+        /// </summary>
+        private void OnLoginButtonClick(EventContext context)
+        {
+            Request?.SetResponse(CommonResponse.Create(ErrorCode.Success, "Test"));
         }
     }
 }
