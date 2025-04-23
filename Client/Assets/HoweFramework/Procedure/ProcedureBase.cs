@@ -33,5 +33,10 @@ namespace HoweFramework
         {
             ProcedureModule.Instance.ChangeProcedure(procedureId);
         }
+
+        /// <summary>
+        /// 切换到下一个流程(依赖于Id的顺序)。
+        /// </summary>
+        protected void ChangeNextProcedure() => ChangeProcedure(Id + 1);
     }
 }
