@@ -49,6 +49,7 @@ namespace HoweFramework
             AddModule<TimerModule>(); // 计时器模块。
             AddModule<SafeAreaModule>(); // 安全区域模块。
             AddModule<ResModule>(); // 资源模块。
+            AddModule<DataTableModule>(); // 配置表模块。
             AddModule<UIModule>(); // UI模块。
             AddModule<ProcedureModule>(); // 流程模块。
         }
