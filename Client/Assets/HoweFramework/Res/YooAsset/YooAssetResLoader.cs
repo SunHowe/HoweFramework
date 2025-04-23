@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 using YooAsset;
 
 namespace HoweFramework
@@ -81,6 +82,41 @@ namespace HoweFramework
             }
 
             return asset;
+        }
+
+        public async UniTask<byte[]> LoadBinaryAsync(string assetKey, CancellationToken token = default)
+        {
+            // 目前使用TextAsset来加载二进制数据。
+            var asset = await LoadAssetAsync(assetKey, typeof(TextAsset), token);
+            if (asset == null)
+            {
+                return null;
+            }
+
+            var bytes = ((TextAsset)asset).bytes;
+            UnloadAsset(assetKey);
+            return bytes;
+        }
+
+        public byte[] LoadBinary(string assetKey)
+        {
+            // 目前使用TextAsset来加载二进制数据。
+            var operation = m_ResourcePackage.LoadAssetSync(assetKey, typeof(TextAsset));
+            var asset = operation.AssetObject;
+            if (asset == null)
+            {
+                return null;
+            }
+
+            byte[] bytes = null;
+            var textAsset = asset as TextAsset;
+            if (textAsset != null)
+            {
+                bytes = textAsset.bytes;
+            }
+            
+            operation.Release();
+            return bytes;
         }
 
         public void UnloadAsset(string assetKey)

@@ -71,6 +71,16 @@ namespace HoweFramework
             return asset;
         }
 
+        public UniTask<byte[]> LoadBinaryAsync(string assetKey, CancellationToken token = default)
+        {
+            return m_ResLoader.LoadBinaryAsync(assetKey, token);
+        }
+
+        public byte[] LoadBinary(string assetKey)
+        {
+            return m_ResLoader.LoadBinary(assetKey);
+        }
+
         public void UnloadAsset(string assetKey)
         {
             if (!m_AssetItemDict.TryGetValue(assetKey, out var assetItemInfo))

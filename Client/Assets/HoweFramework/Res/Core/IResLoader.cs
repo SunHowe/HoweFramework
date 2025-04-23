@@ -35,6 +35,21 @@ namespace HoweFramework
         UniTask<Object> LoadAssetAsync(string assetKey, Type assetType, CancellationToken token = default);
 
         /// <summary>
+        /// 加载二进制数据。
+        /// </summary>
+        /// <param name="assetKey">资源路径。</param>
+        /// <param name="token">取消令牌。</param>
+        /// <returns>二进制数据。</returns>
+        UniTask<byte[]> LoadBinaryAsync(string assetKey, CancellationToken token = default);
+
+        /// <summary>
+        /// 加载二进制数据。
+        /// </summary>
+        /// <param name="assetKey">资源路径。</param>
+        /// <returns>二进制数据。</returns>
+        byte[] LoadBinary(string assetKey);
+
+        /// <summary>
         /// 卸载资源。
         /// </summary>
         /// <param name="assetKey">资源路径。</param>
