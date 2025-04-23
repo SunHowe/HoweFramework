@@ -22,7 +22,7 @@ namespace HoweFramework
         {
             var cache = GetCache(typeof(T), true);
             var instance = cache.Count > 0 ? (T)cache.Dequeue() : new T();
-            instance.ReferenceId = cache.AcquireInstanceId();
+            cache.AcquireInstanceId();
             return instance;
         }
 
@@ -32,15 +32,7 @@ namespace HoweFramework
         /// <param name="instance">引用。</param>
         public static void Release(IReference instance)
         {
-            if (instance.ReferenceId == 0)
-            {
-                // 未被引用池管理的实例或重复释放的实例。
-                instance.Clear();
-                return;
-            }
-
             instance.Clear();
-            instance.ReferenceId = 0;
             GetCache(instance.GetType(), true).Enqueue(instance);
         }
 

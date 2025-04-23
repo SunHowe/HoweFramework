@@ -106,7 +106,6 @@ namespace HoweFramework
         private sealed class UpdateDict : IReference
         {
             public Dictionary<UpdateDelegate, UpdateInfo> Dict = new();
-            public int ReferenceId { get; set; }
 
             public void Clear()
             {
@@ -125,7 +124,6 @@ namespace HoweFramework
             public UpdateDelegate UpdateDelegate { get; set; }
             public bool IsRemove { get; set; }
             public UpdateDict UpdateDict { get; set; }
-            public int ReferenceId { get; set; }
 
             public void Clear()
             {

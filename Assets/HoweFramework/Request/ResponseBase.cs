@@ -12,11 +12,6 @@ namespace HoweFramework
         /// </summary>
         public int ErrorCode { get; set; }
 
-        /// <summary>
-        /// 引用id。
-        /// </summary>
-        public int ReferenceId { get; set; }
-
         public virtual void Clear()
         {
             ErrorCode = 0;

@@ -10,8 +10,6 @@ namespace HoweFramework
     /// </summary>
     internal sealed class ResProxyLoader : IResLoader, IReference
     {
-        public int ReferenceId { get; set; }
-
         private IResLoader m_ResLoader;
 
         private readonly Dictionary<string, AssetItemInfo> m_AssetItemDict = new();

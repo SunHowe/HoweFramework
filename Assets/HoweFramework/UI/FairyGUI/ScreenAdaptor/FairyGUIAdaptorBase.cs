@@ -8,8 +8,6 @@ namespace HoweFramework
     /// </summary>
     public abstract class FairyGUIAdaptorBase : IDisposable, IReference
     {
-        public int ReferenceId { get; set; }
-
         public GComponent ContentPane { get; private set; }
 
         /// <summary>

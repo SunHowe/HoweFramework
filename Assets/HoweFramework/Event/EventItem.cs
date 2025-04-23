@@ -22,14 +22,11 @@ namespace HoweFramework
         /// </summary>
         public object Sender { get; set; }
 
-        public int ReferenceId { get; set; }
-
         public void Clear()
         {
             Id = 0;
             EventArgs = null;
             Sender = null;
-            ReferenceId = 0;
         }
 
         /// <summary>

@@ -8,8 +8,6 @@ namespace HoweFramework
     /// </summary>
     internal sealed class TimerInfo : IReference
     {
-        public int ReferenceId { get; set; }
-
         /// <summary>
         /// 定时器的唯一id。
         /// </summary>

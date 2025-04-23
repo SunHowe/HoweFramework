@@ -8,8 +8,6 @@ namespace HoweFramework
     /// </summary>
     public sealed class ReusableStack<T> : Stack<T>, IReference, IDisposable
     {
-        public int ReferenceId { get; set; }
-
         public void Dispose()
         {
             ReferencePool.Release(this);

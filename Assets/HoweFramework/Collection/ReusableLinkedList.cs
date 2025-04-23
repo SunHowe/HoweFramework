@@ -7,8 +7,6 @@ namespace HoweFramework
     /// </summary>
     public sealed class ReusableLinkedList<T> : LinkedListEx<T>, IReference, IDisposable
     {
-        public int ReferenceId { get; set; }
-
         public void Dispose()
         {
             ReferencePool.Release(this);

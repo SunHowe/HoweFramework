@@ -5,8 +5,6 @@ namespace HoweFramework
     /// </summary>
     public abstract class GameComponentBase : IGameComponent, IReference
     {
-        public int ReferenceId { get; set; }
-
         public int ComponentType => GameEntityHelper.GetComponentType(GetType());
 
         public int ComponentId { get; private set; }

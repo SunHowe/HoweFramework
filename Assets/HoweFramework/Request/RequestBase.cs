@@ -10,11 +10,6 @@ namespace HoweFramework
     public abstract class RequestBase : IReference
     {
         /// <summary>
-        /// 引用id。
-        /// </summary>
-        public int ReferenceId { get; set; }
-
-        /// <summary>
         /// 释放。
         /// </summary>
         public virtual void Clear()

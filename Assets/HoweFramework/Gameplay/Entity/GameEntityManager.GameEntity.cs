@@ -7,7 +7,6 @@ namespace HoweFramework
     {
         private sealed class GameEntity : IGameEntity, IReference
         {
-            public int ReferenceId { get; set; }
             public int EntityId { get; private set; }
             public IGameContext Context { get; private set; }
 

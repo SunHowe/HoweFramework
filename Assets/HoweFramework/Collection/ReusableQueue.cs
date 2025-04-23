@@ -8,8 +8,6 @@ namespace HoweFramework
     /// </summary>
     public sealed class ReusableQueue<T> : Queue<T>, IReference, IDisposable
     {
-        public int ReferenceId { get; set; }
-
         public void Dispose()
         {
             ReferencePool.Release(this);

@@ -27,8 +27,6 @@ namespace HoweFramework
         /// </summary>
         private int m_UpdateTimes;
 
-        public int ReferenceId { get; set; }
-
         public void Clear()
         {
             m_TimerInfoDict.Clear();

@@ -20,11 +20,6 @@ namespace HoweFramework
         public abstract int Id { get; }
 
         /// <summary>
-        /// 引用id。
-        /// </summary>
-        public int ReferenceId { get; set; }
-
-        /// <summary>
         /// 在事件处理后是否回收事件实例。
         /// </summary>
         public virtual bool IsReleaseAfterFire => true;

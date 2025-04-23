@@ -12,8 +12,6 @@ namespace HoweFramework
     /// </summary>
     public class AssetItemInfo : IReference, IDisposable
     {
-        public int ReferenceId { get; set; }
-
         /// <summary>
         /// 是否存在引用.
         /// </summary>
