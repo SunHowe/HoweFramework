@@ -63,6 +63,11 @@ namespace HoweFramework
         public OpenFormRequest Request => UIForm.Request;
 
         /// <summary>
+        /// 当前处理的打开请求的业务透传数据。
+        /// </summary>
+        public object RequestUserData => Request?.UserData;
+
+        /// <summary>
         /// 界面框架组件。
         /// </summary>
         public GComponent Frame

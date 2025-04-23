@@ -20,6 +20,11 @@ namespace HoweFramework
         public int FormId { get; set; }
 
         /// <summary>
+        /// 业务透传数据。
+        /// </summary>
+        public object UserData { get; set; }
+
+        /// <summary>
         /// 取消令牌。
         /// </summary>
         public CancellationToken CancellationToken { get; private set; }
@@ -60,6 +65,15 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 设置业务透传数据。
+        /// </summary>
+        public OpenFormRequest SetUserData(object userData)
+        {
+            UserData = userData;
+            return this;
+        }
+
+        /// <summary>
         /// 清理。
         /// </summary>
         public override void Clear()
@@ -69,6 +83,7 @@ namespace HoweFramework
             CancellationToken = default;
             m_Tcs = null;
             OnSetResponse = null;
+            UserData = null;
         }
     }
 }
