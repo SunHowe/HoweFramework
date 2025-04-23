@@ -20,26 +20,26 @@ namespace HoweFramework
         /// 执行请求，并返回响应。
         /// </summary>
         /// <returns>响应。</returns>
-        public UniTask<ResponseBase> Execute(CancellationToken token = default)
+        public async UniTask<ResponseBase> Execute(CancellationToken token = default)
         {
             try
             {
                 if (token.IsCancellationRequested)
                 {
-                    return UniTask.FromResult<ResponseBase>(CommonResponse.Create(ErrorCode.RequestCanceled));
+                    return CommonResponse.Create(ErrorCode.RequestCanceled);
                 }
 
-                return OnExecute(token);
+                return await OnExecute(token);
             }
             catch (ErrorCodeException e)
             {
                 Log.Error($"Catch exception: ErrorCode={e.ErrorCode}, Message={e.Message}\n{e.StackTrace}");
-                return UniTask.FromResult<ResponseBase>(CommonResponse.Create(e.ErrorCode));
+                return CommonResponse.Create(e.ErrorCode);
             }
             catch (Exception e)
             {
                 Log.Error($"Catch exception: {e.Message}\n{e.StackTrace}");
-                return UniTask.FromResult<ResponseBase>(CommonResponse.Create(ErrorCode.Exception));
+                return CommonResponse.Create(ErrorCode.Exception);
             }
             finally
             {
