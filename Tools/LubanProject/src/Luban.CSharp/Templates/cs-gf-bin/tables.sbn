@@ -1,0 +1,67 @@
+using Luban;
+using Cysharp.Threading.Tasks;
+using GameLogic;
+using GameFramework.DataTable;
+using System.Collections.Generic;
+
+{{namespace_with_grace_begin __namespace}}
+    public partial class {{__name}}
+    {
+        {{~for table in __tables ~}}
+    {{~if table.comment != '' ~}}
+        /// <summary>
+        /// {{escape_comment table.comment}}
+        /// </summary>
+    {{~end~}}
+        public {{table.full_name}} {{format_property_name __code_style table.name}} { get; private set; }
+        {{~end~}}
+        
+        private List<IDataTable> m_PreloadDataTables;
+        
+        public void Init(DataTableLoadMode mode)
+        {
+            var isPreloadAll = mode == DataTableLoadMode.AsyncLoad || mode == DataTableLoadMode.SyncLoad;
+            {{~for table in __tables ~}}
+            {{format_property_name __code_style table.name}} = new {{table.full_name}}(this, "{{table.output_data_file}}", LoadDataTable, LoadDataTableAsync);
+            {{~end~}}
+            
+            if (isPreloadAll)
+            {
+                m_PreloadDataTables = new List<IDataTable> 
+                {
+                    {{~for table in __tables ~}}
+                    {{format_property_name __code_style table.name}},
+                    {{~end~}}
+                };
+            }
+            else
+            {
+                m_PreloadDataTables = GetPreloadDataTables();
+            }
+        }
+        
+        public void Preload()
+        {
+            foreach (var dataTable in m_PreloadDataTables)
+            {
+                dataTable.Load(false);
+            }
+            
+            foreach (var dataTable in m_PreloadDataTables)
+            {
+                dataTable.ResolveRef();
+            }
+        }
+        
+        public async UniTask PreloadAsync()
+        {
+            await UniTask.WhenAll(m_PreloadDataTables.Select(dataTable => dataTable.LoadAsync(false)));
+            
+            foreach (var dataTable in m_PreloadDataTables)
+            {
+                dataTable.ResolveRef();
+            }
+        }
+    }
+
+{{namespace_with_grace_end __namespace}}
