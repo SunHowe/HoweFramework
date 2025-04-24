@@ -37,6 +37,8 @@ namespace GameMain
             await ResModule.Instance.InitYooAssetEditorSimulateMode();
             await ResModule.Instance.RequestUpdatePackageManifest();
 
+            SoundUtility.InitSoundGroup();
+
             await UIModule.Instance.UseFairyGUI(new FairyGUISettings());
             await UIModule.Instance.LoadFairyGUIPackagesAsync(UIConst.UIPackageMappingAssetPath);
             UIModule.Instance.AddFairyGUIFormBindings(UIFormBindings.Bindings);

@@ -15,9 +15,10 @@ namespace HoweFramework
         /// </summary>
         public float Volume { get; set; }
 
-
         public void Clear()
         {
+            Loop = false;
+            Volume = 1f;
         }
     }
 }

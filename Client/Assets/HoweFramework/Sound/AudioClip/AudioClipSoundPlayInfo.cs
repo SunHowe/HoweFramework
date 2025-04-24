@@ -62,12 +62,6 @@ namespace HoweFramework
                 PlaySoundParams = null;
             }
 
-            if (AudioSource != null)
-            {
-                AudioSource.Stop();
-                AudioSource = null;
-            }
-
             ElapseSeconds = 0f;
             Duration = 0f;
             IsPause = false;

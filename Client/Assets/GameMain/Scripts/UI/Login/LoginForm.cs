@@ -71,7 +71,8 @@ namespace GameMain.UI.Login
         private void OnLoginButtonClick(EventContext context)
         {
             // Request?.SetResponse(CommonResponse.Create(ErrorCode.Success, "Test"));
-            GameApp.Instance.RestartGame();
+            // GameApp.Instance.RestartGame();
+            SoundUtility.PlaySound(SoundGroupId.UI, "Assets/GameMain/Sound/sound_demo.wav");
         }
     }
 }

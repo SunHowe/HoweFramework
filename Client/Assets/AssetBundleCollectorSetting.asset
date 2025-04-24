@@ -92,3 +92,16 @@ MonoBehaviour:
         FilterRuleName: CollectTextAsset
         AssetTags: 
         UserData: 
+    - GroupName: Sound
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/GameMain/Sound
+        CollectorGUID: af7019a2b8c8d2b42a8c8911157ebd06
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 

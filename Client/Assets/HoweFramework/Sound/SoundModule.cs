@@ -76,9 +76,25 @@ namespace HoweFramework
         /// </summary>
         /// <param name="groupId">声音组编号。</param>
         /// <param name="soundAssetName">声音资源名称。</param>
+        /// <param name="volume">音量。</param>
+        /// <param name="loop">是否循环播放。</param>
+        /// <returns>声音编号。</returns>
+        public int PlaySound(int groupId, string soundAssetName, float volume = 1f, bool loop = false)
+        {
+            var playSoundParams = ReferencePool.Acquire<PlaySoundParams>();
+            playSoundParams.Volume = volume;
+            playSoundParams.Loop = loop;
+            return PlaySound(groupId, soundAssetName, playSoundParams);
+        }
+
+        /// <summary>
+        /// 播放声音。
+        /// </summary>
+        /// <param name="groupId">声音组编号。</param>
+        /// <param name="soundAssetName">声音资源名称。</param>
         /// <param name="playSoundParams">播放声音参数。</param>
         /// <returns>声音编号。</returns>
-        public int PlaySound(int groupId, string soundAssetName, PlaySoundParams playSoundParams)
+        private int PlaySound(int groupId, string soundAssetName, PlaySoundParams playSoundParams)
         {
             if (m_SoundHelper == null)
             {
@@ -190,6 +206,10 @@ namespace HoweFramework
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
+            if (m_SoundHelper != null)
+            {
+                m_SoundHelper.Update(elapseSeconds, realElapseSeconds);
+            }
         }
     }
 }

@@ -281,6 +281,7 @@ namespace HoweFramework
 
                 if (!playInfo.PlaySoundParams.Loop && playInfo.ElapseSeconds >= playInfo.Duration)
                 {
+                    m_PlayInfoList.Remove(node);
                     StopPlayingSound(playInfo);
                 }
 
@@ -294,6 +295,8 @@ namespace HoweFramework
         /// <param name="playInfo">播放信息。</param>
         private void StopPlayingSound(AudioClipSoundPlayInfo playInfo)
         {
+            playInfo.AudioSource.Stop();
+            playInfo.AudioSource.clip = null;
             m_AudioSourcePool.Enqueue(playInfo.AudioSource);
 
             m_SoundStopCallback?.Invoke(playInfo.SerialId, playInfo.SoundAssetName, playInfo.SoundAsset);
