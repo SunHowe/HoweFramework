@@ -14,6 +14,15 @@ namespace HoweFramework
             JsonUtility.SetJsonHelper(jsonHelper);
         }
 
+        /// <summary>
+        /// 设置文本模板辅助器。
+        /// </summary>
+        /// <param name="textTemplateHelper">文本模板辅助器。</param>
+        public static void SetTextTemplateHelper(ITextTemplateHelper textTemplateHelper)
+        {
+            TextUtility.SetTextTemplateHelper(textTemplateHelper);
+        }
+
         protected override void OnInit()
         {
         }
@@ -21,6 +30,7 @@ namespace HoweFramework
         protected override void OnDestroy()
         {
             JsonUtility.DisposeJsonHelper();
+            TextUtility.DisposeTextTemplateHelper();
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)

@@ -26,6 +26,23 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 追加字符串。
+        /// </summary>
+        /// <param name="str">要追加的字符串。</param>
+        /// <param name="startIndex">开始索引。</param>
+        /// <param name="length">长度。</param>
+        /// <exception cref="ErrorCodeException">StringBuilder未引用时抛出。</exception>
+        public void Append(string str, int startIndex, int length)
+        {
+            if (!m_IsReferenced)
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
+            }
+
+            m_StringBuilder.Append(str, startIndex, length);
+        }
+        
+        /// <summary>
         /// 追加字符。
         /// </summary>
         /// <param name="ch">要追加的字符。</param>

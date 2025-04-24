@@ -33,7 +33,9 @@ namespace HoweFramework
 
             Instance = this;
 
-            AddModule<BaseModule>().UseUnityJsonHelper(); // 基础模块。
+            AddModule<BaseModule>()  // 基础模块。
+                .UseUnityJsonHelper()
+                .UseDefaultTextTemplateHelper();
             AddModule<EventModule>(); // 事件模块。
             AddModule<NetworkModule>(); // 网络模块。
             AddModule<WebRequestModule>().UseUnityWebRequest(); // Web请求模块。

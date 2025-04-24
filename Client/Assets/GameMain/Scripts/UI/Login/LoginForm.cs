@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using FairyGUI;
 using GameMain.Game;
@@ -81,10 +82,23 @@ namespace GameMain.UI.Login
             //     Log.Info($"POST Response: {response.ResponseText}");
             // });
 
-            WebRequestModule.Instance.Get("https://www.baidu.com").ContinueWith(response =>
-            {
-                Log.Info($"GET Response: {response.ResponseText}");
+            // WebRequestModule.Instance.Get("https://www.baidu.com").ContinueWith(response =>
+            // {
+            //     Log.Info($"GET Response: {response.ResponseText}");
+            // });
+
+            const string Template1 = "Hello {name}!";
+            const string Template2 = "Hello {name=LiLei}! Today is {today}. {nokey}";
+
+            TextUtility.AddGlobalTemplateValue("today", DateTime.Now.DayOfWeek.ToString());
+
+            var result1 = TextUtility.ParseTemplate(Template1, new Dictionary<string, string>(){
+                { "name", "HanMeimei" }
             });
+            var result2 = TextUtility.ParseTemplate(Template2, null);
+
+            Log.Info($"Template1: {result1}");
+            Log.Info($"Template2: {result2}");
         }
         
         // [Serializable]
