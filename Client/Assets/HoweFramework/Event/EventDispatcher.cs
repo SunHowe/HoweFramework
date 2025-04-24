@@ -183,6 +183,14 @@ namespace HoweFramework
             }
         }
 
+        /// <summary>
+        /// 清空事件。
+        /// </summary>
+        public void Clear()
+        {
+            m_EventItemQueue.Clear();
+        }
+
         private void HandleEvent(object sender, GameEventArgs e)
         {
             bool noHandlerException = false;

@@ -64,5 +64,10 @@ namespace HoweFramework
         /// 每帧更新。用于驱动事件调度。
         /// </summary>
         void Update();
+
+        /// <summary>
+        /// 清空事件。
+        /// </summary>
+        void Clear();
     }
 }
