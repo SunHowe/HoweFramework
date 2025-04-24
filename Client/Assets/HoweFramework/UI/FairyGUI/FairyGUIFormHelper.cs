@@ -78,6 +78,8 @@ namespace HoweFramework
             m_UIAssetManager.Initialize(this);
 
             m_ResLoader = ResModule.Instance.CreateResLoader();
+
+            GTextField.GetTemplateText = GetTemplateText;
         }
 
         public void Dispose()
@@ -91,6 +93,19 @@ namespace HoweFramework
             m_AudioClipAssetKeyDict.Clear();
 
             UIObjectFactory.Clear();
+
+            GTextField.GetTemplateText = null;
+        }
+
+        /// <summary>
+        /// 获取模板文本。
+        /// </summary>
+        /// <param name="template">模板。</param>
+        /// <param name="dictionary">字典。</param>
+        /// <returns>模板文本。</returns>
+        private string GetTemplateText(string template, Dictionary<string, string> dictionary)
+        {
+            return TextUtility.ParseTemplate(template, dictionary);
         }
 
         /// <summary>
