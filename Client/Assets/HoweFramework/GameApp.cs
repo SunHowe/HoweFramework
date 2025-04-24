@@ -42,6 +42,7 @@ namespace HoweFramework
             AddModule<SceneModule>(); // 场景模块。
             AddModule<DataTableModule>(); // 配置表模块。
             AddModule<LocalizationModule>(); // 本地化模块。
+            AddModule<NetworkModule>(); // 网络模块。
             AddModule<UIModule>(); // UI模块。
             AddModule<ProcedureModule>(); // 流程模块。
         }

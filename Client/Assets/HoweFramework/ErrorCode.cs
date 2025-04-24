@@ -41,6 +41,11 @@ namespace HoweFramework
         public const int InvalidOperationException = 6;
 
         /// <summary>
+        /// 未知错误。
+        /// </summary>
+        public const int Unknown = 7;
+
+        /// <summary>
         /// 界面未打开。
         /// </summary>
         public const int UIFormNotOpen = 100;
@@ -164,5 +169,55 @@ namespace HoweFramework
         /// 流程状态机未运行。
         /// </summary>
         public const int ProcedureNotRunning = 303;
+
+        /// <summary>
+        /// 地址族错误。
+        /// </summary>
+        public const int NetworkAddressFamilyError = 401;
+
+        /// <summary>
+        /// Socket 错误。
+        /// </summary>
+        public const int NetworkSocketError = 402;
+
+        /// <summary>
+        /// 连接错误。
+        /// </summary>
+        public const int NetworkConnectError = 403;
+
+        /// <summary>
+        /// 发送错误。
+        /// </summary>
+        public const int NetworkSendError = 404;
+
+        /// <summary>
+        /// 接收错误。
+        /// </summary>
+        public const int NetworkReceiveError = 405;
+
+        /// <summary>
+        /// 序列化错误。
+        /// </summary>
+        public const int NetworkSerializeError = 406;
+
+        /// <summary>
+        /// 反序列化消息包头错误。
+        /// </summary>
+        public const int NetworkDeserializePacketHeaderError = 407;
+
+        /// <summary>
+        /// 反序列化消息包错误。
+        /// </summary>
+        public const int NetworkDeserializePacketError = 408;
+
+        /// <summary>
+        /// 网络频道已存在。
+        /// </summary>
+        public const int NetworkChannelAlreadyExists = 409;
+
+        /// <summary>
+        /// 不支持的网络服务类型。
+        /// </summary>
+        public const int NetworkNotSupportServiceType = 410;
     }
 }
