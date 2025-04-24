@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using YooAsset;
@@ -10,12 +11,18 @@ namespace HoweFramework
     public static class YooAssetExtensions
     {
         private const string DefaultPackageName = "DefaultPackage";
+        private static readonly Dictionary<string, AutoResetUniTaskCompletionSource> m_PackageDestroyTcsDict = new();
 
         /// <summary>
         /// 使用YooAsset资源管线.
         /// </summary>
         public static async UniTask UseYooAsset(this ResModule module, string packageName, InitializeParameters parameters)
         {
+            if (m_PackageDestroyTcsDict.TryGetValue(packageName, out var tcs))
+            {
+                await tcs.Task;
+            }
+
             YooAssets.Initialize();
 
             var resourcePackage = YooAssets.CreatePackage(packageName);
@@ -27,9 +34,14 @@ namespace HoweFramework
 
             void Dispose()
             {
+                var tcs = AutoResetUniTaskCompletionSource.Create();
+                m_PackageDestroyTcsDict[packageName] = tcs;
+
                 resourcePackage.DestroyAsync().Completed += (op) =>
                 {
                     YooAssets.RemovePackage(packageName);
+                    m_PackageDestroyTcsDict.Remove(packageName);
+                    tcs.TrySetResult();
                 };
             }
         }

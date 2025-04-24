@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 namespace HoweFramework
 {
@@ -9,42 +10,29 @@ namespace HoweFramework
     public sealed class GameApp
     {
         /// <summary>
-        /// 游戏应用初始化完成事件。
+        /// 应用实例。
         /// </summary>
-        public static event Action OnGameAppInited;
+        public static GameApp Instance { get; private set; }
 
         /// <summary>
         /// 游戏应用销毁事件。
         /// </summary>
-        public static event Action OnGameAppDestroyed;
-
-        /// <summary>
-        /// 应用实例。
-        /// </summary>
-        public static GameApp Instance { get; private set; }
+        public event Action OnGameAppDestroyed;
 
         /// <summary>
         /// 模块列表。
         /// </summary>
         private readonly List<ModuleBase> m_ModuleList = new List<ModuleBase>();
 
-        /// <summary>
-        /// 创建应用实例。
-        /// </summary>
-        public static GameApp NewApp()
+        public GameApp()
         {
             if (Instance != null)
             {
-                Instance.Destroy();
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "GameApp already exists.");
             }
 
-            Instance = new GameApp();
-            OnGameAppInited?.Invoke();
-            return Instance;
-        }
+            Instance = this;
 
-        private GameApp()
-        {
             AddModule<BaseModule>().UseUnityJsonHelper(); // 基础模块。
             AddModule<EventModule>(); // 事件模块。
             AddModule<TimerModule>(); // 计时器模块。
@@ -87,6 +75,15 @@ namespace HoweFramework
             {
                 module.Update(elapseSeconds, realElapseSeconds);
             }
+        }
+
+        /// <summary>
+        /// 重启游戏。
+        /// </summary>
+        public void RestartGame()
+        {
+            // 重新加载主场景。
+            SceneManager.LoadScene(0);
         }
 
         /// <summary>
