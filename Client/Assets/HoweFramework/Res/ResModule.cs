@@ -22,15 +22,21 @@ namespace HoweFramework
         /// <summary>
         /// 创建资源加载器。
         /// </summary>
+        /// <param name="resLoader">指定的父资源加载器。若为null则使用核心资源加载器。</param>
         /// <returns>资源加载器。</returns>
-        public IResLoader CreateResLoader()
+        public IResLoader CreateResLoader(IResLoader resLoader = null)
         {
             if (m_ResLoader == null)
             {
                 throw new ErrorCodeException(ErrorCode.ResCoreLoaderNotSet);
             }
 
-            return ResProxyLoader.Create(m_ResLoader);
+            if (resLoader == null)
+            {
+                resLoader = m_ResLoader;
+            }
+
+            return ResProxyLoader.Create(resLoader);
         }
 
         /// <summary>
