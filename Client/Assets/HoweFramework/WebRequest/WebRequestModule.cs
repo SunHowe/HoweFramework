@@ -1,4 +1,5 @@
 using System.Net;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 
 namespace HoweFramework
@@ -23,8 +24,9 @@ namespace HoweFramework
         /// 发送POST请求。
         /// </summary>
         /// <param name="request">POST请求。</param>
+        /// <param name="token">取消令牌。</param>
         /// <returns>POST请求响应。</returns>
-        internal async UniTask<WebRequestResponse> Post(WebPostRequest request)
+        internal async UniTask<ResponseBase> Post(WebPostRequest request, CancellationToken token)
         {
             if (m_WebRequestHelper == null)
             {
@@ -36,7 +38,7 @@ namespace HoweFramework
                 throw new ErrorCodeException(ErrorCode.InvalidParam, "Content type is not set.");
             }
 
-            var (statusCode, responseBody) = await m_WebRequestHelper.Post(request.Url, request.RequestBody, request.Headers, request.ContentType);
+            var (statusCode, responseBody) = await m_WebRequestHelper.Post(request.Url, request.RequestBody, request.Headers, request.ContentType, token);
             if (statusCode != (int)HttpStatusCode.OK)
             {
                 return WebRequestResponse.Create(GetErrorCode(statusCode), responseBody);
@@ -49,8 +51,9 @@ namespace HoweFramework
         /// 发送GET请求。
         /// </summary>
         /// <param name="request">GET请求。</param>
+        /// <param name="token">取消令牌。</param>
         /// <returns>GET请求响应。</returns>
-        internal async UniTask<WebRequestResponse> Get(WebGetRequest request)
+        internal async UniTask<ResponseBase> Get(WebGetRequest request, CancellationToken token)
         {
             if (m_WebRequestHelper == null)
             {
@@ -80,7 +83,7 @@ namespace HoweFramework
                 url = sb.ToString();
             }
 
-            var (statusCode, responseBody) = await m_WebRequestHelper.Get(url, request.Headers);
+            var (statusCode, responseBody) = await m_WebRequestHelper.Get(url, request.Headers, token);
             if (statusCode != (int)HttpStatusCode.OK)
             {
                 return WebRequestResponse.Create(GetErrorCode(statusCode), responseBody);

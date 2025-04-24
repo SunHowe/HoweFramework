@@ -32,7 +32,7 @@ namespace HoweFramework
 
         protected override UniTask<ResponseBase> OnExecute(CancellationToken token)
         {
-            throw new System.NotImplementedException();
+            return WebRequestModule.Instance.Get(this, token);
         }
 
         /// <summary>

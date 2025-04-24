@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using FairyGUI;
 using GameMain.Game;
 using HoweFramework;
@@ -30,7 +31,8 @@ namespace GameMain.UI.Login
         /// </summary>
         public override void OnOpen()
         {
-            TbBuffConfig.Instance.DataList.ForEach(buff => {
+            TbBuffConfig.Instance.DataList.ForEach(buff =>
+            {
                 Log.Info($"Buff: {buff.Id} {buff.Name}");
             });
 
@@ -72,7 +74,24 @@ namespace GameMain.UI.Login
         {
             // Request?.SetResponse(CommonResponse.Create(ErrorCode.Success, "Test"));
             // GameApp.Instance.RestartGame();
-            SoundUtility.PlaySound(SoundGroupId.UI, "Assets/GameMain/Sound/sound_demo.wav");
+            // SoundUtility.PlaySound(SoundGroupId.UI, "Assets/GameMain/Sound/sound_demo.wav");
+            // WebRequestModule.Instance.PostJsonObject("http://localhost:5006/api/demo/json", new DemoDto() { id = 1001, name = "Test" })
+            // .ContinueWith(response =>
+            // {
+            //     Log.Info($"POST Response: {response.ResponseText}");
+            // });
+
+            WebRequestModule.Instance.Get("https://www.baidu.com").ContinueWith(response =>
+            {
+                Log.Info($"GET Response: {response.ResponseText}");
+            });
         }
+        
+        // [Serializable]
+        // public sealed class DemoDto
+        // {
+        //     public int id;
+        //     public string name;
+        // }
     }
 }

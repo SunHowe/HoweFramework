@@ -23,6 +23,8 @@ namespace HoweFramework
                 request.SetRequestHeader(key, value);
             }
 
+            request.downloadHandler = new DownloadHandlerBuffer();
+
             var operation = request.SendWebRequest();
 
             await operation.ToUniTask(cancellationToken: token);
@@ -48,6 +50,7 @@ namespace HoweFramework
             {
                 contentType = contentType
             };
+            request.downloadHandler = new DownloadHandlerBuffer();
 
             var operation = request.SendWebRequest();
 
