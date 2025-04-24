@@ -65,15 +65,36 @@ namespace HoweFramework
         /// <summary>
         /// 加载场景。
         /// </summary>
-        /// <param name="sceneName">场景名称。</param>
+        /// <param name="sceneAssetName">场景资源名称。</param>
         /// <returns>场景。</returns>
         UniTask<Scene> LoadScene(string sceneName);
 
         /// <summary>
         /// 卸载场景。
         /// </summary>
-        /// <param name="sceneName">场景名称。</param>
-        UniTask UnloadScene(string sceneName);
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        UniTask UnloadScene(string sceneAssetName);
+        
+        /// <summary>
+        /// 获取场景是否已加载。
+        /// </summary>
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        /// <returns>场景是否已加载。</returns>
+        bool SceneIsLoaded(string sceneAssetName);
+
+        /// <summary>
+        /// 获取场景是否正在加载。
+        /// </summary>
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        /// <returns>场景是否正在加载。</returns>
+        bool SceneIsLoading(string sceneAssetName);
+
+        /// <summary>
+        /// 获取场景是否正在卸载。
+        /// </summary>
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        /// <returns>场景是否正在卸载。</returns>
+        bool SceneIsUnloading(string sceneAssetName);
 
         #endregion
     }

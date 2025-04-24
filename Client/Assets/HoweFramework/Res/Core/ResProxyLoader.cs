@@ -118,9 +118,9 @@ namespace HoweFramework
         /// <summary>
         /// 加载场景。
         /// </summary>
-        /// <param name="sceneName">场景名称。</param>
+        /// <param name="sceneAssetName">场景资源名称。</param>
         /// <returns>场景。</returns>
-        public UniTask<Scene> LoadScene(string sceneName)
+        public UniTask<Scene> LoadScene(string sceneAssetName)
         {
             throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Please use SceneModule to load scene.");
         }
@@ -128,10 +128,40 @@ namespace HoweFramework
         /// <summary>
         /// 卸载场景。
         /// </summary>
-        /// <param name="sceneName">场景名称。</param>
-        public UniTask UnloadScene(string sceneName)
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        public UniTask UnloadScene(string sceneAssetName)
         {
             throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Please use SceneModule to unload scene.");
+        }
+
+        /// <summary>
+        /// 获取场景是否已加载。
+        /// </summary>
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        /// <returns>场景是否已加载。</returns>
+        public bool SceneIsLoaded(string sceneAssetName)
+        {
+            throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Please use SceneModule to check scene is loaded.");
+        }
+
+        /// <summary>
+        /// 获取场景是否正在加载。
+        /// </summary>
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        /// <returns>场景是否正在加载。</returns>
+        public bool SceneIsLoading(string sceneAssetName)
+        {
+            throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Please use SceneModule to check scene is loading.");
+        }
+
+        /// <summary>
+        /// 获取场景是否正在卸载。
+        /// </summary>
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        /// <returns>场景是否正在卸载。</returns>
+        public bool SceneIsUnloading(string sceneAssetName)
+        {
+            throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Please use SceneModule to check scene is unloading.");
         }
 
         /// <summary>

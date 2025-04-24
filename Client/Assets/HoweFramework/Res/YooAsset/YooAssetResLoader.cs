@@ -19,6 +19,7 @@ namespace HoweFramework
         private readonly Dictionary<string, AssetItemInfo> m_AssetItemDict = new();
         private readonly Dictionary<string, AssetHandle> m_AssetHandlerDict = new();
         private readonly Dictionary<string, SceneHandle> m_SceneHandlerDict = new();
+        private readonly Dictionary<string, UnloadSceneOperation> m_UnloadSceneOperationDict = new();
         private CancellationTokenSource m_CancellationTokenSource;
 
         public YooAssetResLoader(ResourcePackage resourcePackage, Action disposeAction)
@@ -55,6 +56,7 @@ namespace HoweFramework
             }
 
             m_SceneHandlerDict.Clear();
+            m_UnloadSceneOperationDict.Clear();
 
             m_DisposeAction?.Invoke();
         }
@@ -161,43 +163,65 @@ namespace HoweFramework
             m_ResourcePackage.UnloadUnusedAssetsAsync();
         }
 
-        public async UniTask<Scene> LoadScene(string sceneName)
+        /// <summary>
+        /// 加载场景。
+        /// </summary>
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        /// <returns>场景。</returns>
+        /// <exception cref="ErrorCodeException"></exception>
+        public async UniTask<Scene> LoadScene(string sceneAssetName)
         {
-            if (m_SceneHandlerDict.ContainsKey(sceneName))
+            if (m_SceneHandlerDict.TryGetValue(sceneAssetName, out var operation))
             {
+                if (operation.Status == EOperationStatus.Succeed)
+                {
                 throw new ErrorCodeException(ErrorCode.ResSceneAlreadyLoaded);
+                }
+
+                throw new ErrorCodeException(ErrorCode.ResSceneLoading);
             }
 
-            var operation = m_ResourcePackage.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-            m_SceneHandlerDict[sceneName] = operation;
+            operation = m_ResourcePackage.LoadSceneAsync(sceneAssetName, LoadSceneMode.Additive);
+            m_SceneHandlerDict[sceneAssetName] = operation;
 
             await operation.ToUniTask();
 
             if (operation.Status != EOperationStatus.Succeed)
             {
                 operation.Release();
-                m_SceneHandlerDict.Remove(sceneName);
+                m_SceneHandlerDict.Remove(sceneAssetName);
                 throw new ErrorCodeException(ErrorCode.ResSceneLoadFailed);
             }
 
             return operation.SceneObject;
         }
 
-        public async UniTask UnloadScene(string sceneName)
+        /// <summary>
+        /// 卸载场景。
+        /// </summary>
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        /// <exception cref="ErrorCodeException"></exception>
+        public async UniTask UnloadScene(string sceneAssetName)
         {
-            if (!m_SceneHandlerDict.TryGetValue(sceneName, out var operation))
+            if (m_UnloadSceneOperationDict.ContainsKey(sceneAssetName))
+            {
+                throw new ErrorCodeException(ErrorCode.ResSceneUnloading);
+            }
+
+            if (!m_SceneHandlerDict.TryGetValue(sceneAssetName, out var operation))
             {
                 throw new ErrorCodeException(ErrorCode.ResSceneNotLoad);
             }
 
             if (operation.Status != EOperationStatus.Succeed)
             {
-                throw new ErrorCodeException(ErrorCode.ResSceneNotLoad);
+                throw new ErrorCodeException(ErrorCode.ResSceneLoading);
             }
             
-            m_SceneHandlerDict.Remove(sceneName);   
+            m_SceneHandlerDict.Remove(sceneAssetName);   
 
             var unloadOperation = operation.UnloadAsync();
+            m_UnloadSceneOperationDict[sceneAssetName] = unloadOperation;
 
             await unloadOperation;
 
@@ -207,6 +231,51 @@ namespace HoweFramework
             }
 
             operation.Release();
+        }
+
+        /// <summary>
+        /// 获取场景是否已加载。
+        /// </summary>
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        /// <returns>场景是否已加载。</returns>
+        public bool SceneIsLoaded(string sceneAssetName)
+        {
+            if (m_SceneHandlerDict.TryGetValue(sceneAssetName, out var operation))
+            {
+                return operation.Status == EOperationStatus.Succeed;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 获取场景是否正在加载。
+        /// </summary>
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        /// <returns>场景是否正在加载。</returns>
+        public bool SceneIsLoading(string sceneAssetName)
+        {
+            if (m_SceneHandlerDict.TryGetValue(sceneAssetName, out var operation))
+            {
+                return operation.Status == EOperationStatus.Processing;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 获取场景是否正在卸载。
+        /// </summary>
+        /// <param name="sceneAssetName">场景资源名称。</param>
+        /// <returns>场景是否正在卸载。</returns>
+        public bool SceneIsUnloading(string sceneAssetName)
+        {
+            if (m_UnloadSceneOperationDict.TryGetValue(sceneAssetName, out var operation))
+            {
+                return operation.Status == EOperationStatus.Processing;
+            }
+
+            return false;
         }
 
         private async UniTask<UnityEngine.Object> LoadAssetWithYooAssets(string assetKey, Type assetType, CancellationToken token)
