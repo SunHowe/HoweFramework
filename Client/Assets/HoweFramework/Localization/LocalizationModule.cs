@@ -196,6 +196,7 @@ namespace HoweFramework
         /// </summary>
         private void SaveLanguage(Language language)
         {
+            SettingModule.Instance.SetInt(FrameworkSettings.Language, (int)language);
         }
 
         /// <summary>
@@ -203,7 +204,7 @@ namespace HoweFramework
         /// </summary>
         private Language LoadLanguage()
         {
-            return DefaultLanguage;
+            return (Language)SettingModule.Instance.GetInt(FrameworkSettings.Language, (int)DefaultLanguage);
         }
 
         protected override void OnInit()
