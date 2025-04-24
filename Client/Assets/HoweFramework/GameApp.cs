@@ -45,6 +45,7 @@ namespace HoweFramework
 
         private GameApp()
         {
+            AddModule<BaseModule>().UseUnityJsonHelper(); // 基础模块。
             AddModule<EventModule>(); // 事件模块。
             AddModule<TimerModule>(); // 计时器模块。
             AddModule<SettingModule>().UsePlayerPrefsSetting(); // 设置模块。

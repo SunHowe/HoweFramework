@@ -5,7 +5,7 @@ namespace HoweFramework
     /// <summary>
     /// Json 辅助器接口。
     /// </summary>
-    public interface IJsonHelper
+    public interface IJsonHelper : IDisposable
     {
         /// <summary>
         /// 将对象序列化为 JSON 字符串。
@@ -45,6 +45,18 @@ namespace HoweFramework
         public static void SetJsonHelper(IJsonHelper jsonHelper)
         {
             s_JsonHelper = jsonHelper ?? throw new ErrorCodeException(ErrorCode.InvalidParam, "Json helper is invalid.");
+        }
+
+        /// <summary>
+        /// 销毁 Json 辅助器。
+        /// </summary>
+        public static void DisposeJsonHelper()
+        {
+            if (s_JsonHelper != null)
+            {
+                s_JsonHelper.Dispose();
+                s_JsonHelper = null;
+            }
         }
 
         /// <summary>
