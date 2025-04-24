@@ -40,6 +40,7 @@ namespace HoweFramework
             AddModule<SafeAreaModule>(); // 安全区域模块。
             AddModule<ResModule>().UseYooAsset(); // 资源模块。
             AddModule<SceneModule>(); // 场景模块。
+            AddModule<SoundModule>().UseAudioClipSound(); // 声音模块。
             AddModule<GameObjectPoolModule>(); // 游戏对象池模块。
             AddModule<DataTableModule>(); // 配置表模块。
             AddModule<LocalizationModule>(); // 本地化模块。

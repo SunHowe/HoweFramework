@@ -219,5 +219,20 @@ namespace HoweFramework
         /// 不支持的网络服务类型。
         /// </summary>
         public const int NetworkNotSupportServiceType = 410;
+
+        /// <summary>
+        /// 声音组已存在。
+        /// </summary>
+        public const int SoundGroupAlreadyExists = 501;
+
+        /// <summary>
+        /// 声音组不存在。
+        /// </summary>
+        public const int SoundGroupNotExist = 502;
+
+        /// <summary>
+        /// 声音不存在。
+        /// </summary>
+        public const int SoundNotExist = 503;
     }
 }
