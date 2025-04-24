@@ -234,5 +234,48 @@ namespace HoweFramework
         /// 声音不存在。
         /// </summary>
         public const int SoundNotExist = 503;
+
+        #region [WebRequest]
+        
+        public const int WebRequestBadRequest = 501;
+        public const int WebRequestUnauthorized = 502;
+        public const int WebRequestPaymentRequired = 503;
+        public const int WebRequestForbidden = 504;
+        public const int WebRequestNotFound = 505;
+        public const int WebRequestMethodNotAllowed = 506;
+        public const int WebRequestNotAcceptable = 507;
+        public const int WebRequestProxyAuthenticationRequired = 508;
+        public const int WebRequestRequestTimeout = 509;
+        public const int WebRequestConflict = 510;
+        public const int WebRequestGone = 511;
+        public const int WebRequestLengthRequired = 512;
+        public const int WebRequestPreconditionFailed = 513;
+        public const int WebRequestRequestEntityTooLarge = 514;
+        public const int WebRequestRequestUriTooLong = 515;
+        public const int WebRequestUnsupportedMediaType = 516;
+        public const int WebRequestRequestedRangeNotSatisfiable = 517;
+        public const int WebRequestExpectationFailed = 518;
+        public const int WebRequestMisdirectedRequest = 519;
+        public const int WebRequestUnprocessableEntity = 520;
+        public const int WebRequestLocked = 521;
+        public const int WebRequestFailedDependency = 522;
+        public const int WebRequestUpgradeRequired = 523;
+        public const int WebRequestPreconditionRequired = 524;
+        public const int WebRequestTooManyRequests = 525;
+        public const int WebRequestRequestHeaderFieldsTooLarge = 526;
+        public const int WebRequestUnavailableForLegalReasons = 527;
+        public const int WebRequestInternalServerError = 528;
+        public const int WebRequestNotImplemented = 529;
+        public const int WebRequestBadGateway = 530;
+        public const int WebRequestServiceUnavailable = 531;
+        public const int WebRequestGatewayTimeout = 532;
+        public const int WebRequestHttpVersionNotSupported = 505;
+        public const int WebRequestVariantAlsoNegotiates = 534;
+        public const int WebRequestInsufficientStorage = 535;
+        public const int WebRequestLoopDetected = 536;
+        public const int WebRequestNotExtended = 537;
+        public const int WebRequestNetworkAuthenticationRequired = 538;
+
+        #endregion
     }
 }

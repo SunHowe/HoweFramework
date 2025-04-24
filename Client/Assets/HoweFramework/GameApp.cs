@@ -35,6 +35,8 @@ namespace HoweFramework
 
             AddModule<BaseModule>().UseUnityJsonHelper(); // 基础模块。
             AddModule<EventModule>(); // 事件模块。
+            AddModule<NetworkModule>(); // 网络模块。
+            AddModule<WebRequestModule>(); // Web请求模块。
             AddModule<TimerModule>(); // 计时器模块。
             AddModule<SettingModule>().UsePlayerPrefsSetting(); // 设置模块。
             AddModule<SafeAreaModule>(); // 安全区域模块。
@@ -44,7 +46,6 @@ namespace HoweFramework
             AddModule<GameObjectPoolModule>(); // 游戏对象池模块。
             AddModule<DataTableModule>(); // 配置表模块。
             AddModule<LocalizationModule>(); // 本地化模块。
-            AddModule<NetworkModule>(); // 网络模块。
             AddModule<UIModule>(); // UI模块。
             AddModule<ProcedureModule>(); // 流程模块。
         }
