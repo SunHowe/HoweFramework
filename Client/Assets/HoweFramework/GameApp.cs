@@ -47,6 +47,7 @@ namespace HoweFramework
         {
             AddModule<EventModule>(); // 事件模块。
             AddModule<TimerModule>(); // 计时器模块。
+            AddModule<SettingModule>().UsePlayerPrefsSetting(); // 设置模块。
             AddModule<SafeAreaModule>(); // 安全区域模块。
             AddModule<ResModule>(); // 资源模块。
             AddModule<DataTableModule>(); // 配置表模块。
@@ -89,12 +90,13 @@ namespace HoweFramework
         /// <summary>
         /// 添加模块。
         /// </summary>
-        private void AddModule<T>() where T : ModuleBase<T>
+        private T AddModule<T>() where T : ModuleBase<T>
         {
             var module = Activator.CreateInstance<T>();
             module.Init();
 
             m_ModuleList.Add(module);
+            return module;
         }
     }
 }

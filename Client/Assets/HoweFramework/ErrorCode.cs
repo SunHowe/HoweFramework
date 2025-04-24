@@ -36,6 +36,11 @@ namespace HoweFramework
         public const int InvalidParam = 5;
 
         /// <summary>
+        /// 操作无效。
+        /// </summary>
+        public const int InvalidOperationException = 6;
+
+        /// <summary>
         /// 界面未打开。
         /// </summary>
         public const int UIFormNotOpen = 100;
