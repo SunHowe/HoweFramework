@@ -48,6 +48,11 @@ namespace HoweFramework
         /// </summary>
         private int m_LoadId;
 
+        /// <summary>
+        /// 是否开启预加载包模式。
+        /// </summary>
+        private bool m_PreloadPackageMode;
+
         private readonly UIAssetManager m_UIAssetManager;
         private readonly IResLoader m_ResLoader;
         private readonly FairyGUISettings m_Settings;
@@ -89,6 +94,15 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 设置是否开启预加载包模式。
+        /// </summary>
+        /// <param name="preloadPackageMode">是否开启预加载包模式。</param>
+        public void SetPreloadPackageMode(bool preloadPackageMode)
+        {
+            m_PreloadPackageMode = preloadPackageMode;
+        }
+
+        /// <summary>
         /// 加载UI包列表。
         /// </summary>
         /// <param name="assetKey">PackageMapping映射文件加载路径。</param>
@@ -114,6 +128,11 @@ namespace HoweFramework
             // 卸载PackageMapping映射文件。
             m_ResLoader.UnloadAsset(assetKey);
 
+            if (!m_PreloadPackageMode)
+            {
+                return;
+            }
+
             if (count == 0)
             {
                 return;
@@ -130,17 +149,7 @@ namespace HoweFramework
 
             async UniTask LoadUIPackageAsync(string packageName)
             {
-                var packagePath = string.Format(m_Settings.UIPackagePathFormat, packageName);
-                var textAsset = await m_ResLoader.LoadAssetAsync<TextAsset>(packagePath);
-                if (textAsset == null)
-                {
-                    throw new ErrorCodeException(ErrorCode.UIPackageNotFound, $"UI包[{packageName}]未找到。");
-                }
-
-                m_PackageDict[packageName] = textAsset.bytes;
-
-                // 卸载包文件。
-                m_ResLoader.UnloadAsset(packageName);
+                m_PackageDict[packageName] = await LoadUIPackageBytesAsync(packageName);
             }
         }
 
@@ -267,22 +276,58 @@ namespace HoweFramework
 
         #region [IUIAssetLoader]
 
+        /// <summary>
+        /// 获取UI包路径。
+        /// </summary>
+        /// <param name="packageName">包名。</param>
+        /// <returns>UI包路径。</returns>
+        private string GetUIPackagePath(string packageName)
+        {
+            return string.Format(m_Settings.UIPackagePathFormat, packageName);
+        }
+
+        /// <summary>
+        /// 异步加载UI包二进制数据。
+        /// </summary>
+        /// <param name="packageName">包名。</param>
+        /// <returns>UI包二进制数据。</returns>
+        /// <exception cref="ErrorCodeException">UI包未找到。</exception>
+        private async UniTask<byte[]> LoadUIPackageBytesAsync(string packageName)
+        {
+            var packagePath = GetUIPackagePath(packageName);
+            var textAsset = await m_ResLoader.LoadAssetAsync<TextAsset>(packagePath);
+            if (textAsset == null)
+            {
+                throw new ErrorCodeException(ErrorCode.UIPackageNotFound, $"UI包[{packageName}]未找到。");
+            }
+
+            var bytes = textAsset.bytes;
+            m_ResLoader.UnloadAsset(packagePath);
+            return bytes;
+        }
+
         public void LoadUIPackageBytesAsync(string packageName, LoadUIPackageBytesCallback callback)
         {
-            if (m_PackageDict.TryGetValue(packageName, out var bytes))
+            if (m_PreloadPackageMode && m_PackageDict.TryGetValue(packageName, out var bytes))
             {
                 callback(bytes, string.Empty);
+                return;
             }
-            else
-            {
-                callback(null, string.Empty);
-            }
+
+            LoadUIPackageBytesAsync(packageName).ContinueWith(bytes => callback(bytes, string.Empty));
         }
 
         public void LoadUIPackageBytes(string packageName, out byte[] bytes, out string assetNamePrefix)
         {
             assetNamePrefix = string.Empty;
-            m_PackageDict.TryGetValue(packageName, out bytes);
+            
+            if (m_PreloadPackageMode)
+            {
+                m_PackageDict.TryGetValue(packageName, out bytes);
+                return;
+            }
+
+            bytes = m_ResLoader.LoadBinary(GetUIPackagePath(packageName));
         }
 
         public void LoadTextureAsync(string packageName, string assetName, string extension, LoadTextureCallback callback)
