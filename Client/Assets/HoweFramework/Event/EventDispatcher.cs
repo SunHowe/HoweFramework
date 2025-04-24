@@ -10,14 +10,66 @@ namespace HoweFramework
     internal sealed class EventDispatcher : IEventDispatcher
     {
         /// <summary>
+        /// 待处理的事件数量。
+        /// </summary>
+        public int EventCount => m_EventItemQueue.Count;
+
+        /// <summary>
         /// 事件处理器字典。
         /// </summary>
-        private readonly Dictionary<int, GameEventHandler> m_EventHandlerDict = new();
+        private readonly MultiDictionary<int, GameEventHandler> m_EventHandlerDict = new();
+        
+        /// <summary>
+        /// 缓存的事件处理器节点。
+        /// </summary>
+        private readonly Dictionary<object, LinkedListNode<GameEventHandler>> m_CachedNodes = new();
+
+        /// <summary>
+        /// 临时的事件处理器节点。
+        /// </summary>
+        private readonly Dictionary<object, LinkedListNode<GameEventHandler>> m_TempNodes = new();
 
         /// <summary>
         /// 事件队列。
         /// </summary>
         private readonly ConcurrentQueue<EventItem> m_EventItemQueue = new();
+
+        private GameEventHandler m_DefaultHandler;
+        private EventDispatcherMode m_Mode;
+
+        /// <summary>
+        /// 设置默认事件处理函数。
+        /// </summary>
+        /// <param name="handler">要设置的默认事件处理函数。</param>
+        public void SetDefaultHandler(GameEventHandler handler)
+        {
+            m_DefaultHandler = handler;
+        }
+
+        /// <summary>
+        /// 设置事件调度器模式。
+        /// </summary>
+        /// <param name="mode">事件调度器模式。</param>
+        public void SetMode(EventDispatcherMode mode)
+        {
+            m_Mode = mode;
+        }
+
+        /// <summary>
+        /// 检查是否存在事件处理函数。
+        /// </summary>
+        /// <param name="id">事件类型编号。</param>
+        /// <param name="handler">要检查的事件处理函数。</param>
+        /// <returns>是否存在事件处理函数。</returns>
+        public bool Check(int id, GameEventHandler handler)
+        {
+            if (handler == null)
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Event handler is invalid.");
+            }
+
+            return m_EventHandlerDict.Contains(id, handler);
+        }
 
         /// <summary>
         /// 订阅事件。
@@ -26,14 +78,26 @@ namespace HoweFramework
         /// <param name="handler">事件处理器。</param>
         public void Subscribe(int id, GameEventHandler handler)
         {
-            if (m_EventHandlerDict.TryGetValue(id, out var eventHandler))
+            if (handler == null)
             {
-                eventHandler += handler;
-                m_EventHandlerDict[id] = eventHandler;
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Event handler is invalid.");
+            }
+
+            if (!m_EventHandlerDict.Contains(id))
+            {
+                m_EventHandlerDict.Add(id, handler);
+            }
+            else if ((m_Mode & EventDispatcherMode.AllowMultiHandler) != EventDispatcherMode.AllowMultiHandler)
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Event '{id}' not allow multi handler.");
+            }
+            else if ((m_Mode & EventDispatcherMode.AllowDuplicateHandler) != EventDispatcherMode.AllowDuplicateHandler && Check(id, handler))
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Event '{id}' not allow duplicate handler.");
             }
             else
             {
-                m_EventHandlerDict[id] = handler;
+                m_EventHandlerDict.Add(id, handler);
             }
         }
 
@@ -44,13 +108,36 @@ namespace HoweFramework
         /// <param name="handler">事件处理器。</param>
         public void Unsubscribe(int id, GameEventHandler handler)
         {
-            if (!m_EventHandlerDict.TryGetValue(id, out var eventHandler))
+            if (handler == null)
             {
-                return;
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Event handler is invalid.");
             }
 
-            eventHandler -= handler;
-            m_EventHandlerDict[id] = eventHandler;
+            if (m_CachedNodes.Count > 0)
+            {
+                foreach (KeyValuePair<object, LinkedListNode<GameEventHandler>> cachedNode in m_CachedNodes)
+                {
+                    if (cachedNode.Value != null && cachedNode.Value.Value == handler)
+                    {
+                        m_TempNodes.Add(cachedNode.Key, cachedNode.Value.Next);
+                    }
+                }
+
+                if (m_TempNodes.Count > 0)
+                {
+                    foreach (KeyValuePair<object, LinkedListNode<GameEventHandler>> cachedNode in m_TempNodes)
+                    {
+                        m_CachedNodes[cachedNode.Key] = cachedNode.Value;
+                    }
+
+                    m_TempNodes.Clear();
+                }
+            }
+
+            if (!m_EventHandlerDict.Remove(id, handler))
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Event '{id}' not exists specified handler.");
+            }
         }
 
         /// <summary>
@@ -62,7 +149,7 @@ namespace HoweFramework
         {
             if (eventArgs == null)
             {
-                throw new ArgumentNullException(nameof(eventArgs));
+                throw new ErrorCodeException(ErrorCode.InvalidParam, "Event args is invalid.");
             }
 
             var eventItem = EventItem.Create(eventArgs.Id, eventArgs, sender);
@@ -78,18 +165,10 @@ namespace HoweFramework
         {
             if (eventArgs == null)
             {
-                throw new ArgumentNullException(nameof(eventArgs));
+                throw new ErrorCodeException(ErrorCode.InvalidParam, "Event args is invalid.");
             }
 
-            if (m_EventHandlerDict.TryGetValue(eventArgs.Id, out var eventHandler))
-            {
-                eventHandler.Invoke(sender, eventArgs);
-            }
-
-            if (eventArgs.IsReleaseAfterFire)
-            {
-                ReferencePool.Release(eventArgs);
-            }
+            HandleEvent(sender, eventArgs);
         }
 
         /// <summary>
@@ -99,23 +178,52 @@ namespace HoweFramework
         {
             while (m_EventItemQueue.TryDequeue(out var eventItem))
             {
-                try
+                HandleEvent(eventItem.Sender, eventItem.EventArgs);
+                ReferencePool.Release(eventItem);
+            }
+        }
+
+        private void HandleEvent(object sender, GameEventArgs e)
+        {
+            bool noHandlerException = false;
+            if (m_EventHandlerDict.TryGetValue(e.Id, out var range))
+            {
+                LinkedListNode<GameEventHandler> current = range.First;
+                while (current != null && current != range.Terminal)
                 {
-                    m_EventHandlerDict[eventItem.Id]?.Invoke(eventItem.Sender, eventItem.EventArgs);
-                }
-                catch (Exception e)
-                {
-                    Log.Error($"Dispatch event {eventItem.Id} failed, {e.Message}");
-                }
-                finally
-                {
-                    if (eventItem.EventArgs.IsReleaseAfterFire)
+                    m_CachedNodes[e] = current.Next != range.Terminal ? current.Next : null;
+
+                    try
                     {
-                        ReferencePool.Release(eventItem.EventArgs);
+                        current.Value(sender, e);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error($"Handle event '{e.Id}' error: {ex.Message}");
                     }
 
-                    ReferencePool.Release(eventItem);
+                    current = m_CachedNodes[e];
                 }
+
+                m_CachedNodes.Remove(e);
+            }
+            else if (m_DefaultHandler != null)
+            {
+                m_DefaultHandler(sender, e);
+            }
+            else if ((m_Mode & EventDispatcherMode.AllowNoHandler) == 0)
+            {
+                noHandlerException = true;
+            }
+
+            if (e.IsReleaseAfterFire)
+            {
+                ReferencePool.Release(e);
+            }
+
+            if (noHandlerException)
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Event '{e.Id}' not allow no handler.");
             }
         }
 

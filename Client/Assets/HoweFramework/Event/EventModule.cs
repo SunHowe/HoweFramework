@@ -64,6 +64,7 @@ namespace HoweFramework
         protected override void OnInit()
         {
             m_EventDispatcher = CreateEventDispatcher();
+            m_EventDispatcher.SetMode(EventDispatcherMode.AllowMultiHandler);
         }
 
         protected override void OnDestroy()
