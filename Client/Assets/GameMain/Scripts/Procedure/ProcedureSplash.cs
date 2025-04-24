@@ -34,7 +34,7 @@ namespace GameMain
 
         private async UniTask InitAsync()
         {
-            await ResModule.Instance.UseYooAssetEditorSimulateMode();
+            await ResModule.Instance.InitYooAssetEditorSimulateMode();
             await ResModule.Instance.RequestUpdatePackageManifest();
 
             await UIModule.Instance.UseFairyGUI(new FairyGUISettings());

@@ -13,8 +13,11 @@ namespace HoweFramework
     /// </summary>
     public sealed class YooAssetResLoader : IResLoader
     {
-        private readonly ResourcePackage m_ResourcePackage;
-        private readonly Action m_DisposeAction;
+        public const string DefaultPackageName = "DefaultPackage";
+
+        private static AutoResetUniTaskCompletionSource s_DestroyTcs;
+
+        private ResourcePackage m_ResourcePackage;
 
         private readonly Dictionary<string, AssetItemInfo> m_AssetItemDict = new();
         private readonly Dictionary<string, AssetHandle> m_AssetHandlerDict = new();
@@ -22,11 +25,45 @@ namespace HoweFramework
         private readonly Dictionary<string, UnloadSceneOperation> m_UnloadSceneOperationDict = new();
         private CancellationTokenSource m_CancellationTokenSource;
 
-        public YooAssetResLoader(ResourcePackage resourcePackage, Action disposeAction)
+        public YooAssetResLoader()
         {
-            m_ResourcePackage = resourcePackage;
-            m_DisposeAction = disposeAction;
             m_CancellationTokenSource = new CancellationTokenSource();
+        }
+
+        /// <summary>
+        /// 初始化资源包。
+        /// </summary>
+        public async UniTask InitResourcePackageAsync(InitializeParameters parameters)
+        {
+            if (s_DestroyTcs != null)
+            {
+                await s_DestroyTcs.Task;
+            }
+
+            YooAssets.Initialize();
+
+            var resourcePackage = YooAssets.CreatePackage(DefaultPackageName);
+            YooAssets.SetDefaultPackage(resourcePackage);
+
+            await resourcePackage.InitializeAsync(parameters).ToUniTask();
+
+            m_ResourcePackage = resourcePackage;
+        }
+
+        /// <summary>
+        /// 释放资源包。
+        /// </summary>
+        private async UniTask DisposeResourcePackageAsync()
+        {
+            var tcs = AutoResetUniTaskCompletionSource.Create();
+            s_DestroyTcs = tcs;
+
+            await m_ResourcePackage.DestroyAsync().ToUniTask();
+
+            YooAssets.RemovePackage(DefaultPackageName);
+
+            s_DestroyTcs = null;
+            tcs.TrySetResult();
         }
 
         public void Dispose()
@@ -58,7 +95,7 @@ namespace HoweFramework
             m_SceneHandlerDict.Clear();
             m_UnloadSceneOperationDict.Clear();
 
-            m_DisposeAction?.Invoke();
+            DisposeResourcePackageAsync().Forget();
         }
 
         public async UniTask<UnityEngine.Object> LoadAssetAsync(string assetKey, Type assetType, CancellationToken token = default)

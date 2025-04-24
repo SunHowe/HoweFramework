@@ -70,7 +70,8 @@ namespace GameMain.UI.Login
         /// </summary>
         private void OnLoginButtonClick(EventContext context)
         {
-            Request?.SetResponse(CommonResponse.Create(ErrorCode.Success, "Test"));
+            // Request?.SetResponse(CommonResponse.Create(ErrorCode.Success, "Test"));
+            GameApp.Instance.RestartGame();
         }
     }
 }

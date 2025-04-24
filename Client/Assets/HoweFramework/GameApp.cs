@@ -38,7 +38,7 @@ namespace HoweFramework
             AddModule<TimerModule>(); // 计时器模块。
             AddModule<SettingModule>().UsePlayerPrefsSetting(); // 设置模块。
             AddModule<SafeAreaModule>(); // 安全区域模块。
-            AddModule<ResModule>(); // 资源模块。
+            AddModule<ResModule>().UseYooAsset(); // 资源模块。
             AddModule<SceneModule>(); // 场景模块。
             AddModule<GameObjectPoolModule>(); // 游戏对象池模块。
             AddModule<DataTableModule>(); // 配置表模块。

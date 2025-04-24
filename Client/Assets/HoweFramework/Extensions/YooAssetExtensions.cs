@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using YooAsset;
 
@@ -10,60 +8,36 @@ namespace HoweFramework
     /// </summary>
     public static class YooAssetExtensions
     {
-        private const string DefaultPackageName = "DefaultPackage";
-        private static readonly Dictionary<string, AutoResetUniTaskCompletionSource> m_PackageDestroyTcsDict = new();
+        private static YooAssetResLoader s_YooAssetResLoader;
 
         /// <summary>
         /// 使用YooAsset资源管线.
         /// </summary>
-        public static async UniTask UseYooAsset(this ResModule module, string packageName, InitializeParameters parameters)
+        public static ResModule UseYooAsset(this ResModule module)
         {
-            if (m_PackageDestroyTcsDict.TryGetValue(packageName, out var tcs))
-            {
-                await tcs.Task;
-            }
-
-            YooAssets.Initialize();
-
-            var resourcePackage = YooAssets.CreatePackage(packageName);
-            YooAssets.SetDefaultPackage(resourcePackage);
-
-            await resourcePackage.InitializeAsync(parameters).ToUniTask();
-
-            module.SetResCoreLoader(new YooAssetResLoader(resourcePackage, Dispose));
-
-            void Dispose()
-            {
-                var tcs = AutoResetUniTaskCompletionSource.Create();
-                m_PackageDestroyTcsDict[packageName] = tcs;
-
-                resourcePackage.DestroyAsync().Completed += (op) =>
-                {
-                    YooAssets.RemovePackage(packageName);
-                    m_PackageDestroyTcsDict.Remove(packageName);
-                    tcs.TrySetResult();
-                };
-            }
+            s_YooAssetResLoader = new YooAssetResLoader();
+            module.SetResCoreLoader(s_YooAssetResLoader);
+            return module;
         }
 
         /// <summary>
-        /// 使用编辑器模拟模式的YooAsset资源管线.
+        /// 使用编辑器模拟模式初始化YooAsset资源管线.
         /// </summary>
-        public static UniTask UseYooAssetEditorSimulateMode(this ResModule module, string packageName = DefaultPackageName)
+        public static UniTask InitYooAssetEditorSimulateMode(this ResModule module)
         {
-            var buildResult = EditorSimulateModeHelper.SimulateBuild(packageName);
+            var buildResult = EditorSimulateModeHelper.SimulateBuild(YooAssetResLoader.DefaultPackageName);
             var packageRoot = buildResult.PackageRootDirectory;
             var editorFileSystemParams = FileSystemParameters.CreateDefaultEditorFileSystemParameters(packageRoot);
             var initParameters = new EditorSimulateModeParameters();
             initParameters.EditorFileSystemParameters = editorFileSystemParams;
 
-            return module.UseYooAsset(packageName, initParameters);
+            return s_YooAssetResLoader.InitResourcePackageAsync(initParameters);
         }
 
         /// <summary>
-        /// 使用联机更新模式的YooAsset资源管线.
+        /// 使用联机更新模式初始化YooAsset资源管线.
         /// </summary>
-        public static UniTask UseYooAssetHostPlayMode(this ResModule module, string hostServer, string fallbackHostServer, string packageName = DefaultPackageName)
+        public static UniTask InitYooAssetHostPlayMode(this ResModule module, string hostServer, string fallbackHostServer)
         {
             IRemoteServices remoteServices = new YooAssetRemoteServices(hostServer, fallbackHostServer);
             var cacheFileSystemParams = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices);
@@ -73,7 +47,7 @@ namespace HoweFramework
             initParameters.BuildinFileSystemParameters = buildinFileSystemParams;
             initParameters.CacheFileSystemParameters = cacheFileSystemParams;
 
-            return module.UseYooAsset(packageName, initParameters);
+            return s_YooAssetResLoader.InitResourcePackageAsync(initParameters);
         }
 
         /// <summary>
@@ -83,9 +57,9 @@ namespace HoweFramework
         /// <param name="packageName">资源包名.</param>
         /// <param name="packageVersion">资源包版本号,若为空则使用YooAssets默认的版本号请求功能.</param>
         /// <returns></returns>
-        public static async UniTask<bool> RequestUpdatePackageManifest(this ResModule module, string packageName = DefaultPackageName, string packageVersion = null)
+        public static async UniTask<bool> RequestUpdatePackageManifest(this ResModule module, string packageVersion = null)
         {
-            var package = YooAssets.GetPackage(packageName);
+            var package = YooAssets.GetPackage(YooAssetResLoader.DefaultPackageName);
             if (string.IsNullOrEmpty(packageVersion))
             {
                 var requestVersionOperation = package.RequestPackageVersionAsync();
