@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace HoweFramework
@@ -59,5 +59,22 @@ namespace HoweFramework
         /// 卸载未使用的资源。
         /// </summary>
         void UnloadUnusedAsset();
+
+        #region [场景加载]
+
+        /// <summary>
+        /// 加载场景。
+        /// </summary>
+        /// <param name="sceneName">场景名称。</param>
+        /// <returns>场景。</returns>
+        UniTask<Scene> LoadScene(string sceneName);
+
+        /// <summary>
+        /// 卸载场景。
+        /// </summary>
+        /// <param name="sceneName">场景名称。</param>
+        UniTask UnloadScene(string sceneName);
+
+        #endregion
     }
 }

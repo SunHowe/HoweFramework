@@ -34,6 +34,15 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 获取核心资源加载器。
+        /// </summary>
+        /// <returns>核心资源加载器。</returns>
+        internal IResLoader GetResCoreLoader()
+        {
+            return m_ResLoader;
+        }
+
+        /// <summary>
         /// 卸载未使用的资源。
         /// </summary>
         public void UnloadUnusedAsset()

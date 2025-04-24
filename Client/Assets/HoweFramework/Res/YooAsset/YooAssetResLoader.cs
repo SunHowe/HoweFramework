@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using YooAsset;
 
 namespace HoweFramework
@@ -17,6 +18,7 @@ namespace HoweFramework
 
         private readonly Dictionary<string, AssetItemInfo> m_AssetItemDict = new();
         private readonly Dictionary<string, AssetHandle> m_AssetHandlerDict = new();
+        private readonly Dictionary<string, SceneHandle> m_SceneHandlerDict = new();
         private CancellationTokenSource m_CancellationTokenSource;
 
         public YooAssetResLoader(ResourcePackage resourcePackage, Action disposeAction)
@@ -46,6 +48,13 @@ namespace HoweFramework
             }
 
             m_AssetHandlerDict.Clear();
+
+            foreach (var handle in m_SceneHandlerDict.Values)
+            {
+                handle.Release();
+            }
+
+            m_SceneHandlerDict.Clear();
 
             m_DisposeAction?.Invoke();
         }
@@ -150,6 +159,54 @@ namespace HoweFramework
             }
 
             m_ResourcePackage.UnloadUnusedAssetsAsync();
+        }
+
+        public async UniTask<Scene> LoadScene(string sceneName)
+        {
+            if (m_SceneHandlerDict.ContainsKey(sceneName))
+            {
+                throw new ErrorCodeException(ErrorCode.ResSceneAlreadyLoaded);
+            }
+
+            var operation = m_ResourcePackage.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+            m_SceneHandlerDict[sceneName] = operation;
+
+            await operation.ToUniTask();
+
+            if (operation.Status != EOperationStatus.Succeed)
+            {
+                operation.Release();
+                m_SceneHandlerDict.Remove(sceneName);
+                throw new ErrorCodeException(ErrorCode.ResSceneLoadFailed);
+            }
+
+            return operation.SceneObject;
+        }
+
+        public async UniTask UnloadScene(string sceneName)
+        {
+            if (!m_SceneHandlerDict.TryGetValue(sceneName, out var operation))
+            {
+                throw new ErrorCodeException(ErrorCode.ResSceneNotLoad);
+            }
+
+            if (operation.Status != EOperationStatus.Succeed)
+            {
+                throw new ErrorCodeException(ErrorCode.ResSceneNotLoad);
+            }
+            
+            m_SceneHandlerDict.Remove(sceneName);   
+
+            var unloadOperation = operation.UnloadAsync();
+
+            await unloadOperation;
+
+            if (unloadOperation.Status != EOperationStatus.Succeed)
+            {
+                throw new ErrorCodeException(ErrorCode.ResSceneUnloadFailed);
+            }
+
+            operation.Release();
         }
 
         private async UniTask<UnityEngine.Object> LoadAssetWithYooAssets(string assetKey, Type assetType, CancellationToken token)

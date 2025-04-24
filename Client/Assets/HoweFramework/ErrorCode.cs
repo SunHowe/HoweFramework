@@ -121,6 +121,26 @@ namespace HoweFramework
         public const int ResNotFound = 203;
 
         /// <summary>
+        /// 场景已加载。
+        /// </summary>
+        public const int ResSceneAlreadyLoaded = 204;
+
+        /// <summary>
+        /// 场景未加载。
+        /// </summary>
+        public const int ResSceneNotLoad = 205;
+
+        /// <summary>
+        /// 场景加载失败。
+        /// </summary>
+        public const int ResSceneLoadFailed = 206;
+
+        /// <summary>
+        /// 场景卸载失败。
+        /// </summary>
+        public const int ResSceneUnloadFailed = 207;
+
+        /// <summary>
         /// 流程状态机已经启动。
         /// </summary>
         public const int ProcedureAlreadyLaunch = 301;

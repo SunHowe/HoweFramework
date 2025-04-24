@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace HoweFramework
 {
@@ -112,6 +113,25 @@ namespace HoweFramework
             }
 
             m_ResLoader.UnloadUnusedAsset();
+        }
+
+        /// <summary>
+        /// 加载场景。
+        /// </summary>
+        /// <param name="sceneName">场景名称。</param>
+        /// <returns>场景。</returns>
+        public UniTask<Scene> LoadScene(string sceneName)
+        {
+            throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Please use SceneModule to load scene.");
+        }
+
+        /// <summary>
+        /// 卸载场景。
+        /// </summary>
+        /// <param name="sceneName">场景名称。</param>
+        public UniTask UnloadScene(string sceneName)
+        {
+            throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Please use SceneModule to unload scene.");
         }
 
         /// <summary>
