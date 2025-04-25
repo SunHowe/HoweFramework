@@ -1,6 +1,5 @@
 using IGrains;
 using Orleans.Streams;
-using Protocol;
 using ServerProtocol;
 
 namespace Grains;

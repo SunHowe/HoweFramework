@@ -22,7 +22,7 @@ namespace ProtocolGenerator
             var classesWithIds = classDeclarations
                 .Collect()
                 .Select((classes, _) => GenerateClassIds(classes!));
-
+            
             // 第三步：生成输出文件
             context.RegisterSourceOutput(classesWithIds, (spc, source) => GenerateOutput(spc, source));
         }
@@ -66,6 +66,11 @@ namespace ProtocolGenerator
 
         private static void GenerateOutput(SourceProductionContext context, Dictionary<INamedTypeSymbol, ushort> classToIdMap)
         {
+            if (classToIdMap.Count <= 0)
+            {
+                return;
+            }
+            
             // 1. 为每个类生成partial类文件
             foreach (var pair in classToIdMap)
             {

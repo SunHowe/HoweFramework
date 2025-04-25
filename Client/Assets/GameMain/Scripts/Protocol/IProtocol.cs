@@ -18,4 +18,17 @@ namespace Protocol
         int ErrorCode { get; set; }
     }
 
+    /// <summary>
+    /// 协议基类.
+    /// </summary>
+    public abstract class ProtocolBase :
+#if NETCOREAPP
+    IProtocol
+#else
+    HoweFramework.Packet, HoweFramework.IReference
+#endif
+    {
+
+    }
+
 }

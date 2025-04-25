@@ -32,7 +32,7 @@ public static class GatewayServerPackageHelper
                 ProtocolId = package.ProtocolId,
                 RpcId = package.RpcId,
                 ErrorCode = package.ErrorCode,
-                BodyLength = package.ProtocolBody?.Length ?? 0,
+                BodyLength = (ushort)(package.ProtocolBody?.Length ?? 0),
             };
         }
         else
@@ -40,7 +40,7 @@ public static class GatewayServerPackageHelper
             responseHeader = new ResponseHeader
             {
                 ProtocolId = package.ProtocolId,
-                BodyLength = package.ProtocolBody?.Length ?? 0,
+                BodyLength = (ushort)(package.ProtocolBody?.Length ?? 0),
             };
         }
     }
