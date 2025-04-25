@@ -289,6 +289,18 @@ namespace HoweFramework
             gFormComponent.Dispose();
         }
 
+        /// <summary>
+        /// 设置界面实例排序顺序。
+        /// </summary>
+        /// <param name="uiFormInstance">界面实例。</param>
+        /// <param name="sortingOrder">排序顺序。</param>
+        public void SetUIFormInstanceSortingOrder(object uiFormInstance, int sortingOrder)
+        {
+            var gFormComponent = (GComponent)uiFormInstance;
+            gFormComponent.sortingOrder = sortingOrder;
+        }
+        
+
         #region [IUIAssetLoader]
 
         /// <summary>

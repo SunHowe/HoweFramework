@@ -331,6 +331,7 @@ namespace HoweFramework
 
             // 从栈顶开始遍历。
             var node = m_UIFormOpenedList.Last;
+            int sortingOrder = m_UIFormOpenedList.Count;
 
             while (node != null)
             {
@@ -342,6 +343,9 @@ namespace HoweFramework
                     // 不处理固定界面。
                     continue;
                 }
+                
+                uiForm.SetSortingOrder(sortingOrder);
+                --sortingOrder;
 
                 if (uiForm.IsAllowControlVisibleByFramework)
                 {

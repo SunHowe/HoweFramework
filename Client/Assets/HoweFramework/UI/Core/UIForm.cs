@@ -88,6 +88,11 @@ namespace HoweFramework
         private IUIFormLogic m_FormLogic;
 
         /// <summary>
+        /// 排序顺序。
+        /// </summary>
+        private int m_SortingOrder;
+
+        /// <summary>
         /// 初始化界面。
         /// </summary>
         /// <param name="serialId">界面序列编号。</param>
@@ -267,6 +272,7 @@ namespace HoweFramework
             }
 
             // 触发逻辑打开回调。
+            m_UIFormHelper.SetUIFormInstanceSortingOrder(FormInstance, m_SortingOrder);
             m_UIFormHelper.SetUIFormInstanceIsOpen(FormInstance, FormGroup.GroupInstance, true);
             m_FormLogic.OnOpen();
 
@@ -322,6 +328,20 @@ namespace HoweFramework
         public void CloseForm()
         {
             UIModule.Instance.CloseUIForm(FormId);
+        }
+
+        /// <summary>
+        /// 更新排序顺序。
+        /// </summary>
+        /// <param name="sortingOrder">排序顺序。</param>
+        public void SetSortingOrder(int sortingOrder)
+        {
+            m_SortingOrder = sortingOrder;
+
+            if (IsLoaded)
+            {
+                m_UIFormHelper.SetUIFormInstanceSortingOrder(FormInstance, sortingOrder);
+            }
         }
     }
 }

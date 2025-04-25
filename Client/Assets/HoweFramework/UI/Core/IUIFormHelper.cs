@@ -48,5 +48,12 @@ namespace HoweFramework
         /// <param name="uiGroupInstance">界面组实例。</param>
         /// <param name="isOpen">是否打开。</param>
         void SetUIFormInstanceIsOpen(object uiFormInstance, object uiGroupInstance, bool isOpen);
+
+        /// <summary>
+        /// 设置界面实例排序顺序。
+        /// </summary>
+        /// <param name="uiFormInstance">界面实例。</param>
+        /// <param name="sortingOrder">排序顺序。</param>
+        void SetUIFormInstanceSortingOrder(object uiFormInstance, int sortingOrder);
     }
 }
