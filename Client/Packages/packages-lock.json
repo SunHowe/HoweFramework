@@ -21,6 +21,13 @@
       "dependencies": {},
       "hash": "cb5288cbbde1c5df8f9708003740e3949d3dd8d7"
     },
+    "com.smkplus.custom-toolbar": {
+      "version": "https://github.com/smkplus/CustomToolbar.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "c42b0f4497a2b463490b59be9026cb63b1b884f9"
+    },
     "com.tuyoogame.yooasset": {
       "version": "2.3.8",
       "depth": 0,

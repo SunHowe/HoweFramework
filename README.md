@@ -14,6 +14,7 @@ Unity3d客户端开发框架，部分模块采用现有的工具或参考现有�
 - YooAsset: [https://github.com/tuyoogame/YooAsset](https://github.com/tuyoogame/YooAsset)
 - Luban: [https://github.com/focus-creative-games/luban](https://github.com/focus-creative-games/luban)
 - UniTask: [https://github.com/Cysharp/UniTask.git](https://github.com/Cysharp/UniTask.git)
+- CustomToolbar: [https://github.com/smkplus/CustomToolbar.git](https://github.com/smkplus/CustomToolbar.git)
 
 ## 现有模块
 
