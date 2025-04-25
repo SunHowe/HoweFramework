@@ -16,7 +16,7 @@
 
     <ItemGroup>
         <Compile Include="..\..\Client\Assets\GameMain\Scripts\Protocol\**\*.cs">
-            <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+            <Link>Protocol/%(RecursiveDir)%(FileName)%(Extension)</Link>
         </Compile>
     </ItemGroup>
 
