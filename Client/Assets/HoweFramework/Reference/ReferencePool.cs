@@ -22,7 +22,25 @@ namespace HoweFramework
         {
             var cache = GetCache(typeof(T), true);
             var instance = cache.Count > 0 ? (T)cache.Dequeue() : new T();
-            cache.AcquireInstanceId();
+            return instance;
+        }
+
+        /// <summary>
+        /// 获取引用。
+        /// </summary>
+        /// <param name="type">引用类型。</param>
+        /// <returns>引用。</returns>
+        public static object Acquire(Type type)
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (!type.IsClass || !type.IsSubclassOf(typeof(IReference)))
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Type is invalid.");
+            }
+#endif
+
+            var cache = GetCache(type, true);
+            var instance = cache.Count > 0 ? cache.Dequeue() : Activator.CreateInstance(type);
             return instance;
         }
 
