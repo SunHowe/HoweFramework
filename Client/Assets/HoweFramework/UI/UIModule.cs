@@ -229,6 +229,9 @@ namespace HoweFramework
 
                 // 触发界面打开事件。
                 uiForm.HandleOpenRequest(request);
+
+                // 更新UI栈。
+                UpdateUIStack();
             }
             catch (ErrorCodeException e)
             {
@@ -267,8 +270,8 @@ namespace HoweFramework
                 // 将界面从已打开界面列表移除。
                 m_UIFormOpenedList.Remove(uiForm);
 
-                // 处理界面关闭后逻辑。
-                AfterUIFormClose(uiForm);
+                // 更新UI栈。
+                UpdateUIStack();
 
                 // 将界面加入缓存。
                 CacheUIForm(uiForm);
@@ -315,54 +318,52 @@ namespace HoweFramework
                         }
                     }
                     break;
-                case UIFormType.Normal:
-                    // 普通界面。隐藏其他所有界面。
-                    {
-                        var node = m_UIFormOpenedList.First;
-                        while (node != null)
-                        {
-                            var form = node.Value;
-                            node = node.Next;
-                            if (form.IsVisible && form.IsAllowControlVisibleByFramework)
-                            {
-                                form.SetVisible(false);
-                            }
-                        }
-                    }
-                    break;
             }
         }
 
         /// <summary>
-        /// 处理界面关闭后逻辑。
+        /// 更新UI栈。
         /// </summary>
-        /// <param name="uiForm">界面实例。</param>
-        private void AfterUIFormClose(UIForm uiForm)
+        private void UpdateUIStack()
         {
-            // 根据界面类型进行处理。
-            switch (uiForm.FormType)
+            // 是否已经找到普通界面。
+            var foundNormalForm = false;
+
+            // 从栈顶开始遍历。
+            var node = m_UIFormOpenedList.Last;
+
+            while (node != null)
             {
-                case UIFormType.Normal:
-                    // 普通界面。显示前面的界面，直到遇到普通或主界面为止。
-                    {
-                        var node = m_UIFormOpenedList.Last;
-                        while (node != null)
-                        {
-                            var form = node.Value;
-                            node = node.Previous;
+                var uiForm = node.Value;
+                node = node.Previous;
 
-                            if (!form.IsVisible && form.IsAllowControlVisibleByFramework)
-                            {
-                                form.SetVisible(true);
-                            }
+                if (uiForm.FormType == UIFormType.Fixed)
+                {
+                    // 不处理固定界面。
+                    continue;
+                }
 
-                            if (form.FormType == UIFormType.Normal || form.FormType == UIFormType.Main)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                if (uiForm.IsAllowControlVisibleByFramework)
+                {
+                    // 设置界面是否可见。
+                    uiForm.SetVisible(!foundNormalForm);
+                }
+
+                if (uiForm.FormType == UIFormType.Main)
+                {
+                    // 处理到主界面为止，不可能存在更底下的界面。
                     break;
+                }
+
+                if (foundNormalForm)
+                {
+                    continue;
+                }
+
+                if (uiForm.FormType == UIFormType.Normal)
+                {
+                    foundNormalForm = true;
+                }
             }
         }
 
