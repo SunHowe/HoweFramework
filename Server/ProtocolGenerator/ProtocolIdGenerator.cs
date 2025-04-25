@@ -41,7 +41,15 @@ namespace ProtocolGenerator
 
             var iMessageInterface = model.Compilation.GetTypeByMetadataName("Protocol.IProtocol");
             if (iMessageInterface == null)
+            {
                 return null;
+            }
+            
+            // 如果是抽象类则忽略。
+            if (typeSymbol.IsAbstract)
+            {
+                return null;
+            }
 
             return typeSymbol?.AllInterfaces.Any(i => 
                 i.Equals(iMessageInterface, SymbolEqualityComparer.Default)) == true
@@ -102,9 +110,32 @@ namespace ProtocolGenerator
 
             // 检查是否实现了IResponse接口
             var iResponseInterface = classSymbol.ContainingAssembly.GetTypeByMetadataName("Protocol.IResponse");
-            if (iResponseInterface != null && classSymbol.AllInterfaces.Any(i => i.Equals(iResponseInterface, SymbolEqualityComparer.Default)))
+            var isResponseType = iResponseInterface != null && classSymbol.AllInterfaces.Any(i => i.Equals(iResponseInterface, SymbolEqualityComparer.Default));
+            if (isResponseType)
             {
                 sourceBuilder.AppendLine("        public int ErrorCode { get; set; }");
+            }
+            
+            // 检查是否派生自HoweFramework.Packet
+            if (classSymbol.BaseType != null)
+            {
+                sourceBuilder.AppendLine($"        public override int Id => {protocolId};");
+                sourceBuilder.AppendLine("        public override void Clear()");
+                sourceBuilder.AppendLine("        {");
+
+                if (isResponseType)
+                {
+                    sourceBuilder.AppendLine("            ErrorCode = default;");
+                }
+
+                // 遍历所有属性，并将其设置为default。
+
+                foreach (var property in classSymbol.GetMembers().OfType<IPropertySymbol>())
+                {
+                    sourceBuilder.AppendLine($"            {property.Name} = default;");
+                }
+                
+                sourceBuilder.AppendLine("        }");
             }
 
             sourceBuilder.AppendLine("    }");

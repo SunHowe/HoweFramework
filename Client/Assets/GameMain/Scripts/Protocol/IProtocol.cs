@@ -23,12 +23,10 @@ namespace Protocol
     /// </summary>
     public abstract class ProtocolBase :
 #if NETCOREAPP
-    IProtocol
+        IProtocol
 #else
-    HoweFramework.Packet, HoweFramework.IReference
+        HoweFramework.Packet, IProtocol
 #endif
     {
-
     }
-
 }
