@@ -13,7 +13,7 @@ Unity3d客户端开发框架，部分模块采用现有的工具或参考现有�
 - FairyGUI-CodeGenerator: [https://github.com/SunHowe/FairyGUI-CodeGenerator](https://github.com/SunHowe/FairyGUI-CodeGenerator)
 - YooAsset: [https://github.com/tuyoogame/YooAsset](https://github.com/tuyoogame/YooAsset)
 - Luban: [https://github.com/focus-creative-games/luban](https://github.com/focus-creative-games/luban)
-- UniTask: [https://github.com/Cysharp/UniTask.git]
+- UniTask: [https://github.com/Cysharp/UniTask.git](https://github.com/Cysharp/UniTask.git)
 
 ## 现有模块
 
