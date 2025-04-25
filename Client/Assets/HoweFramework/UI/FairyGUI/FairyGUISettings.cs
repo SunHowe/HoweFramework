@@ -25,6 +25,6 @@ namespace HoweFramework
         /// <summary>
         /// UI资源路径字符串格式化。
         /// </summary>
-        public string UIAssetPathFormat { get; set; } = "Assets/GameMain/UI/{0}_{1}_{2}";
+        public string UIAssetPathFormat { get; set; } = "Assets/GameMain/UI/{0}_{1}{2}";
     }
 }

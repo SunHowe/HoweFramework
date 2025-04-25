@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packageDescription id="eb0bof9p">
+  <resources>
+    <component id="hf010" name="LoginForm.xml" path="/" exported="true"/>
+    <movieclip id="i9sb1" name="MovieClip1.jta" path="/" smoothing="false"/>
+    <component id="i9sbe" name="Button.xml" path="/"/>
+  </resources>
+  <publish name=""/>
+</packageDescription>

@@ -17,7 +17,7 @@ namespace GameMain.UI.Login
         /// </summary>
         private void OnInitialize()
         {
-            m_LoginComp.LoginButton.onClick.Add(OnLoginButtonClick);
+            m_BtnLogin.onClick.Add(OnLoginButtonClick);
         }
 
         /// <summary>

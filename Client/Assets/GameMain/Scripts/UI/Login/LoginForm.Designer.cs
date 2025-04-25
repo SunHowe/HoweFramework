@@ -10,14 +10,14 @@ namespace GameMain.UI.Login
 {
     public partial class LoginForm
     {
-        public const string URL = "ui://6apezyp2hjkq0";
+        public const string URL = "ui://eb0bof9phf010";
         
         public override int FormId => (int)UIFormId.LoginForm;
 
         #region [子节点]
  
-        private GameMain.UI.Login.LoginComp m_LoginComp;
- 
+        private FairyGUI.GButton m_BtnLogin;
+   
         #endregion
 
         #region [控制器]
@@ -32,8 +32,8 @@ namespace GameMain.UI.Login
         {
             #region [子节点]
  
-            m_LoginComp = (GameMain.UI.Login.LoginComp)ContentPane.GetChild("loginComp");
- 
+            m_BtnLogin = (FairyGUI.GButton)ContentPane.GetChild("btnLogin");
+   
             #endregion
 
             #region [控制器]

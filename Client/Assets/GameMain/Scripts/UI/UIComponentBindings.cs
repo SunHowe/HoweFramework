@@ -17,7 +17,6 @@ namespace GameMain.UI
     {
         public static readonly FairyGUIComponentBinding[] Bindings = new FairyGUIComponentBinding[]
         {
-            new FairyGUIComponentBinding(GameMain.UI.Login.LoginComp.URL, () => new GameMain.UI.Login.LoginComp()),
         };
     }
 }
