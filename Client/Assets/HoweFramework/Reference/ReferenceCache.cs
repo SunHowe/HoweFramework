@@ -16,21 +16,6 @@ namespace HoweFramework
         /// 引用队列。
         /// </summary>
         private readonly Queue<IReference> m_ReferenceQueue = new();
-
-        /// <summary>
-        /// 自增长实例id。
-        /// </summary>
-        private int m_InstanceId;
-
-        /// <summary>
-        /// 获取实例id。
-        /// </summary>
-        /// <returns>实例id。</returns>
-        public int AcquireInstanceId()
-        {
-            return ++m_InstanceId;
-        }
-
         /// <summary>
         /// 出队。
         /// </summary>
