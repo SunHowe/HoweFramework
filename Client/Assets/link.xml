@@ -1,0 +1,4 @@
+<linker>
+    <assembly fullname="HoweFramework" preserve="all"/>
+    <assembly fullname="Assembly-CSharp" preserve="all"/>
+</linker>
