@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using FairyGUI;
 using GameMain.Game;
 using HoweFramework;
+using MemoryPack;
 
 namespace GameMain.UI.Login
 {
@@ -87,18 +88,35 @@ namespace GameMain.UI.Login
             //     Log.Info($"GET Response: {response.ResponseText}");
             // });
 
-            const string Template1 = "Hello {name}!";
-            const string Template2 = "Hello {name=LiLei}! Today is {today}. {nokey}";
+            // const string Template1 = "Hello {name}!";
+            // const string Template2 = "Hello {name=LiLei}! Today is {today}. {nokey}";
 
-            TextUtility.AddGlobalTemplateValue("today", DateTime.Now.DayOfWeek.ToString());
+            // TextUtility.AddGlobalTemplateValue("today", DateTime.Now.DayOfWeek.ToString());
 
-            var result1 = TextUtility.ParseTemplate(Template1, new Dictionary<string, string>(){
-                { "name", "HanMeimei" }
-            });
-            var result2 = TextUtility.ParseTemplate(Template2, null);
+            // var result1 = TextUtility.ParseTemplate(Template1, new Dictionary<string, string>(){
+            //     { "name", "HanMeimei" }
+            // });
+            // var result2 = TextUtility.ParseTemplate(Template2, null);
 
-            Log.Info($"Template1: {result1}");
-            Log.Info($"Template2: {result2}");
+            // Log.Info($"Template1: {result1}");
+            // Log.Info($"Template2: {result2}");
+
+            var demoObject = new DemoObject() { Id = 1001, Name = "Test" };
+            var bytes = MemoryPackSerializer.Serialize(demoObject);
+            Log.Info($"Serialize: {bytes.Length}");
+
+            var demoObject2 = MemoryPackSerializer.Deserialize<DemoObject>(bytes);
+            Log.Info($"Deserialize: {demoObject2.Id} {demoObject2.Name}");
+        }
+
+        [MemoryPackable]
+        public sealed partial class DemoObject
+        {
+            [MemoryPackOrder(0)]
+            public int Id;
+
+            [MemoryPackOrder(1)]
+            public string Name;
         }
         
         // [Serializable]

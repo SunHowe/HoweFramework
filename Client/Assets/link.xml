@@ -1,4 +1,7 @@
 <linker>
     <assembly fullname="HoweFramework" preserve="all"/>
     <assembly fullname="Assembly-CSharp" preserve="all"/>
+    <assembly fullname="MemoryPack" preserve="all"/>
+    <assembly fullname="MemoryPack.Core" preserve="all"/>
+    <assembly fullname="MemoryPack.Generator" preserve="all"/>
 </linker>
