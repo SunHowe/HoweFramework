@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MemoryPack" Version="1.21.4" />
+      <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="9.1.2" />
+      <PackageReference Include="Microsoft.Orleans.Server" Version="9.1.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Client\Protocol.csproj" />
+    </ItemGroup>
+
+</Project>

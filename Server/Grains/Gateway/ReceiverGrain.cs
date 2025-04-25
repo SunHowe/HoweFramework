@@ -1,0 +1,102 @@
+using IGrains;
+using Protocol;
+using ServerProtocol;
+
+namespace Grains;
+
+/// <summary>
+/// 消息接收Grain, 用于接收客户端的消息.
+/// </summary>
+public class ReceiverGrain : Grain, IReceiverGrain
+{
+    /// <summary>
+    /// 是否已经登录成功.
+    /// </summary>
+    private bool m_IsLoginSucess;
+
+    /// <summary>
+    /// 玩家的唯一id.
+    /// </summary>
+    private Guid m_UserId;
+
+    public Task OnGatewayConnected()
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task OnGatewayDisconnected()
+    {
+        return Task.CompletedTask;
+    }
+
+    public async Task OnReceive(ServerPackage package)
+    {
+        if (package.ProtocolId == (ushort)ProtocolId.LoginRequest)
+        {
+            var sessionGrain = GrainFactory.GetGrain<ISessionGrain>(this.GetPrimaryKey());
+
+            if (m_IsLoginSucess)
+            {
+                // 重复登录.
+                await SendResponse(sessionGrain, package.RpcId, GameErrorCode.RepeatLogin);
+                return;
+            }
+            
+            try
+            {
+                // 处理登录请求.
+                var request = package.Unpack<LoginRequest>();
+                var loginGrain = GrainFactory.GetGrain<ILoginGrain>(Guid.NewGuid());
+                var userId = await loginGrain.Login(request!.Account!, request!.Password!);
+
+                m_IsLoginSucess = true;
+                m_UserId = userId;
+
+                // 登录成功, 激活UserGrain.
+                await GrainFactory.GetGrain<IUserGrain>(userId).OnLogin(this.GetPrimaryKey());
+                await SendResponse(sessionGrain, package.RpcId, GameErrorCode.Success);
+            }
+            catch (GameException e)
+            {
+                m_IsLoginSucess = false;
+                m_UserId = Guid.Empty;
+                Console.WriteLine(e);
+                await SendResponse(sessionGrain, package.RpcId, e.ErrorCode);
+            }
+            catch (Exception e)
+            {
+                m_IsLoginSucess = false;
+                m_UserId = Guid.Empty;
+                Console.WriteLine(e);
+                await SendResponse(sessionGrain, package.RpcId, GameErrorCode.Internal);
+            }
+
+            return;
+        }
+
+        // 处理其他请求.
+        if (!m_IsLoginSucess)
+        {
+            // 未登录成功不允许请求其他包.
+            var sessionGrain = GrainFactory.GetGrain<ISessionGrain>(this.GetPrimaryKey());
+            await SendResponse(sessionGrain, package.RpcId, GameErrorCode.NoLogin);
+            return;
+        }
+
+        // 转发给UserGrain进行处理.
+        var userGrain = GrainFactory.GetGrain<IUserGrain>(m_UserId);
+        await userGrain.OnReceive(package);
+    }
+
+    private static async Task SendResponse(ISessionGrain sessionGrain, int rpcId, int errorCode)
+    {
+        var serverPackage = new ServerPackage
+        {
+            RpcId = rpcId,
+            ErrorCode = errorCode,
+            ProtocolId = (ushort)ProtocolId.CommonResp,
+        };
+
+        await sessionGrain.Send(serverPackage);
+    }
+}
