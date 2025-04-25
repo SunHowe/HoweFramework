@@ -41,6 +41,11 @@ namespace HoweFramework
         bool IsAllowControlCloseByFramework { get; }
 
         /// <summary>
+        /// 当界面关闭时，返回的错误码。
+        /// </summary>
+        int ErrorCodeOnClose { get; }
+
+        /// <summary>
         /// 界面初始化回调。
         /// </summary>
         /// <param name="uiForm">界面接口实例。</param>

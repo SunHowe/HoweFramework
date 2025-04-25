@@ -48,6 +48,11 @@ namespace HoweFramework
         public virtual bool IsAllowControlCloseByFramework => true;
 
         /// <summary>
+        /// 当界面关闭时，返回的错误码。
+        /// </summary>
+        public virtual int ErrorCodeOnClose => ErrorCode.UIFormClosed;
+
+        /// <summary>
         /// 屏幕适配器类型。
         /// </summary>
         public abstract FairyGUIScreenAdaptorType ScreenAdaptorType { get; }

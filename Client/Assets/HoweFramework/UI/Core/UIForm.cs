@@ -245,7 +245,7 @@ namespace HoweFramework
             }
 
             // 设置响应包。
-            InnerSetRequestResponse(CommonResponse.Create(ErrorCode.UIFormClosed));
+            InnerSetRequestResponse(CommonResponse.Create(m_FormLogic.ErrorCodeOnClose));
         }
 
         /// <summary>
