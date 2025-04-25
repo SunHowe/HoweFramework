@@ -22,14 +22,14 @@ namespace ProtocolGenerator
             var classesWithIds = classDeclarations
                 .Collect()
                 .Select((classes, _) => GenerateClassIds(classes!));
-            
+
             // 第三步：生成输出文件
             context.RegisterSourceOutput(classesWithIds, (spc, source) => GenerateOutput(spc, source));
         }
 
         private static bool IsClassWithInterface(SyntaxNode node)
         {
-            return node is ClassDeclarationSyntax classDecl && 
+            return node is ClassDeclarationSyntax classDecl &&
                    classDecl.BaseList?.Types.Count > 0;
         }
 
@@ -44,14 +44,14 @@ namespace ProtocolGenerator
             {
                 return null;
             }
-            
+
             // 如果是抽象类则忽略。
             if (typeSymbol.IsAbstract)
             {
                 return null;
             }
 
-            return typeSymbol?.AllInterfaces.Any(i => 
+            return typeSymbol?.AllInterfaces.Any(i =>
                 i.Equals(iMessageInterface, SymbolEqualityComparer.Default)) == true
                 ? typeSymbol
                 : null;
@@ -72,13 +72,14 @@ namespace ProtocolGenerator
             return classToIdMap;
         }
 
-        private static void GenerateOutput(SourceProductionContext context, Dictionary<INamedTypeSymbol, ushort> classToIdMap)
+        private static void GenerateOutput(SourceProductionContext context,
+            Dictionary<INamedTypeSymbol, ushort> classToIdMap)
         {
             if (classToIdMap.Count <= 0)
             {
                 return;
             }
-            
+
             // 1. 为每个类生成partial类文件
             foreach (var pair in classToIdMap)
             {
@@ -110,33 +111,31 @@ namespace ProtocolGenerator
 
             // 检查是否实现了IResponse接口
             var iResponseInterface = classSymbol.ContainingAssembly.GetTypeByMetadataName("Protocol.IResponse");
-            var isResponseType = iResponseInterface != null && classSymbol.AllInterfaces.Any(i => i.Equals(iResponseInterface, SymbolEqualityComparer.Default));
+            var isResponseType = iResponseInterface != null &&
+                                 classSymbol.AllInterfaces.Any(i =>
+                                     i.Equals(iResponseInterface, SymbolEqualityComparer.Default));
             if (isResponseType)
             {
                 sourceBuilder.AppendLine("        public int ErrorCode { get; set; }");
             }
-            
-            // 检查是否派生自HoweFramework.Packet
-            if (classSymbol.BaseType != null)
+
+            sourceBuilder.AppendLine($"        public override int Id => {protocolId};");
+            sourceBuilder.AppendLine("        public override void Clear()");
+            sourceBuilder.AppendLine("        {");
+
+            if (isResponseType)
             {
-                sourceBuilder.AppendLine($"        public override int Id => {protocolId};");
-                sourceBuilder.AppendLine("        public override void Clear()");
-                sourceBuilder.AppendLine("        {");
-
-                if (isResponseType)
-                {
-                    sourceBuilder.AppendLine("            ErrorCode = default;");
-                }
-
-                // 遍历所有属性，并将其设置为default。
-
-                foreach (var property in classSymbol.GetMembers().OfType<IPropertySymbol>())
-                {
-                    sourceBuilder.AppendLine($"            {property.Name} = default;");
-                }
-                
-                sourceBuilder.AppendLine("        }");
+                sourceBuilder.AppendLine("            ErrorCode = default;");
             }
+
+            // 遍历所有属性，并将其设置为default。
+
+            foreach (var property in classSymbol.GetMembers().OfType<IPropertySymbol>())
+            {
+                sourceBuilder.AppendLine($"            {property.Name} = default;");
+            }
+
+            sourceBuilder.AppendLine("        }");
 
             sourceBuilder.AppendLine("    }");
             sourceBuilder.AppendLine("}");
@@ -186,14 +185,17 @@ namespace ProtocolGenerator
             sourceBuilder.AppendLine();
             sourceBuilder.AppendLine("        static ProtocolBinder()");
             sourceBuilder.AppendLine("        {");
-            
+
             foreach (var classSymbol in classToIdMap.Keys)
             {
-                string typeName = classSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Replace("global::", "");
-                sourceBuilder.AppendLine($"            _typeToId.Add(typeof({typeName}), (ushort)ProtocolId.{classSymbol.Name});");
-                sourceBuilder.AppendLine($"            _idToType.Add((ushort)ProtocolId.{classSymbol.Name}, typeof({typeName}));");
+                string typeName = classSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
+                    .Replace("global::", "");
+                sourceBuilder.AppendLine(
+                    $"            _typeToId.Add(typeof({typeName}), (ushort)ProtocolId.{classSymbol.Name});");
+                sourceBuilder.AppendLine(
+                    $"            _idToType.Add((ushort)ProtocolId.{classSymbol.Name}, typeof({typeName}));");
             }
-            
+
             sourceBuilder.AppendLine("        }");
             sourceBuilder.AppendLine();
             sourceBuilder.AppendLine("        public static ushort? GetProtocolId<T>() => GetProtocolId(typeof(T));");
@@ -205,7 +207,8 @@ namespace ProtocolGenerator
             sourceBuilder.AppendLine();
             sourceBuilder.AppendLine("        public static Type? GetProtocolType(ushort protocolId)");
             sourceBuilder.AppendLine("        {");
-            sourceBuilder.AppendLine("            return _idToType.TryGetValue(protocolId, out var type) ? type : null;");
+            sourceBuilder.AppendLine(
+                "            return _idToType.TryGetValue(protocolId, out var type) ? type : null;");
             sourceBuilder.AppendLine("        }");
             sourceBuilder.AppendLine("    }");
             sourceBuilder.AppendLine("}");

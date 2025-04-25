@@ -28,5 +28,10 @@ namespace Protocol
         HoweFramework.Packet, IProtocol
 #endif
     {
+#if NETCOREAPP
+        public abstract int Id { get; }
+
+        public abstract void Clear();
+#endif
     }
 }

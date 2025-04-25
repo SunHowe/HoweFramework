@@ -8,8 +8,8 @@ namespace Protocol
     [MemoryPackable]
     public partial class LoginRequest : ProtocolBase
     {
-        public string? Account { get; set; }
-        public string? Password { get; set; }
+        public string Account { get; set; }
+        public string Password { get; set; }
     }
 
 }
