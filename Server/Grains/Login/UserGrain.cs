@@ -51,7 +51,7 @@ public class UserGrain : Grain, IUserGrain
         await sessionGrain.Send(serverPackage);
     }
 
-    private static async Task SendResponse(IUserSessionGrain sessionGrain, int rpcId, IResponse response)
+    private static async Task SendResponse(IUserSessionGrain sessionGrain, int rpcId, IProtocolResponse response)
     {
         var serverPackage = ServerPackageHelper.Pack(response);
         serverPackage.RpcId = rpcId;

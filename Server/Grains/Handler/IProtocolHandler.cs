@@ -8,5 +8,5 @@ namespace Grains;
 /// </summary>
 public interface IProtocolHandler
 {
-    Task<IResponse> Handle(IUserSessionGrain sessionGrain, IProtocol request);
+    Task<IProtocolResponse> Handle(IUserSessionGrain sessionGrain, IProtocol request);
 }

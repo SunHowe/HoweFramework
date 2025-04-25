@@ -9,15 +9,19 @@ namespace GameMain
     {
         public const int PacketHeaderLength = 12;
 
-        /// <summary>
-        /// 协议包体长度。
-        /// </summary>
-        public int PacketLength { get; set; }
+        public const int PacketBodyLengthLimit = 65536;
+
+        public int PacketLength => BodyLength;
 
         /// <summary>
         /// 协议ID。
         /// </summary>
         public ushort ProtocolId { get; set; }
+
+        /// <summary>
+        /// 协议包体长度。
+        /// </summary>
+        public ushort BodyLength { get; set; }
 
         /// <summary>
         /// 请求ID。
@@ -31,7 +35,7 @@ namespace GameMain
 
         public void Clear()
         {
-            PacketLength = 0;
+            BodyLength = 0;
             ProtocolId = 0;
             RpcId = 0;
             ErrorCode = 0;

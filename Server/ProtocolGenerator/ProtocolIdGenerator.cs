@@ -109,17 +109,18 @@ namespace ProtocolGenerator
             sourceBuilder.AppendLine("    {");
             sourceBuilder.AppendLine($"        public const ushort ProtocolId = {protocolId};");
 
-            // 检查是否实现了IResponse接口
-            var iResponseInterface = classSymbol.ContainingAssembly.GetTypeByMetadataName("Protocol.IResponse");
-            var isResponseType = iResponseInterface != null &&
+            // 检查是否实现了IProtocolResponse接口
+            var IProtocolResponseInterface = classSymbol.ContainingAssembly.GetTypeByMetadataName("Protocol.IProtocolResponse");
+            var isResponseType = IProtocolResponseInterface != null &&
                                  classSymbol.AllInterfaces.Any(i =>
-                                     i.Equals(iResponseInterface, SymbolEqualityComparer.Default));
+                                     i.Equals(IProtocolResponseInterface, SymbolEqualityComparer.Default));
             if (isResponseType)
             {
+                sourceBuilder.AppendLine("        [MemoryPack.MemoryPackIgnore]");
                 sourceBuilder.AppendLine("        public int ErrorCode { get; set; }");
             }
 
-            sourceBuilder.AppendLine($"        public override int Id => {protocolId};");
+            sourceBuilder.AppendLine($"        public override ushort Id => {protocolId};");
             sourceBuilder.AppendLine("        public override void Clear()");
             sourceBuilder.AppendLine("        {");
 

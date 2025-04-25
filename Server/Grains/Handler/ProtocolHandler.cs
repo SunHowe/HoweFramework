@@ -9,9 +9,9 @@ namespace Grains;
 /// </summary>
 public abstract class ProtocolHandler<T, TResponse> : IProtocolHandler
     where T : IProtocol
-    where TResponse : IResponse, new()
+    where TResponse : IProtocolResponse, new()
 {
-    public async Task<IResponse> Handle(IUserSessionGrain sessionGrain, IProtocol request)
+    public async Task<IProtocolResponse> Handle(IUserSessionGrain sessionGrain, IProtocol request)
     {
         var response = new TResponse();
 

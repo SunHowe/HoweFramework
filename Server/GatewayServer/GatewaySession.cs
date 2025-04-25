@@ -104,6 +104,18 @@ public class GatewaySession : TcpSession
                     break;
                 }
 
+                if (message.ProtocolId == (int)ProtocolId.Heartbeat)
+                {
+                    // 心跳包，直接返回一个应答包。
+                    var heartbeat = new Heartbeat
+                    {
+                        UnixTime = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()
+                    };
+
+                    Send(heartbeat);
+                    continue;
+                }
+
                 Console.WriteLine($"Gateway Session({Id}) send to game server: {message.ProtocolId} {message.RpcId}");
 
                 var receiverGrain = m_ClusterClient.GetGrain<IReceiverGrain>(Id);
@@ -162,10 +174,21 @@ public class GatewaySession : TcpSession
             return Task.CompletedTask;
         }
 
-        GatewayServerPackageHelper.Unpack(package, out var responseHeader, out var bytes);
-        Send(responseHeader, bytes);
+        Send(package);
 
         return Task.CompletedTask;
+    }
+
+    private void Send(IProtocol protocol)
+    {
+        var serverPackage = ServerPackageHelper.Pack(protocol);
+        Send(serverPackage);
+    }
+
+    private void Send(ServerPackage serverPackage)
+    {
+        GatewayServerPackageHelper.Unpack(serverPackage, out var responseHeader, out var bytes);
+        Send(responseHeader, bytes);
     }
 
     private void Send(in ResponseHeader header, byte[]? body)
