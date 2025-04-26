@@ -4,7 +4,7 @@ using HoweFramework;
 using MemoryPack;
 using Protocol;
 
-namespace GameMain
+namespace HoweFramework
 {
     /// <summary>
     /// 基于Orleans的网络通道辅助类。
@@ -38,7 +38,6 @@ namespace GameMain
         /// <param name="source">数据流。</param>
         /// <param name="customErrorData">自定义错误数据。</param>
         /// <returns>包。</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
         public Packet DeserializePacket(IPacketHeader packetHeader, Stream source, out object customErrorData)
         {
             var header = (OrleansPacketHeader)packetHeader;

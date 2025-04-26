@@ -1,7 +1,7 @@
 using HoweFramework;
 using Protocol;
 
-namespace GameMain
+namespace HoweFramework
 {
     /// <summary>
     /// Orleans协议包。这里为了保证前后端协议统一，包了一层。

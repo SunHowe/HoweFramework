@@ -1,6 +1,6 @@
 using HoweFramework;
 
-namespace GameMain
+namespace HoweFramework
 {
     /// <summary>
     /// 基于Orleans的协议包头。
