@@ -8,6 +8,16 @@ namespace HoweFramework
     public sealed class NetworkModule : ModuleBase<NetworkModule>
     {
         /// <summary>
+        /// 默认网络频道名称。
+        /// </summary>
+        public string DefaultChannelName { get; private set; }
+
+        /// <summary>
+        /// 默认网络频道。
+        /// </summary>
+        public INetworkChannel DefaultChannel { get; private set; }
+
+        /// <summary>
         /// 获取网络频道数量。
         /// </summary>
         public int NetworkChannelCount { get; }
@@ -76,6 +86,32 @@ namespace HoweFramework
         {
             return m_NetworkManager.DestroyNetworkChannel(name);
         }
+        
+        /// <summary>
+        /// 创建默认网络频道。
+        /// </summary>
+        /// <param name="module">网络模块。</param>
+        /// <param name="name">网络频道名。</param>
+        /// <param name="serviceType">网络服务类型。</param>
+        /// <param name="networkChannelHelper">网络频道辅助器。</param>
+        /// <returns>网络频道。</returns>
+        public INetworkChannel CreateDefaultNetworkChannel(string name, ServiceType serviceType, INetworkChannelHelper networkChannelHelper)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidParam);
+            }
+            
+            if (!string.IsNullOrEmpty(DefaultChannelName))
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Default channel name has been set.");
+            }
+
+            var channel = CreateNetworkChannel(name, serviceType, networkChannelHelper);
+            DefaultChannelName = name;
+            DefaultChannel = channel;
+            return channel;
+        }
 
         protected override void OnInit()
         {
@@ -90,6 +126,8 @@ namespace HoweFramework
         protected override void OnDestroy()
         {
             m_NetworkManager.Dispose();
+            DefaultChannelName = null;
+            DefaultChannel = null;
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
@@ -99,27 +137,27 @@ namespace HoweFramework
 
         private void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
         {
-            EventModule.Instance.Dispatch(this, e);
+            EventModule.Instance.Dispatch(this, NetworkConnectedEventArgs.Create(e));
         }
 
         private void OnNetworkClosed(object sender, NetworkClosedEventArgs e)
         {
-            EventModule.Instance.Dispatch(this, e);
+            EventModule.Instance.Dispatch(this, NetworkClosedEventArgs.Create(e));
         }
 
         private void OnNetworkMissHeartBeat(object sender, NetworkMissHeartBeatEventArgs e)
         {
-            EventModule.Instance.Dispatch(this, e);
+            EventModule.Instance.Dispatch(this, NetworkMissHeartBeatEventArgs.Create(e));
         }
 
         private void OnNetworkError(object sender, NetworkErrorEventArgs e)
         {
-            EventModule.Instance.Dispatch(this, e);
+            EventModule.Instance.Dispatch(this, NetworkErrorEventArgs.Create(e));
         }
 
         private void OnNetworkCustomError(object sender, NetworkCustomErrorEventArgs e)
         {
-            EventModule.Instance.Dispatch(this, e);
+            EventModule.Instance.Dispatch(this, NetworkCustomErrorEventArgs.Create(e));
         }
     }
 }

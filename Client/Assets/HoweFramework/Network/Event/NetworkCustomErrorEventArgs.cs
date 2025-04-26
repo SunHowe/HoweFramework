@@ -12,8 +12,6 @@
 
         public override int Id => EventId;
 
-        public override bool IsReleaseAfterFire => false;
-
         /// <summary>
         /// 初始化用户自定义网络错误事件的新实例。
         /// </summary>
@@ -53,6 +51,22 @@
             networkCustomErrorEventArgs.NetworkChannel = networkChannel;
             networkCustomErrorEventArgs.CustomErrorData = customErrorData;
             return networkCustomErrorEventArgs;
+        }
+
+        /// <summary>
+        /// 创建用户自定义网络错误事件。
+        /// </summary>
+        /// <param name="eventArgs">用户自定义网络错误事件。</param>
+        /// <returns>创建的用户自定义网络错误事件。</returns>
+        public static NetworkCustomErrorEventArgs Create(NetworkCustomErrorEventArgs eventArgs)
+        {
+            if (eventArgs == null)
+            {
+                Log.Error("Network custom error event args is invalid.");
+                return null;
+            }
+
+            return Create(eventArgs.NetworkChannel, eventArgs.CustomErrorData);
         }
 
         /// <summary>

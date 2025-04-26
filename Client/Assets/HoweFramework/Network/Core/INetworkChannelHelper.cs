@@ -1,11 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace HoweFramework
 {
     /// <summary>
     /// 网络频道辅助器接口。
     /// </summary>
-    public interface INetworkChannelHelper
+    public interface INetworkChannelHelper : IDisposable
     {
         /// <summary>
         /// 获取消息包头长度。
@@ -16,15 +17,15 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 获取远程请求调度器。
+        /// </summary>
+        IRemoteRequestDispatcher RequestDispatcher { get; }
+
+        /// <summary>
         /// 初始化网络频道辅助器。
         /// </summary>
         /// <param name="networkChannel">网络频道。</param>
         void Initialize(INetworkChannel networkChannel);
-
-        /// <summary>
-        /// 关闭并清理网络频道辅助器。
-        /// </summary>
-        void Shutdown();
 
         /// <summary>
         /// 准备进行连接。

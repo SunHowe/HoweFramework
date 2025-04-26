@@ -214,12 +214,18 @@ namespace HoweFramework
                 }
 
                 m_CachedNodes.Remove(e);
+
+                // 如果存在默认事件处理函数，并且事件调度器模式为总是触发默认事件处理函数，则触发默认事件处理函数。
+                if (m_DefaultHandler != null && (m_Mode & EventDispatcherMode.AlwaysInvokeDefaultHandler) == EventDispatcherMode.AlwaysInvokeDefaultHandler)
+                {
+                    m_DefaultHandler(sender, e);
+                }
             }
             else if (m_DefaultHandler != null)
             {
                 m_DefaultHandler(sender, e);
             }
-            else if ((m_Mode & EventDispatcherMode.AllowNoHandler) == 0)
+            else if ((m_Mode & EventDispatcherMode.AllowNoHandler) != EventDispatcherMode.AllowNoHandler)
             {
                 noHandlerException = true;
             }

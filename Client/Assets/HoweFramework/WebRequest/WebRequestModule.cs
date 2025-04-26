@@ -26,7 +26,7 @@ namespace HoweFramework
         /// <param name="request">POST请求。</param>
         /// <param name="token">取消令牌。</param>
         /// <returns>POST请求响应。</returns>
-        internal async UniTask<ResponseBase> Post(WebPostRequest request, CancellationToken token)
+        internal async UniTask<IResponse> Post(WebPostRequest request, CancellationToken token)
         {
             if (m_WebRequestHelper == null)
             {
@@ -53,7 +53,7 @@ namespace HoweFramework
         /// <param name="request">GET请求。</param>
         /// <param name="token">取消令牌。</param>
         /// <returns>GET请求响应。</returns>
-        internal async UniTask<ResponseBase> Get(WebGetRequest request, CancellationToken token)
+        internal async UniTask<IResponse> Get(WebGetRequest request, CancellationToken token)
         {
             if (m_WebRequestHelper == null)
             {

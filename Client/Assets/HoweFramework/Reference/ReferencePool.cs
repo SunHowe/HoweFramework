@@ -33,7 +33,7 @@ namespace HoweFramework
         public static object Acquire(Type type)
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (!type.IsClass || !type.IsSubclassOf(typeof(IReference)))
+            if (!type.IsClass || !typeof(IReference).IsAssignableFrom(type))
             {
                 throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Type is invalid.");
             }

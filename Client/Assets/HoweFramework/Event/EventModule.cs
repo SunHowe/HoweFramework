@@ -8,9 +8,9 @@ namespace HoweFramework
     public sealed class EventModule : ModuleBase<EventModule>
     {
         /// <summary>
-        /// 事件调度器。
+        /// 全局事件调度器。
         /// </summary>
-        private IEventDispatcher m_EventDispatcher;
+        public IEventDispatcher EventDispatcher { get; private set; }
 
         /// <summary>
         /// 订阅事件。
@@ -19,7 +19,7 @@ namespace HoweFramework
         /// <param name="handler">事件处理器。</param>
         public void Subscribe(int id, GameEventHandler handler)
         {
-            m_EventDispatcher.Subscribe(id, handler);
+            EventDispatcher.Subscribe(id, handler);
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace HoweFramework
         /// <param name="handler">事件处理器。</param>
         public void Unsubscribe(int id, GameEventHandler handler)
         {
-            m_EventDispatcher.Unsubscribe(id, handler);
+            EventDispatcher.Unsubscribe(id, handler);
         }
 
         /// <summary>   
@@ -39,7 +39,7 @@ namespace HoweFramework
         /// <param name="eventArgs">事件参数。</param>
         public void Dispatch(object sender, GameEventArgs eventArgs)
         {
-            m_EventDispatcher.Dispatch(sender, eventArgs);
+            EventDispatcher.Dispatch(sender, eventArgs);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace HoweFramework
         /// <param name="eventArgs">事件参数。</param>
         public void DispatchNow(object sender, GameEventArgs eventArgs)
         {
-            m_EventDispatcher.DispatchNow(sender, eventArgs);
+            EventDispatcher.DispatchNow(sender, eventArgs);
         }
 
         /// <summary>
@@ -63,19 +63,19 @@ namespace HoweFramework
 
         protected override void OnInit()
         {
-            m_EventDispatcher = CreateEventDispatcher();
-            m_EventDispatcher.SetMode(EventDispatcherMode.AllowMultiHandler | EventDispatcherMode.AllowNoHandler);
+            EventDispatcher = CreateEventDispatcher();
+            EventDispatcher.SetMode(EventDispatcherMode.AllowMultiHandler | EventDispatcherMode.AllowNoHandler);
         }
 
         protected override void OnDestroy()
         {
-            m_EventDispatcher.Dispose();
-            m_EventDispatcher = null;
+            EventDispatcher.Dispose();
+            EventDispatcher = null;
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
-            m_EventDispatcher.Update();
+            EventDispatcher.Update();
         }
     }
 }

@@ -14,8 +14,6 @@ namespace HoweFramework
 
         public override int Id => EventId;
 
-        public override bool IsReleaseAfterFire => false;
-
         /// <summary>
         /// 初始化网络错误事件的新实例。
         /// </summary>
@@ -79,6 +77,22 @@ namespace HoweFramework
             networkErrorEventArgs.SocketErrorCode = socketErrorCode;
             networkErrorEventArgs.ErrorMessage = errorMessage;
             return networkErrorEventArgs;
+        }
+
+        /// <summary>
+        /// 创建网络错误事件。
+        /// </summary>
+        /// <param name="eventArgs">网络错误事件。</param>
+        /// <returns>创建的网络错误事件。</returns>
+        public static NetworkErrorEventArgs Create(NetworkErrorEventArgs eventArgs)
+        {
+            if (eventArgs == null)
+            {
+                Log.Error("Network error event args is invalid.");
+                return null;
+            }
+
+            return Create(eventArgs.NetworkChannel, eventArgs.ErrorCode, eventArgs.SocketErrorCode, eventArgs.ErrorMessage);
         }
 
         /// <summary>

@@ -12,8 +12,6 @@
 
         public override int Id => EventId;
 
-        public override bool IsReleaseAfterFire => false;
-
         /// <summary>
         /// 初始化网络连接关闭事件的新实例。
         /// </summary>
@@ -41,6 +39,22 @@
             NetworkClosedEventArgs networkClosedEventArgs = ReferencePool.Acquire<NetworkClosedEventArgs>();
             networkClosedEventArgs.NetworkChannel = networkChannel;
             return networkClosedEventArgs;
+        }
+
+        /// <summary>
+        /// 创建网络连接关闭事件。
+        /// </summary>
+        /// <param name="eventArgs">网络连接关闭事件。</param>
+        /// <returns>创建的网络连接关闭事件。</returns>
+        public static NetworkClosedEventArgs Create(NetworkClosedEventArgs eventArgs)
+        {
+            if (eventArgs == null)
+            {
+                Log.Error("Network closed event args is invalid.");
+                return null;
+            }
+
+            return Create(eventArgs.NetworkChannel);
         }
 
         /// <summary>

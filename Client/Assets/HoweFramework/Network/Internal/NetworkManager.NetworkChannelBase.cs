@@ -222,6 +222,22 @@ namespace HoweFramework
             }
 
             /// <summary>
+            /// 获取网络频道辅助器。
+            /// </summary>
+            public INetworkChannelHelper Helper
+            {
+                get
+                {
+                    return m_NetworkChannelHelper;
+                }
+            }
+
+            /// <summary>
+            /// 在发送失败时是否抛异常。
+            /// </summary>
+            public bool ThrowSendException { get; set; } = true;
+
+            /// <summary>
             /// 网络频道轮询。
             /// </summary>
             /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
@@ -280,7 +296,7 @@ namespace HoweFramework
             {
                 Close();
                 m_ReceivePacketPool.Dispose();
-                m_NetworkChannelHelper.Shutdown();
+                m_NetworkChannelHelper.Dispose();
             }
 
             /// <summary>
@@ -417,7 +433,11 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         NetworkChannelError(this, ErrorCode.NetworkSendError, SocketError.Success, errorMessage);
-                        return;
+
+                        if (!ThrowSendException)
+                        {
+                            return;
+                        }
                     }
 
                     throw new ErrorCodeException(ErrorCode.NetworkSendError, errorMessage);
@@ -429,7 +449,11 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         NetworkChannelError(this, ErrorCode.NetworkSendError, SocketError.Success, errorMessage);
-                        return;
+
+                        if (!ThrowSendException)
+                        {
+                            return;
+                        }
                     }
 
                     throw new ErrorCodeException(ErrorCode.NetworkSendError, errorMessage);
@@ -441,7 +465,11 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         NetworkChannelError(this, ErrorCode.NetworkSendError, SocketError.Success, errorMessage);
-                        return;
+
+                        if (!ThrowSendException)
+                        {
+                            return;
+                        }
                     }
 
                     throw new ErrorCodeException(ErrorCode.NetworkSendError, errorMessage);

@@ -16,34 +16,24 @@ namespace HoweFramework
         public const int Exception = 1;
 
         /// <summary>
-        /// 响应包类型不匹配。
-        /// </summary>
-        public const int ResponseTypeMismatch = 2;
-
-        /// <summary>
         /// 框架异常。
         /// </summary>
-        public const int FrameworkException = 3;
-
-        /// <summary>
-        /// 请求已取消。
-        /// </summary>
-        public const int RequestCanceled = 4;
+        public const int FrameworkException = 2;
 
         /// <summary>
         /// 参数无效。
         /// </summary>
-        public const int InvalidParam = 5;
+        public const int InvalidParam = 3;
 
         /// <summary>
         /// 操作无效。
         /// </summary>
-        public const int InvalidOperationException = 6;
+        public const int InvalidOperationException = 4;
 
         /// <summary>
         /// 未知错误。
         /// </summary>
-        public const int Unknown = 7;
+        public const int Unknown = 5;
 
         /// <summary>
         /// 界面未打开。
@@ -221,19 +211,14 @@ namespace HoweFramework
         public const int NetworkNotSupportServiceType = 410;
 
         /// <summary>
-        /// 声音组已存在。
+        /// 网络频道不存在。
         /// </summary>
-        public const int SoundGroupAlreadyExists = 501;
+        public const int NetworkChannelNotExist = 411;
 
         /// <summary>
-        /// 声音组不存在。
+        /// 网络协议包不是远程请求。
         /// </summary>
-        public const int SoundGroupNotExist = 502;
-
-        /// <summary>
-        /// 声音不存在。
-        /// </summary>
-        public const int SoundNotExist = 503;
+        public const int NetworkPacketRequestNotRemoteRequest = 412;
 
         #region [WebRequest]
         
@@ -277,5 +262,36 @@ namespace HoweFramework
         public const int WebRequestNetworkAuthenticationRequired = 538;
 
         #endregion
+    
+        /// <summary>
+        /// 声音组已存在。
+        /// </summary>
+        public const int SoundGroupAlreadyExists = 601;
+
+        /// <summary>
+        /// 声音组不存在。
+        /// </summary>
+        public const int SoundGroupNotExist = 602;
+
+        /// <summary>
+        /// 声音不存在。
+        /// </summary>
+        public const int SoundNotExist = 603;
+
+        
+        /// <summary>
+        /// 响应包类型不匹配。
+        /// </summary>
+        public const int ResponseTypeMismatch = 701;
+
+        /// <summary>
+        /// 请求已取消。
+        /// </summary>
+        public const int RequestCanceled = 702;
+
+        /// <summary>
+        /// 请求调度器正在销毁。
+        /// </summary>
+        public const int RequestDispatcherDisposing = 703;
     }
 }

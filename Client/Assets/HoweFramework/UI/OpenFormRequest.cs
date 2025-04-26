@@ -29,12 +29,12 @@ namespace HoweFramework
         /// </summary>
         public CancellationToken CancellationToken { get; private set; }
 
-        private AutoResetUniTaskCompletionSource<ResponseBase> m_Tcs;
+        private AutoResetUniTaskCompletionSource<IResponse> m_Tcs;
 
-        protected override UniTask<ResponseBase> OnExecute(CancellationToken token)
+        protected override UniTask<IResponse> OnExecute(CancellationToken token)
         {
             CancellationToken = token;
-            m_Tcs = AutoResetUniTaskCompletionSource<ResponseBase>.Create();
+            m_Tcs = AutoResetUniTaskCompletionSource<IResponse>.Create();
             var task = m_Tcs.Task;
             UIModule.Instance.HandleOpenFormRequest(this);
             return task;
@@ -44,7 +44,7 @@ namespace HoweFramework
         /// 设置响应。
         /// </summary>
         /// <param name="response">响应。</param>
-        public void SetResponse(ResponseBase response)
+        public void SetResponse(IResponse response)
         {
             if (m_Tcs == null)
             {

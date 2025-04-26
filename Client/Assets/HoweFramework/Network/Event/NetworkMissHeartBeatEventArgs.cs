@@ -12,8 +12,6 @@
 
         public override int Id => EventId;
 
-        public override bool IsReleaseAfterFire => false;
-
         /// <summary>
         /// 初始化网络心跳包丢失事件的新实例。
         /// </summary>
@@ -55,6 +53,22 @@
             return networkMissHeartBeatEventArgs;
         }
 
+        /// <summary>
+        /// 创建网络心跳包丢失事件。
+        /// </summary>
+        /// <param name="eventArgs">网络心跳包丢失事件。</param>
+        /// <returns>创建的网络心跳包丢失事件。</returns>
+        public static NetworkMissHeartBeatEventArgs Create(NetworkMissHeartBeatEventArgs eventArgs)
+        {
+            if (eventArgs == null)
+            {
+                Log.Error("Network miss heart beat event args is invalid.");
+                return null;
+            }
+
+            return Create(eventArgs.NetworkChannel, eventArgs.MissCount);
+        }
+        
         /// <summary>
         /// 清理网络心跳包丢失事件。
         /// </summary>

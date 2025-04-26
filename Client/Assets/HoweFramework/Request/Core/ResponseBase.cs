@@ -5,7 +5,7 @@ namespace HoweFramework
     /// <summary>
     /// 异步请求响应基类。
     /// </summary>
-    public class ResponseBase : IReference, IDisposable
+    public class ResponseBase : IResponse
     {
         /// <summary>
         /// 错误码。0表示成功，其他表示失败。

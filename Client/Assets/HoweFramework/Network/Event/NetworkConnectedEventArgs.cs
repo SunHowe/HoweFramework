@@ -12,8 +12,6 @@
 
         public override int Id => EventId;
 
-        public override bool IsReleaseAfterFire => false;
-
         /// <summary>
         /// 初始化网络连接成功事件的新实例。
         /// </summary>
@@ -53,6 +51,22 @@
             networkConnectedEventArgs.NetworkChannel = networkChannel;
             networkConnectedEventArgs.UserData = userData;
             return networkConnectedEventArgs;
+        }
+
+        /// <summary>
+        /// 创建网络连接成功事件。
+        /// </summary>
+        /// <param name="eventArgs">网络连接成功事件。</param>
+        /// <returns>创建的网络连接成功事件。</returns>
+        public static NetworkConnectedEventArgs Create(NetworkConnectedEventArgs eventArgs)
+        {
+            if (eventArgs == null)
+            {
+                Log.Error("Network connected event args is invalid.");
+                return null;
+            }
+
+            return Create(eventArgs.NetworkChannel, eventArgs.UserData);
         }
 
         /// <summary>

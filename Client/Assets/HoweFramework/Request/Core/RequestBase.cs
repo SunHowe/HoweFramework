@@ -7,7 +7,7 @@ namespace HoweFramework
     /// <summary>
     /// 异步请求基类。
     /// </summary>
-    public abstract class RequestBase : IReference
+    public abstract class RequestBase : IRequest, IReference
     {
         /// <summary>
         /// 释放。
@@ -20,7 +20,7 @@ namespace HoweFramework
         /// 执行请求，并返回响应。
         /// </summary>
         /// <returns>响应。</returns>
-        public async UniTask<ResponseBase> Execute(CancellationToken token = default)
+        public async UniTask<IResponse> Execute(CancellationToken token = default)
         {
             try
             {
@@ -51,6 +51,6 @@ namespace HoweFramework
         /// 执行请求。
         /// </summary>
         /// <returns>响应。</returns>
-        protected abstract UniTask<ResponseBase> OnExecute(CancellationToken token);
+        protected abstract UniTask<IResponse> OnExecute(CancellationToken token);
     }
 }
