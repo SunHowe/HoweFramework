@@ -1,7 +1,7 @@
 using HoweFramework;
 using Protocol;
 
-namespace HoweFramework
+namespace GameMain
 {
     /// <summary>
     /// Orleans 网络消息包处理器基类。

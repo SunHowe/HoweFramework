@@ -4,7 +4,7 @@ using HoweFramework;
 using MemoryPack;
 using Protocol;
 
-namespace HoweFramework
+namespace GameMain
 {
     /// <summary>
     /// 基于Orleans的网络通道辅助类。
