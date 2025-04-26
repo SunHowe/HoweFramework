@@ -116,6 +116,14 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 获取网络频道辅助器。
+        /// </summary>
+        INetworkChannelHelper Helper
+        {
+            get;
+        }
+
+        /// <summary>
         /// 注册网络消息包处理函数。
         /// </summary>
         /// <param name="handler">要注册的网络消息包处理函数。</param>

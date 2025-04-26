@@ -210,6 +210,16 @@ namespace HoweFramework
         /// </summary>
         public const int NetworkNotSupportServiceType = 410;
 
+        /// <summary>
+        /// 网络频道不存在。
+        /// </summary>
+        public const int NetworkChannelNotExist = 411;
+
+        /// <summary>
+        /// 网络协议包不是远程请求。
+        /// </summary>
+        public const int NetworkPacketRequestNotRemoteRequest = 412;
+
         #region [WebRequest]
         
         public const int WebRequestBadRequest = 501;

@@ -222,6 +222,17 @@ namespace HoweFramework
             }
 
             /// <summary>
+            /// 获取网络频道辅助器。
+            /// </summary>
+            public INetworkChannelHelper Helper
+            {
+                get
+                {
+                    return m_NetworkChannelHelper;
+                }
+            }
+
+            /// <summary>
             /// 网络频道轮询。
             /// </summary>
             /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
@@ -280,7 +291,7 @@ namespace HoweFramework
             {
                 Close();
                 m_ReceivePacketPool.Dispose();
-                m_NetworkChannelHelper.Shutdown();
+                m_NetworkChannelHelper.Dispose();
             }
 
             /// <summary>

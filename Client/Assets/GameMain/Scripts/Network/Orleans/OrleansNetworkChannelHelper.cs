@@ -9,7 +9,7 @@ namespace GameMain
     /// <summary>
     /// 基于Orleans的网络通道辅助类。
     /// </summary>
-    public sealed class OrleansNetworkChannelHelper : INetworkChannelHelper
+    public sealed class OrleansNetworkChannelHelper : NetworkChannelHelperBase
     {
         /// <summary>
         /// 包头缓冲区。
@@ -24,12 +24,7 @@ namespace GameMain
         /// <summary>
         /// 包头长度。参考RequestHeader和ResponseHeader
         /// </summary>
-        public int PacketHeaderLength => OrleansPacketHeader.PacketHeaderLength;
-
-        /// <summary>
-        /// 网络频道。
-        /// </summary>
-        private INetworkChannel m_NetworkChannel;
+        public override int PacketHeaderLength => OrleansPacketHeader.PacketHeaderLength;
 
         /// <summary>
         /// 反序列化包。
@@ -38,7 +33,7 @@ namespace GameMain
         /// <param name="source">数据流。</param>
         /// <param name="customErrorData">自定义错误数据。</param>
         /// <returns>包。</returns>
-        public Packet DeserializePacket(IPacketHeader packetHeader, Stream source, out object customErrorData)
+        public override Packet DeserializePacket(IPacketHeader packetHeader, Stream source, out object customErrorData)
         {
             var header = (OrleansPacketHeader)packetHeader;
 
@@ -96,9 +91,13 @@ namespace GameMain
             if (protocol is IProtocolResponse response)
             {
                 response.ErrorCode = header.ErrorCode;
-            }
 
-            return OrleansPacket.Create(header.RpcId, protocol);
+                return OrleansResponsePacket.Create(header.RpcId, protocol);
+            }
+            else
+            {
+                return OrleansNotifyPacket.Create(protocol);
+            }
         }
 
         /// <summary>
@@ -107,7 +106,7 @@ namespace GameMain
         /// <param name="source">数据流。</param>
         /// <param name="customErrorData">自定义错误数据。</param>
         /// <returns>包头。</returns>
-        public IPacketHeader DeserializePacketHeader(Stream source, out object customErrorData)
+        public override IPacketHeader DeserializePacketHeader(Stream source, out object customErrorData)
         {
             if (source.Read(m_PacketHeaderBuffer, 0, PacketHeaderLength) != PacketHeaderLength)
             {
@@ -125,16 +124,16 @@ namespace GameMain
             return header;
         }
 
-        public void PrepareForConnecting()
+        public override void PrepareForConnecting()
         {
         }
 
         /// <summary>
         /// 发送心跳包。
         /// </summary>
-        public bool SendHeartBeat()
+        public override bool SendHeartBeat()
         {
-            m_NetworkChannel.Send(OrleansPacket.Create(0, ReferencePool.Acquire<Heartbeat>()));
+            // m_NetworkChannel.Send(OrleansRequestPacket.Create(0, ReferencePool.Acquire<Heartbeat>()));
             return true;
         }
 
@@ -145,11 +144,11 @@ namespace GameMain
         /// <param name="packet">包。</param>
         /// <param name="destination">目标流。</param>
         /// <returns>是否序列化成功。</returns>
-        public bool Serialize<T>(T packet, Stream destination) where T : Packet
+        public override bool Serialize<T>(T packet, Stream destination)
         {
-            if (packet is not OrleansPacket orleansPacket)
+            if (packet is not OrleansRequestPacket orleansPacket)
             {
-                throw new ErrorCodeException(ErrorCode.NetworkSerializeError, "Only accept OrleansPacket.");
+                throw new ErrorCodeException(ErrorCode.NetworkSerializeError, "Only accept OrleansRequestPacket.");
             }
 
             // 写入协议id(ushort)。
@@ -160,7 +159,7 @@ namespace GameMain
             destination.Seek(2, SeekOrigin.Current);
 
             // 写入请求id(int)。
-            destination.Write(BitConverter.GetBytes(orleansPacket.RpcId), 0, 4);
+            destination.Write(BitConverter.GetBytes(orleansPacket.RequestId), 0, 4);
 
             // 写入魔法数字(int)。
             var magicNumber = 0x12345678;
@@ -181,12 +180,11 @@ namespace GameMain
             return true;
         }
 
-        public void Initialize(INetworkChannel networkChannel)
+        protected override void OnInitialize()
         {
-            m_NetworkChannel = networkChannel;
         }
 
-        public void Shutdown()
+        protected override void OnDispose()
         {
         }
     }
