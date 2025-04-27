@@ -38,7 +38,8 @@ namespace GameMain
             await ResModule.Instance.RequestUpdatePackageManifest();
 
             SoundUtility.InitSoundGroup();
-            NetworkModule.Instance.CreateDefaultNetworkChannel(NetworkConst.GatewayChannelName, ServiceType.Tcp, new OrleansNetworkChannelHelper());
+            NetworkModule.Instance.CreateDefaultNetworkChannel(NetworkConst.GatewayChannelName, ServiceType.Tcp, new OrleansNetworkChannelHelper())
+                .MappingPacketHandler(typeof(OrleansNetworkChannelHelper).Assembly);
 
             await UIModule.Instance.UseFairyGUI(new FairyGUISettings());
             await UIModule.Instance.LoadFairyGUIPackagesAsync(UIConst.UIPackageMappingAssetPath);
