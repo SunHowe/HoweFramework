@@ -20,6 +20,7 @@ namespace GameMain
                 new ProcedureSplash(),
                 new ProcedureLoadDataTable(),
                 new ProcedureLoadLocalization(),
+                new ProcedureLoadModule(),
                 new ProcedureLogin(),
             };
             
