@@ -9,8 +9,6 @@ public class LoginGrain : Grain, ILoginGrain
 {
     public Task<Guid> Login(string account, string password)
     {
-        // TODO.
-
-        return Task.FromResult(Guid.NewGuid());
+        return GrainFactory.GetGrain<IOfficialAccountLoginGrain>(account).Login(password);
     }
 }

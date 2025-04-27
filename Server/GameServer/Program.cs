@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Grains;
+using Microsoft.Extensions.Hosting;
 using Orleans.Configuration;
 using ServerProtocol;
 
@@ -16,6 +17,13 @@ internal static class Program
                 {
                     options.ClusterId = "ClusterId";
                     options.ServiceId = "ServiceId";
+                });
+                
+                siloBuilder.UseMongoDBClient("mongodb://localhost");
+                siloBuilder.AddMongoDBGrainStorageAsDefault(options =>
+                {
+                    options.DatabaseName  = "OrleansDB";
+                    options.CollectionPrefix = "Grains";
                 });
 
                 siloBuilder.AddMemoryStreams(StreamingProviderConst.ProviderName);

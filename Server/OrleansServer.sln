@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerProtocol", "ServerPro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol", "Protocol\Protocol.csproj", "{784193A3-7DA0-4E83-B814-C6213D23E274}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrainStates", "GrainStates\GrainStates.csproj", "{3B4A673D-34C0-4EFA-A0B1-E9EE67BDECE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{784193A3-7DA0-4E83-B814-C6213D23E274}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{784193A3-7DA0-4E83-B814-C6213D23E274}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{784193A3-7DA0-4E83-B814-C6213D23E274}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B4A673D-34C0-4EFA-A0B1-E9EE67BDECE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B4A673D-34C0-4EFA-A0B1-E9EE67BDECE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B4A673D-34C0-4EFA-A0B1-E9EE67BDECE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B4A673D-34C0-4EFA-A0B1-E9EE67BDECE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

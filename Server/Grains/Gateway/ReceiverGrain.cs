@@ -47,7 +47,7 @@ public class ReceiverGrain : Grain, IReceiverGrain
                 // 处理登录请求.
                 var request = package.Unpack<LoginRequest>();
                 var loginGrain = GrainFactory.GetGrain<ILoginGrain>(Guid.NewGuid());
-                var userId = await loginGrain.Login(request!.Account!, request!.Password!);
+                var userId = await loginGrain.Login(request!.Account, request.Password);
 
                 m_IsLoginSucess = true;
                 m_UserId = userId;

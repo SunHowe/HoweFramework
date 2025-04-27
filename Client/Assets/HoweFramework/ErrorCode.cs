@@ -334,6 +334,11 @@ namespace HoweFramework
         /// </summary>
         public const int NoLogin = 802;
 
+        /// <summary>
+        /// 登录认证失败。
+        /// </summary>
+        public const int LoginAuthFailed = 803;
+
         #endregion
     }
 }

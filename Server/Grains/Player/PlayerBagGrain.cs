@@ -13,7 +13,7 @@ public class PlayerBagGrain : PlayerFeatureGrainBase, IPlayerBagGrain
     private readonly IPersistentState<BagState> m_BagState;
 
     public PlayerBagGrain(
-        [PersistentState(GrainsConst.MongoStorageProviderName, BagState.StorageName)]
+        [PersistentState(BagState.StorageName)]
         IPersistentState<BagState> bagState)
     {
         m_BagState = bagState;
@@ -23,6 +23,8 @@ public class PlayerBagGrain : PlayerFeatureGrainBase, IPlayerBagGrain
     {
         await base.OnActivateAsync(cancellationToken);
         await m_BagState.ReadStateAsync(cancellationToken);
+        
+        m_BagState.State.ItemDict ??= new Dictionary<int, long>();
     }
 
     /// <summary>
