@@ -27,7 +27,7 @@ public abstract class ProtocolHandler<T, TResponse> : IProtocolHandler
         catch (Exception e)
         {
             Console.WriteLine(e);
-            response.ErrorCode = GameErrorCode.Internal;
+            response.ErrorCode = HoweFramework.ErrorCode.Exception;
         }
 
         return response;

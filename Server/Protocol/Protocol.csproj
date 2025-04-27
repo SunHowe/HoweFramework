@@ -18,6 +18,9 @@
         <Compile Include="..\..\Client\Assets\GameMain\Scripts\Protocol\**\*.cs">
             <Link>Protocol/%(RecursiveDir)%(FileName)%(Extension)</Link>
         </Compile>
+        <Compile Include="..\..\Client\Assets\HoweFramework\ErrorCode.cs">
+          <Link>ErrorCode.cs</Link>
+        </Compile>
     </ItemGroup>
 
 </Project>

@@ -38,10 +38,10 @@ public class ReceiverGrain : Grain, IReceiverGrain
             if (m_IsLoginSucess)
             {
                 // 重复登录.
-                await SendResponse(sessionGrain, package.RpcId, GameErrorCode.RepeatLogin);
+                await SendResponse(sessionGrain, package.RpcId, HoweFramework.ErrorCode.LoginDuplicate);
                 return;
             }
-            
+
             try
             {
                 // 处理登录请求.
@@ -54,7 +54,7 @@ public class ReceiverGrain : Grain, IReceiverGrain
 
                 // 登录成功, 激活UserGrain.
                 await GrainFactory.GetGrain<IUserGrain>(userId).OnLogin(this.GetPrimaryKey());
-                await SendResponse(sessionGrain, package.RpcId, GameErrorCode.Success);
+                await SendResponse(sessionGrain, package.RpcId, LoginResponse.Create(userId));
             }
             catch (GameException e)
             {
@@ -68,7 +68,7 @@ public class ReceiverGrain : Grain, IReceiverGrain
                 m_IsLoginSucess = false;
                 m_UserId = Guid.Empty;
                 Console.WriteLine(e);
-                await SendResponse(sessionGrain, package.RpcId, GameErrorCode.Internal);
+                await SendResponse(sessionGrain, package.RpcId, HoweFramework.ErrorCode.Exception);
             }
 
             return;
@@ -79,7 +79,7 @@ public class ReceiverGrain : Grain, IReceiverGrain
         {
             // 未登录成功不允许请求其他包.
             var sessionGrain = GrainFactory.GetGrain<ISessionGrain>(this.GetPrimaryKey());
-            await SendResponse(sessionGrain, package.RpcId, GameErrorCode.NoLogin);
+            await SendResponse(sessionGrain, package.RpcId, HoweFramework.ErrorCode.NoLogin);
             return;
         }
 
@@ -97,6 +97,15 @@ public class ReceiverGrain : Grain, IReceiverGrain
             ProtocolId = (ushort)ProtocolId.CommonResp,
         };
 
+        await sessionGrain.Send(serverPackage);
+    }
+
+    private static async Task SendResponse(ISessionGrain sessionGrain, int rpcId, IProtocolResponse response)
+    {
+        var serverPackage = ServerPackageHelper.Pack(response);
+        serverPackage.RpcId = rpcId;
+        serverPackage.ErrorCode = response.ErrorCode;
+        
         await sessionGrain.Send(serverPackage);
     }
 }

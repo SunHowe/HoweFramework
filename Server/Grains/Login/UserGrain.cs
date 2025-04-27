@@ -22,7 +22,7 @@ public class UserGrain : Grain, IUserGrain
         {
             // 无协议处理器.
             Console.WriteLine($"No handler for protocol: {package.ProtocolId} rpcId={package.RpcId}");
-            await SendResponse(sessionGrain, package.RpcId, GameErrorCode.NoHandler);
+            await SendResponse(sessionGrain, package.RpcId, HoweFramework.ErrorCode.NetworkNotSupportPacket);
             return;
         }
 
@@ -31,7 +31,7 @@ public class UserGrain : Grain, IUserGrain
         {
             // 协议解析失败.
             Console.WriteLine($"Failed to unpack protocol: {package.ProtocolId} rpcId={package.RpcId}");
-            await SendResponse(sessionGrain, package.RpcId, GameErrorCode.ProtocolUnpackError);
+            await SendResponse(sessionGrain, package.RpcId, HoweFramework.ErrorCode.NetworkDeserializePacketError);
             return;
         }
 
