@@ -234,6 +234,11 @@ namespace HoweFramework
         /// </summary>
         public const int NetworkPacketRequestNotRemoteRequest = 412;
 
+        /// <summary>
+        /// 不支持的网络协议包。
+        /// </summary>
+        public const int NetworkNotSupportPacket = 413;
+
         #endregion
 
         #region [WebRequest]
@@ -314,6 +319,20 @@ namespace HoweFramework
         /// 请求调度器正在销毁。
         /// </summary>
         public const int RequestDispatcherDisposing = 703;
+
+        #endregion
+
+        #region [Login]
+
+        /// <summary>
+        /// 重复登录。
+        /// </summary>
+        public const int LoginDuplicate = 801;
+
+        /// <summary>
+        /// 未登录。
+        /// </summary>
+        public const int NoLogin = 802;
 
         #endregion
     }
