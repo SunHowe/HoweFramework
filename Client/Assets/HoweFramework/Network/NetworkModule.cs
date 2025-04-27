@@ -8,6 +8,11 @@ namespace HoweFramework
     public sealed class NetworkModule : ModuleBase<NetworkModule>
     {
         /// <summary>
+        /// 默认网络频道名称。
+        /// </summary>
+        public string DefaultChannelName { get; set; }
+
+        /// <summary>
         /// 获取网络频道数量。
         /// </summary>
         public int NetworkChannelCount { get; }
@@ -90,6 +95,7 @@ namespace HoweFramework
         protected override void OnDestroy()
         {
             m_NetworkManager.Dispose();
+            DefaultChannelName = null;
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)

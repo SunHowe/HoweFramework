@@ -20,6 +20,11 @@ namespace HoweFramework
 
         protected override UniTask<IResponse> OnExecute(CancellationToken token)
         {
+            if (string.IsNullOrEmpty(ChannelName))
+            {
+                throw new ErrorCodeException(ErrorCode.NetworkChannelNotExist);
+            }
+
             var networkChannel = NetworkModule.Instance.GetNetworkChannel(ChannelName);
             if (networkChannel == null)
             {
@@ -53,6 +58,22 @@ namespace HoweFramework
                 ReferencePool.Release(Packet);
                 Packet = null;
             }
+        }
+
+        /// <summary>
+        /// 创建网络协议交互请求。
+        /// </summary>
+        /// <param name="packet">协议包。</param>
+        /// <param name="channelName">网络频道名。</param>
+        /// <returns>网络协议交互请求。</returns>
+        public static NetworkPacketRequest Create(Packet packet, string channelName = null)
+        {
+            channelName ??= NetworkModule.Instance.DefaultChannelName;
+
+            var request = ReferencePool.Acquire<NetworkPacketRequest>();
+            request.Packet = packet;
+            request.ChannelName = channelName;
+            return request;
         }
     }
 }
