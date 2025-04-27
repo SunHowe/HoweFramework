@@ -39,6 +39,8 @@ namespace GameMain
             PlayerName = playerPush.PlayerName;
             LoginTime = playerPush.LoginTime;
             CreateTime = playerPush.CreateTime;
+
+            EventModule.Instance.Dispatch(this, PlayerInfoUpdateEventArgs.Create());
         }
 
         protected override void OnDestroy()
