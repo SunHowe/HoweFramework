@@ -30,10 +30,10 @@ class Program
         // 获取Orleans客户端实例.
         var clusterClient = host.Services.GetRequiredService<IClusterClient>();
 
-        var gatewayServer = new GatewayServer(clusterClient, IPAddress.Any, 1111);
+        var gatewayServer = new GatewayServer(clusterClient, IPAddress.Any, 9000);
         gatewayServer.Start();
         
-        Console.WriteLine("Gateway Server started, listening on port 9000");
+        Console.WriteLine($"Gateway Server started, listening on port {gatewayServer.Port}");
         Console.ReadLine();
         
         gatewayServer.Stop();

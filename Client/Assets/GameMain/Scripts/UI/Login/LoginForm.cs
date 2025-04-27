@@ -113,7 +113,7 @@ namespace GameMain.UI.Login
 
         private async UniTask LoginAsync(string account, string password)
         {
-            var code = await NetworkModule.Instance.ConnectAsync("127.0.0.1", 30000).GetErrorCode();
+            var code = await NetworkModule.Instance.ConnectAsync("127.0.0.1", 9000).GetErrorCode();
             if (code != ErrorCode.Success)
             {
                 Log.Error($"Connect failed: {code}");
