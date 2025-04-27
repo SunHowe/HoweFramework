@@ -26,6 +26,11 @@ namespace HoweFramework
         /// <summary>
         /// 允许存在重复的事件处理函数。
         /// </summary>
-        AllowDuplicateHandler = 4
+        AllowDuplicateHandler = 4,
+
+        /// <summary>
+        /// 无论是否存在事件处理函数，都会触发默认事件处理函数。
+        /// </summary>
+        AlwaysInvokeDefaultHandler = 8,
     }
 }
