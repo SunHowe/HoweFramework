@@ -218,12 +218,25 @@ namespace HoweFramework
                 // 如果存在默认事件处理函数，并且事件调度器模式为总是触发默认事件处理函数，则触发默认事件处理函数。
                 if (m_DefaultHandler != null && (m_Mode & EventDispatcherMode.AlwaysInvokeDefaultHandler) == EventDispatcherMode.AlwaysInvokeDefaultHandler)
                 {
-                    m_DefaultHandler(sender, e);
-                }
+                    try
+                    {
+                        m_DefaultHandler(sender, e);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error($"Handle event '{e.Id}' error: {ex.Message}\n{ex.StackTrace}");
+                    }
             }
             else if (m_DefaultHandler != null)
             {
-                noHandlerException = !m_DefaultHandler(sender, e);
+                try
+                {
+                    noHandlerException = !m_DefaultHandler(sender, e);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Handle event '{e.Id}' error: {ex.Message}\n{ex.StackTrace}");
+                }
             }
 
             // 无人处理事件，检测是否需要抛异常。
