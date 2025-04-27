@@ -137,27 +137,27 @@ namespace HoweFramework
 
         private void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
         {
-            EventModule.Instance.Dispatch(this, e);
+            EventModule.Instance.Dispatch(this, NetworkConnectedEventArgs.Create(e));
         }
 
         private void OnNetworkClosed(object sender, NetworkClosedEventArgs e)
         {
-            EventModule.Instance.Dispatch(this, e);
+            EventModule.Instance.Dispatch(this, NetworkClosedEventArgs.Create(e));
         }
 
         private void OnNetworkMissHeartBeat(object sender, NetworkMissHeartBeatEventArgs e)
         {
-            EventModule.Instance.Dispatch(this, e);
+            EventModule.Instance.Dispatch(this, NetworkMissHeartBeatEventArgs.Create(e));
         }
 
         private void OnNetworkError(object sender, NetworkErrorEventArgs e)
         {
-            EventModule.Instance.Dispatch(this, e);
+            EventModule.Instance.Dispatch(this, NetworkErrorEventArgs.Create(e));
         }
 
         private void OnNetworkCustomError(object sender, NetworkCustomErrorEventArgs e)
         {
-            EventModule.Instance.Dispatch(this, e);
+            EventModule.Instance.Dispatch(this, NetworkCustomErrorEventArgs.Create(e));
         }
     }
 }
