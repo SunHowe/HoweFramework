@@ -61,6 +61,15 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 断开连接。
+        /// </summary>
+        /// <param name="networkModule">网络模块。</param>
+        public static void Disconnect(this NetworkModule networkModule)
+        {
+            networkModule.DefaultChannel.Close();
+        }
+
+        /// <summary>
         /// 连接网络频道。
         /// </summary>
         /// <param name="networkChannel">网络频道。</param>
