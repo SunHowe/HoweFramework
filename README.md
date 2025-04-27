@@ -59,9 +59,14 @@ Unity3d客户端开发框架，部分模块采用现有的工具或参考现有�
 
 - Network
 
-    网络模块，参考GameFramework实现，为项目提供通用的网络通信功能。
+    网络模块，参考GameFramework实现，为项目提供通用的网络通信功能，并基于项目的请求模块实现异步请求封装。
 
     通过`INetworkChannel`、`INetworkChannelHelper`、`IPacketHandler`、`IPacketHeader`为使用者自定义拓展需求提供支持。
+
+    ```csharp
+    var code = await NetworkModule.Instance.ConnectAsync("127.0.0.1", 9000).GetErrorCode();
+    using var response = await LoginRequest.Create(account, password).SendPacketAsync<LoginResponse>();
+    ```
 
 - Procedure
 
@@ -130,3 +135,39 @@ Unity3d客户端开发框架，部分模块采用现有的工具或参考现有�
     通过`IWebRequestHelper`为使用者自定义拓展需求提供支持。
 
     项目内已基于UnityWebRequest实现了一套HTTP交互的逻辑。
+
+- 小工具支持
+
+    - DisposableSemaphoreSlim
+
+        基于信号量，实现了一套简单的异步锁功能，并提供全局指定键值的异步锁。
+
+        ```csharp
+        private readonly DisposableSemaphoreSlim m_DisposableSemaphoreSlim = new();
+
+        private async UniTask DisposableSemaphoreSlimTest(int id)
+        {
+            using var _ = await m_DisposableSemaphoreSlim.WaitAsync();
+            Log.Info($"DisposableSemaphoreSlimTest: {id}");
+            await UniTask.Delay(1000);
+        }
+
+        private async UniTask GlobalDisposableSemaphoreSlimTest(int id)
+        {
+            using var _ = await DisposableSemaphoreSlim.WaitAsync(id);
+            Log.Info($"GlobalDisposableSemaphoreSlimTest: {id}");
+            await UniTask.Delay(1000);
+        }
+        ```
+
+    - 文本模板
+
+        参考FairyGUI的文本模板实现，实现了一套项目公用的文本模板功能，并整合FairyGUI的接口，允许添加全局变量和局部变量。
+
+        ```chsarp
+        TextUtility.ParseTemplate(string template, Dictionary<string, string> dictionary)
+        ```
+        
+        例如文本内容为"我的名字是{name=李雷}, 我今年{age=10}岁"
+        若传入参数为{"name": "韩梅梅"}
+        则文本模板处理结果为"我的名字是韩梅梅, 我今年10岁"
