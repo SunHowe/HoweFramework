@@ -12,14 +12,14 @@ namespace HoweFramework
         /// 创建一个远程请求实例。
         /// </summary>
         /// <returns>请求id和异步等待对象。</returns>
-        (int requestId, UniTask<ResponseBase> task) CreateRemoteRequest();
+        (int requestId, UniTask<IResponse> task) CreateRemoteRequest();
 
         /// <summary>
         /// 设置一个远程请求的响应。
         /// </summary>
         /// <param name="requestId">请求id。</param>
         /// <param name="response">响应。</param>
-        void SetResponse(int requestId, ResponseBase response);
+        void SetResponse(int requestId, IResponse response);
 
         /// <summary>
         /// 中断所有请求。

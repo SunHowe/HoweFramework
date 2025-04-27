@@ -16,7 +16,7 @@ namespace HoweFramework
         /// <param name="userData">业务透传数据。</param>
         /// <param name="token">取消令牌。</param>
         /// <returns>打开界面响应。</returns>
-        public static UniTask<ResponseBase> OpenUIForm(this UIModule module, int uiFormId, object userData = null, CancellationToken token = default)
+        public static UniTask<IResponse> OpenUIForm(this UIModule module, int uiFormId, object userData = null, CancellationToken token = default)
         {
             return ReferencePool.Acquire<OpenFormRequest>()
                 .SetFormId(uiFormId)
@@ -31,7 +31,7 @@ namespace HoweFramework
         /// <param name="uiFormId">界面Id。</param>
         /// <param name="token">取消令牌。</param>
         /// <returns>关闭界面响应。</returns>
-        public static UniTask<ResponseBase> CloseUIForm(this UIModule module, int uiFormId, CancellationToken token = default)
+        public static UniTask<IResponse> CloseUIForm(this UIModule module, int uiFormId, CancellationToken token = default)
         {
             var request = ReferencePool.Acquire<CloseFormRequest>();
             request.FormId = uiFormId;

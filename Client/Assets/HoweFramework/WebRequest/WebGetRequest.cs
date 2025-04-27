@@ -30,7 +30,7 @@ namespace HoweFramework
             Url = null;
         }
 
-        protected override UniTask<ResponseBase> OnExecute(CancellationToken token)
+        protected override UniTask<IResponse> OnExecute(CancellationToken token)
         {
             return WebRequestModule.Instance.Get(this, token);
         }

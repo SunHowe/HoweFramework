@@ -18,7 +18,7 @@ namespace HoweFramework
         /// </summary>
         public string ChannelName { get; set; }
 
-        protected override UniTask<ResponseBase> OnExecute(CancellationToken token)
+        protected override UniTask<IResponse> OnExecute(CancellationToken token)
         {
             var networkChannel = NetworkModule.Instance.GetNetworkChannel(ChannelName);
             if (networkChannel == null)

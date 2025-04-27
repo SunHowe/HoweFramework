@@ -11,7 +11,7 @@ namespace HoweFramework
         /// <summary>
         /// 请求字典。
         /// </summary>
-        private readonly Dictionary<int, AutoResetUniTaskCompletionSource<ResponseBase>> m_RequestDict = new();
+        private readonly Dictionary<int, AutoResetUniTaskCompletionSource<IResponse>> m_RequestDict = new();
 
         /// <summary>
         /// 自增长的请求id。
@@ -22,10 +22,10 @@ namespace HoweFramework
         /// 创建一个远程请求实例。
         /// </summary>
         /// <returns>请求id和异步等待对象。</returns>
-        public (int requestId, UniTask<ResponseBase> task) CreateRemoteRequest()
+        public (int requestId, UniTask<IResponse> task) CreateRemoteRequest()
         {
             var requestId = ++m_RequestId;
-            var tcs = AutoResetUniTaskCompletionSource<ResponseBase>.Create();
+            var tcs = AutoResetUniTaskCompletionSource<IResponse>.Create();
 
             m_RequestDict.Add(requestId, tcs);
             return (requestId, tcs.Task);
@@ -36,7 +36,7 @@ namespace HoweFramework
         /// </summary>
         /// <param name="requestId">请求id。</param>
         /// <param name="response">响应。</param>
-        public void SetResponse(int requestId, ResponseBase response)
+        public void SetResponse(int requestId, IResponse response)
         {
             if (m_RequestDict.Remove(requestId, out var tcs))
             {
@@ -54,7 +54,7 @@ namespace HoweFramework
         /// <param name="errorCode">错误码。</param>
         public void InterruptAllRequests(int errorCode = ErrorCode.RequestCanceled)
         {
-            using var buffer = ReusableList<AutoResetUniTaskCompletionSource<ResponseBase>>.Create();
+            using var buffer = ReusableList<AutoResetUniTaskCompletionSource<IResponse>>.Create();
             foreach (var request in m_RequestDict)
             {
                 buffer.Add(request.Value);

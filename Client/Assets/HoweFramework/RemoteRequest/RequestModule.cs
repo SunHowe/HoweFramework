@@ -1,12 +1,9 @@
-using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
-
 namespace HoweFramework
 {
     /// <summary>
-    /// 请求模块，为远程交互请求提供统一的注册功能。
+    /// 远程请求模块。
     /// </summary>
-    public sealed class RequestModule : ModuleBase<RequestModule>
+    public sealed class RemoteRequestModule : ModuleBase<RemoteRequestModule>
     {
         /// <summary>
         /// 创建一个远程请求调度器。

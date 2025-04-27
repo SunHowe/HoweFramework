@@ -13,7 +13,7 @@ namespace HoweFramework
         /// </summary>
         /// <param name="task">异步请求任务。</param>
         /// <returns>错误码。</returns>
-        public static async UniTask<int> GetErrorCode(this UniTask<ResponseBase> task)
+        public static async UniTask<int> GetErrorCode(this UniTask<IResponse> task)
         {
             var response = await task;
             var errorCode = response.ErrorCode;
@@ -25,7 +25,7 @@ namespace HoweFramework
         /// 忽略异步请求结果。
         /// </summary>
         /// <param name="task">异步请求任务。</param>
-        public static void Forget(this UniTask<ResponseBase> task)
+        public static void Forget(this UniTask<IResponse> task)
         {
             task.GetErrorCode().Forget();
         }
@@ -36,7 +36,7 @@ namespace HoweFramework
         /// <typeparam name="T">指定类型。</typeparam>
         /// <param name="task">异步请求任务。</param>
         /// <returns>指定类型。</returns>
-        public static async UniTask<T> As<T>(this UniTask<ResponseBase> task) where T : ResponseBase, new()
+        public static async UniTask<T> As<T>(this UniTask<IResponse> task) where T : class, IResponse, new()
         {
             var raw = await task;
             if (raw is T response)

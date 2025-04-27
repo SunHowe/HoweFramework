@@ -29,7 +29,7 @@ namespace HoweFramework
         public void Initialize(INetworkChannel networkChannel)
         {
             NetworkChannel = networkChannel;
-            RequestDispatcher = RequestModule.Instance.CreateRemoteRequestDispatcher();
+            RequestDispatcher = RemoteRequestModule.Instance.CreateRemoteRequestDispatcher();
             NetworkChannel.SetDefaultHandler(OnReceivePacket);
 
             OnInitialize();
