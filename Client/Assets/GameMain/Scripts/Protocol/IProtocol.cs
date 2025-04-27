@@ -1,3 +1,4 @@
+using MemoryPack;
 #if !NETCOREAPP
 using HoweFramework;
 #endif
@@ -67,6 +68,7 @@ namespace Protocol
 #endif
     {
 #if NETCOREAPP
+        [MemoryPackIgnore]
         public abstract int Id { get; }
 
         public virtual void Clear()

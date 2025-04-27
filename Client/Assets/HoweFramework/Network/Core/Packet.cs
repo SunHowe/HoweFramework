@@ -1,4 +1,6 @@
-﻿namespace HoweFramework
+﻿using MemoryPack;
+
+namespace HoweFramework
 {
     /// <summary>
     /// 网络消息包基类。
@@ -8,6 +10,7 @@
         /// <summary>
         /// 在事件处理后是否回收事件实例。
         /// </summary>
+        [MemoryPackIgnore]
         public override bool IsReleaseAfterFire => m_IsReleaseAfterFire;
 
         private bool m_IsReleaseAfterFire = true;

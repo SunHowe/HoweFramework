@@ -6,7 +6,7 @@ namespace Protocol
     /// 心跳包。
     /// </summary>
     [MemoryPackable]
-    public partial class Heartbeat : ProtocolBase
+    public partial class Heartbeat : ProtocolBase, IProtocolRequest
     {
         /// <summary>
         /// 服务器的Unix时间戳(秒)。

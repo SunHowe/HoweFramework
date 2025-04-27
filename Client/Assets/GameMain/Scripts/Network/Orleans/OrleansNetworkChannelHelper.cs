@@ -91,6 +91,7 @@ namespace GameMain
             if (protocol is IProtocolResponse response)
             {
                 response.ErrorCode = header.ErrorCode;
+                response.RequestId = header.RpcId;
             }
 
             return protocol;

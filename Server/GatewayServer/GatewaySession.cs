@@ -37,7 +37,7 @@ public class GatewaySession : TcpSession
 
     protected override void OnDisconnected()
     {
-        Console.WriteLine($"Gateway Session({Id}) disconnected: RemoteEndPoint={Socket.RemoteEndPoint}, LocalEndPoint={Socket.LocalEndPoint}");
+        Console.WriteLine($"Gateway Session({Id}) disconnected");
         m_IsConnected = false;
         DisconnectGameServer().Wait();
     }

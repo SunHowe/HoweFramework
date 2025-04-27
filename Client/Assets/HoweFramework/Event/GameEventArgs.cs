@@ -1,4 +1,5 @@
 using System;
+using MemoryPack;
 
 namespace HoweFramework
 {
@@ -17,11 +18,13 @@ namespace HoweFramework
         /// <summary>
         /// 事件类型。
         /// </summary>
+        [MemoryPackIgnore]
         public abstract int Id { get; }
 
         /// <summary>
         /// 在事件处理后是否回收事件实例。
         /// </summary>
+        [MemoryPackIgnore]
         public virtual bool IsReleaseAfterFire => true;
 
         public abstract void Clear();
