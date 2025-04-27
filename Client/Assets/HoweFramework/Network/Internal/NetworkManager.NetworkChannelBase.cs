@@ -233,6 +233,11 @@ namespace HoweFramework
             }
 
             /// <summary>
+            /// 在发送失败时是否抛异常。
+            /// </summary>
+            public bool ThrowSendException { get; set; } = true;
+
+            /// <summary>
             /// 网络频道轮询。
             /// </summary>
             /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
@@ -428,7 +433,11 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         NetworkChannelError(this, ErrorCode.NetworkSendError, SocketError.Success, errorMessage);
-                        return;
+
+                        if (!ThrowSendException)
+                        {
+                            return;
+                        }
                     }
 
                     throw new ErrorCodeException(ErrorCode.NetworkSendError, errorMessage);
@@ -440,7 +449,11 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         NetworkChannelError(this, ErrorCode.NetworkSendError, SocketError.Success, errorMessage);
-                        return;
+
+                        if (!ThrowSendException)
+                        {
+                            return;
+                        }
                     }
 
                     throw new ErrorCodeException(ErrorCode.NetworkSendError, errorMessage);
@@ -452,7 +465,11 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         NetworkChannelError(this, ErrorCode.NetworkSendError, SocketError.Success, errorMessage);
-                        return;
+
+                        if (!ThrowSendException)
+                        {
+                            return;
+                        }
                     }
 
                     throw new ErrorCodeException(ErrorCode.NetworkSendError, errorMessage);

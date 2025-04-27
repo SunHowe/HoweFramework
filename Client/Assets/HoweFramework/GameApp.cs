@@ -37,6 +37,7 @@ namespace HoweFramework
                 .UseUnityJsonHelper()
                 .UseDefaultTextTemplateHelper();
             AddModule<EventModule>(); // 事件模块。
+            AddModule<RemoteRequestModule>(); // 远程请求模块。
             AddModule<NetworkModule>(); // 网络模块。
             AddModule<WebRequestModule>().UseUnityWebRequest(); // Web请求模块。
             AddModule<TimerModule>(); // 计时器模块。

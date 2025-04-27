@@ -122,6 +122,11 @@ namespace HoweFramework
         {
             get;
         }
+        
+        /// <summary>
+        /// 在发送失败时是否抛异常。
+        /// </summary>
+        bool ThrowSendException { get; set; }
 
         /// <summary>
         /// 注册网络消息包处理函数。

@@ -11,11 +11,11 @@ namespace HoweFramework
         /// 发送协议包，并等待响应。
         /// </summary>
         /// <param name="packet">协议包。</param>
-        /// <param name="channelName">网络频道名。</param>
+        /// <param name="networkChannel">网络频道。</param>
         /// <returns>响应。</returns>
-        public static UniTask<IResponse> SendPacketAsync(this Packet packet, string channelName = null)
+        public static UniTask<IResponse> SendPacketAsync(this Packet packet, INetworkChannel networkChannel = null)
         {
-            return NetworkPacketRequest.Create(packet, channelName).Execute();
+            return NetworkPacketRequest.Create(packet, networkChannel).Execute();
         }
     }
 }

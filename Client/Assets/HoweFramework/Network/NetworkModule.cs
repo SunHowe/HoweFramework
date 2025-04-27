@@ -10,7 +10,12 @@ namespace HoweFramework
         /// <summary>
         /// 默认网络频道名称。
         /// </summary>
-        public string DefaultChannelName { get; set; }
+        public string DefaultChannelName { get; private set; }
+
+        /// <summary>
+        /// 默认网络频道。
+        /// </summary>
+        public INetworkChannel DefaultChannel { get; private set; }
 
         /// <summary>
         /// 获取网络频道数量。
@@ -81,6 +86,32 @@ namespace HoweFramework
         {
             return m_NetworkManager.DestroyNetworkChannel(name);
         }
+        
+        /// <summary>
+        /// 创建默认网络频道。
+        /// </summary>
+        /// <param name="module">网络模块。</param>
+        /// <param name="name">网络频道名。</param>
+        /// <param name="serviceType">网络服务类型。</param>
+        /// <param name="networkChannelHelper">网络频道辅助器。</param>
+        /// <returns>网络频道。</returns>
+        public INetworkChannel CreateDefaultNetworkChannel(string name, ServiceType serviceType, INetworkChannelHelper networkChannelHelper)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidParam);
+            }
+            
+            if (!string.IsNullOrEmpty(DefaultChannelName))
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Default channel name has been set.");
+            }
+
+            var channel = CreateNetworkChannel(name, serviceType, networkChannelHelper);
+            DefaultChannelName = name;
+            DefaultChannel = channel;
+            return channel;
+        }
 
         protected override void OnInit()
         {
@@ -96,6 +127,7 @@ namespace HoweFramework
         {
             m_NetworkManager.Dispose();
             DefaultChannelName = null;
+            DefaultChannel = null;
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)

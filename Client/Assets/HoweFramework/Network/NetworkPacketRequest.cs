@@ -14,19 +14,13 @@ namespace HoweFramework
         public Packet Packet { get; set; }
 
         /// <summary>
-        /// 网络频道名。
+        /// 网络频道。
         /// </summary>
-        public string ChannelName { get; set; }
+        public INetworkChannel NetworkChannel { get; set; }
 
         protected override UniTask<IResponse> OnExecute(CancellationToken token)
         {
-            if (string.IsNullOrEmpty(ChannelName))
-            {
-                throw new ErrorCodeException(ErrorCode.NetworkChannelNotExist);
-            }
-
-            var networkChannel = NetworkModule.Instance.GetNetworkChannel(ChannelName);
-            if (networkChannel == null)
+            if (NetworkChannel == null)
             {
                 throw new ErrorCodeException(ErrorCode.NetworkChannelNotExist);
             }
@@ -39,13 +33,13 @@ namespace HoweFramework
             var packet = Packet;
             Packet = null;
 
-            var (requestId, task) = networkChannel.Helper.RequestDispatcher.CreateRemoteRequest();
+            var (requestId, task) = NetworkChannel.Helper.RequestDispatcher.CreateRemoteRequest();
 
             // 设置请求id。
             remoteRequest.RequestId = requestId;
 
             // 发送协议包。
-            networkChannel.Send(packet);
+            NetworkChannel.Send(packet);
 
             return task;
         }
@@ -66,13 +60,25 @@ namespace HoweFramework
         /// <param name="packet">协议包。</param>
         /// <param name="channelName">网络频道名。</param>
         /// <returns>网络协议交互请求。</returns>
-        public static NetworkPacketRequest Create(Packet packet, string channelName = null)
+        public static NetworkPacketRequest Create(Packet packet, string channelName)
         {
-            channelName ??= NetworkModule.Instance.DefaultChannelName;
-
             var request = ReferencePool.Acquire<NetworkPacketRequest>();
             request.Packet = packet;
-            request.ChannelName = channelName;
+            request.NetworkChannel = NetworkModule.Instance.GetNetworkChannel(channelName);
+            return request;
+        }
+
+        /// <summary>
+        /// 创建网络协议交互请求。
+        /// </summary>
+        /// <param name="packet">协议包。</param>
+        /// <param name="networkChannel">网络频道。</param>
+        /// <returns>网络协议交互请求。</returns>
+        public static NetworkPacketRequest Create(Packet packet, INetworkChannel networkChannel = null)
+        {
+            var request = ReferencePool.Acquire<NetworkPacketRequest>();
+            request.Packet = packet;
+            request.NetworkChannel = networkChannel ?? NetworkModule.Instance.DefaultChannel;
             return request;
         }
     }
