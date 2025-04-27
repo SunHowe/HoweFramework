@@ -52,12 +52,14 @@ namespace HoweFramework
         /// <returns>事件捕获器。</returns>
         public static EventCapture Create(int eventId, GameEventHandler handler, IEventDispatcher eventDispatcher = null)
         {
+            eventDispatcher ??= EventModule.Instance.EventDispatcher;
+            
             EventCapture eventCapture = ReferencePool.Acquire<EventCapture>();
             eventCapture.EventId = eventId;
             eventCapture.Handler = handler;
             eventCapture.m_Referenced = true;
+            eventCapture.m_EventDispatcher = eventDispatcher;
 
-            eventDispatcher ??= EventModule.Instance.EventDispatcher;
             eventDispatcher.Subscribe(eventId, handler);
 
             return eventCapture;
