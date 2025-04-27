@@ -17,7 +17,7 @@ namespace GameMain.UI.Login
         #region [子节点]
  
         private FairyGUI.GButton m_BtnLogin;
-   
+ 
         #endregion
 
         #region [控制器]
@@ -33,7 +33,7 @@ namespace GameMain.UI.Login
             #region [子节点]
  
             m_BtnLogin = (FairyGUI.GButton)ContentPane.GetChild("btnLogin");
-   
+ 
             #endregion
 
             #region [控制器]

@@ -4,8 +4,5 @@
     <component id="n0_i9sb" name="btnLogin" src="i9sbe" fileName="Button.xml" xy="440,566" size="400,80" aspect="true">
       <relation target="" sidePair="center-center,bottom-bottom"/>
     </component>
-    <movieclip id="n2_i9sb" name="n2" src="i9sb1" fileName="MovieClip1.jta" xy="480,200" size="320,320" aspect="true">
-      <relation target="" sidePair="center-center,middle-middle"/>
-    </movieclip>
   </displayList>
 </component>
