@@ -48,12 +48,12 @@ namespace HoweFramework
         {
             var packet = (Packet)e;
 
-            if (packet is IRemoteResponse remoteResponse)
+            if (packet is IRemoteRequest remoteRequest && packet is IResponse response)
             {
                 packet.SetIsReleaseAfterFire(false);
 
-                var requestId = remoteResponse.RequestId;
-                RequestDispatcher.SetResponse(requestId, remoteResponse);
+                var requestId = remoteRequest.RequestId;
+                RequestDispatcher.SetResponse(requestId, response);
             }
         }
     }

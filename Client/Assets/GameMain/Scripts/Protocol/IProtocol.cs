@@ -38,7 +38,7 @@ namespace Protocol
     /// </summary>
     public interface IProtocolResponse
 #if !NETCOREAPP
-        : IProtocol, IRemoteResponse
+        : IProtocol, IRemoteRequest, IResponse
 #else
         : IProtocol
 #endif
@@ -68,7 +68,7 @@ namespace Protocol
     {
 #if NETCOREAPP
         public abstract int Id { get; }
-        
+
         public virtual void Clear()
         {
         }

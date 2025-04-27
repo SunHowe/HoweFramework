@@ -3,7 +3,7 @@ namespace HoweFramework
     /// <summary>
     /// 远程请求接口。
     /// </summary>
-    public interface IRemoteRequest : IRequest
+    public interface IRemoteRequest
     {
         /// <summary>
         /// 请求id。
