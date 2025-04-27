@@ -107,6 +107,8 @@ namespace ProtocolGenerator
             sourceBuilder.AppendLine("{");
             sourceBuilder.AppendLine($"    public partial class {className}");
             sourceBuilder.AppendLine("    {");
+
+            #region [属性]
             sourceBuilder.AppendLine($"        public const ushort ProtocolId = {protocolId};");
             sourceBuilder.AppendLine($"        public override int Id => {protocolId};");
 
@@ -123,7 +125,7 @@ namespace ProtocolGenerator
             {
                 sourceBuilder.AppendLine("        [MemoryPack.MemoryPackIgnore]");
                 sourceBuilder.AppendLine("        public int ErrorCode { get; set; }");
-                
+
                 sourceBuilder.AppendLine("        [MemoryPack.MemoryPackIgnore]");
                 sourceBuilder.AppendLine("        public int RequestId { get; set; }");
             }
@@ -132,6 +134,62 @@ namespace ProtocolGenerator
                 sourceBuilder.AppendLine("        [MemoryPack.MemoryPackIgnore]");
                 sourceBuilder.AppendLine("        public int RequestId { get; set; }");
             }
+
+            #endregion
+
+            #region [Create方法]
+
+            sourceBuilder.Append($"        public static {className} Create");
+            sourceBuilder.Append("(");
+
+            // 遍历所有属性，将其作为Create方法的参数，且提供默认值。
+            var isFirst = true;
+            foreach (var property in classSymbol.GetMembers().OfType<IPropertySymbol>())
+            {
+                if (!isFirst)
+                {
+                    sourceBuilder.Append(", ");
+                }
+                sourceBuilder.Append($"{property.Type.ToDisplayString()} {property.Name.CamelCase()} = default");
+                isFirst = false;
+            }
+
+            sourceBuilder.Append(")");
+            sourceBuilder.AppendLine();
+            sourceBuilder.AppendLine("        {");
+
+            sourceBuilder.AppendLine("            #if NETCOREAPP");
+            sourceBuilder.AppendLine($"            var protocol = new {className}();");
+            sourceBuilder.AppendLine("            #else");
+            sourceBuilder.AppendLine($"            var protocol = HoweFramework.ReferencePool.Acquire<{className}>();");
+            sourceBuilder.AppendLine("            #endif");
+
+            foreach (var property in classSymbol.GetMembers().OfType<IPropertySymbol>())
+            {
+                sourceBuilder.AppendLine($"            protocol.{property.Name} = {property.Name.CamelCase()};");
+            }
+
+            sourceBuilder.AppendLine("            return protocol;");
+            sourceBuilder.AppendLine("        }");
+
+            if (isResponseType)
+            {
+                // 单独创建一个只包含ErrorCode参数的方法。
+                sourceBuilder.AppendLine($"        public static {className} Create(int errorCode)");
+                sourceBuilder.AppendLine("        {");
+                sourceBuilder.AppendLine("            #if NETCOREAPP");
+                sourceBuilder.AppendLine($"            var protocol = new {className}();");
+                sourceBuilder.AppendLine("            #else");
+                sourceBuilder.AppendLine($"            var protocol = HoweFramework.ReferencePool.Acquire<{className}>();");
+                sourceBuilder.AppendLine("            #endif");
+                sourceBuilder.AppendLine("            protocol.ErrorCode = errorCode;");
+                sourceBuilder.AppendLine("            return protocol;");
+                sourceBuilder.AppendLine("        }");
+            }
+
+            #endregion
+
+            #region [Clear方法]
 
             sourceBuilder.AppendLine("        public override void Clear()");
             sourceBuilder.AppendLine("        {");
@@ -155,6 +213,8 @@ namespace ProtocolGenerator
             }
 
             sourceBuilder.AppendLine("        }");
+
+            #endregion
 
             sourceBuilder.AppendLine("    }");
             sourceBuilder.AppendLine("}");

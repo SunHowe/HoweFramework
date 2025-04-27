@@ -5,6 +5,7 @@ using FairyGUI;
 using GameMain.Game;
 using HoweFramework;
 using MemoryPack;
+using Protocol;
 
 namespace GameMain.UI.Login
 {
@@ -101,23 +102,24 @@ namespace GameMain.UI.Login
             // Log.Info($"Template1: {result1}");
             // Log.Info($"Template2: {result2}");
 
-            var demoObject = new DemoObject() { Id = 1001, Name = "Test" };
-            var bytes = MemoryPackSerializer.Serialize(demoObject);
-            Log.Info($"Serialize: {bytes.Length}");
+            // var demoObject = new DemoObject() { Id = 1001, Name = "Test" };
+            // var bytes = MemoryPackSerializer.Serialize(demoObject);
+            // Log.Info($"Serialize: {bytes.Length}");
 
-            var demoObject2 = MemoryPackSerializer.Deserialize<DemoObject>(bytes);
-            Log.Info($"Deserialize: {demoObject2.Id} {demoObject2.Name}");
+            // var demoObject2 = MemoryPackSerializer.Deserialize<DemoObject>(bytes);
+            // Log.Info($"Deserialize: {demoObject2.Id} {demoObject2.Name}");
+            LoginRequest.Create("accountId", "password").SendPacketAsync();
         }
 
-        [MemoryPackable]
-        public sealed partial class DemoObject
-        {
-            [MemoryPackOrder(0)]
-            public int Id;
+        // [MemoryPackable]
+        // public sealed partial class DemoObject
+        // {
+        //     [MemoryPackOrder(0)]
+        //     public int Id;
 
-            [MemoryPackOrder(1)]
-            public string Name;
-        }
+        //     [MemoryPackOrder(1)]
+        //     public string Name;
+        // }
         
         // [Serializable]
         // public sealed class DemoDto
