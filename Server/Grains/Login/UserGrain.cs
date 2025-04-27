@@ -9,9 +9,9 @@ namespace Grains;
 /// </summary>
 public class UserGrain : Grain, IUserGrain
 {
-    public Task OnLogin(Guid sessionId)
+    public async Task OnLogin(Guid sessionId)
     {
-        return Task.CompletedTask;
+        // 触发各模块的登录成功事件.
     }
 
     public async Task OnReceive(ServerPackage package)
@@ -22,7 +22,7 @@ public class UserGrain : Grain, IUserGrain
         {
             // 无协议处理器.
             Console.WriteLine($"No handler for protocol: {package.ProtocolId} rpcId={package.RpcId}");
-            await SendResponse(sessionGrain, package.RpcId, HoweFramework.ErrorCode.NetworkNotSupportPacket);
+            await sessionGrain.SendResponse(package.RpcId, HoweFramework.ErrorCode.NetworkNotSupportPacket);
             return;
         }
 
@@ -31,32 +31,11 @@ public class UserGrain : Grain, IUserGrain
         {
             // 协议解析失败.
             Console.WriteLine($"Failed to unpack protocol: {package.ProtocolId} rpcId={package.RpcId}");
-            await SendResponse(sessionGrain, package.RpcId, HoweFramework.ErrorCode.NetworkDeserializePacketError);
+            await sessionGrain.SendResponse(package.RpcId, HoweFramework.ErrorCode.NetworkDeserializePacketError);
             return;
         }
 
         var response = await handler.Handle(sessionGrain, protocol);
-        await SendResponse(sessionGrain, package.RpcId, response);
-    }
-
-    private static async Task SendResponse(IUserSessionGrain sessionGrain, int rpcId, int errorCode)
-    {
-        var serverPackage = new ServerPackage
-        {
-            RpcId = rpcId,
-            ErrorCode = errorCode,
-            ProtocolId = (ushort)ProtocolId.CommonResp,
-        };
-        
-        await sessionGrain.Send(serverPackage);
-    }
-
-    private static async Task SendResponse(IUserSessionGrain sessionGrain, int rpcId, IProtocolResponse response)
-    {
-        var serverPackage = ServerPackageHelper.Pack(response);
-        serverPackage.RpcId = rpcId;
-        serverPackage.ErrorCode = response.ErrorCode;
-        
-        await sessionGrain.Send(serverPackage);
+        await sessionGrain.SendResponse(package.RpcId, response);
     }
 }

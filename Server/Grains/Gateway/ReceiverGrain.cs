@@ -38,7 +38,7 @@ public class ReceiverGrain : Grain, IReceiverGrain
             if (m_IsLoginSucess)
             {
                 // 重复登录.
-                await SendResponse(sessionGrain, package.RpcId, HoweFramework.ErrorCode.LoginDuplicate);
+                await sessionGrain.SendResponse(package.RpcId, HoweFramework.ErrorCode.LoginDuplicate);
                 return;
             }
 
@@ -54,21 +54,21 @@ public class ReceiverGrain : Grain, IReceiverGrain
 
                 // 登录成功, 激活UserGrain.
                 await GrainFactory.GetGrain<IUserGrain>(userId).OnLogin(this.GetPrimaryKey());
-                await SendResponse(sessionGrain, package.RpcId, LoginResponse.Create(userId));
+                await sessionGrain.SendResponse(package.RpcId, LoginResponse.Create(userId));
             }
             catch (GameException e)
             {
                 m_IsLoginSucess = false;
                 m_UserId = Guid.Empty;
                 Console.WriteLine(e);
-                await SendResponse(sessionGrain, package.RpcId, e.ErrorCode);
+                await sessionGrain.SendResponse(package.RpcId, e.ErrorCode);
             }
             catch (Exception e)
             {
                 m_IsLoginSucess = false;
                 m_UserId = Guid.Empty;
                 Console.WriteLine(e);
-                await SendResponse(sessionGrain, package.RpcId, HoweFramework.ErrorCode.Exception);
+                await sessionGrain.SendResponse(package.RpcId, HoweFramework.ErrorCode.Exception);
             }
 
             return;
@@ -79,7 +79,7 @@ public class ReceiverGrain : Grain, IReceiverGrain
         {
             // 未登录成功不允许请求其他包.
             var sessionGrain = GrainFactory.GetGrain<ISessionGrain>(this.GetPrimaryKey());
-            await SendResponse(sessionGrain, package.RpcId, HoweFramework.ErrorCode.NoLogin);
+            await sessionGrain.SendResponse(package.RpcId, HoweFramework.ErrorCode.NoLogin);
             return;
         }
 
@@ -88,24 +88,5 @@ public class ReceiverGrain : Grain, IReceiverGrain
         await userGrain.OnReceive(package);
     }
 
-    private static async Task SendResponse(ISessionGrain sessionGrain, int rpcId, int errorCode)
-    {
-        var serverPackage = new ServerPackage
-        {
-            RpcId = rpcId,
-            ErrorCode = errorCode,
-            ProtocolId = (ushort)ProtocolId.CommonResp,
-        };
-
-        await sessionGrain.Send(serverPackage);
-    }
-
-    private static async Task SendResponse(ISessionGrain sessionGrain, int rpcId, IProtocolResponse response)
-    {
-        var serverPackage = ServerPackageHelper.Pack(response);
-        serverPackage.RpcId = rpcId;
-        serverPackage.ErrorCode = response.ErrorCode;
-        
-        await sessionGrain.Send(serverPackage);
-    }
+    
 }
