@@ -11,7 +11,7 @@ public abstract class ProtocolHandler<T, TResponse> : IProtocolHandler
     where T : IProtocol
     where TResponse : IProtocolResponse, new()
 {
-    public async Task<IProtocolResponse> Handle(IUserSessionGrain sessionGrain, IProtocol request)
+    public async Task<IProtocolResponse> Handle(IPlayerSessionGrain sessionGrain, IProtocol request)
     {
         var response = new TResponse();
 
@@ -33,7 +33,7 @@ public abstract class ProtocolHandler<T, TResponse> : IProtocolHandler
         return response;
     }
 
-    protected abstract Task OnHandle(IUserSessionGrain sessionGrain, T request, TResponse response);
+    protected abstract Task OnHandle(IPlayerSessionGrain sessionGrain, T request, TResponse response);
 }
 
 /// <summary>

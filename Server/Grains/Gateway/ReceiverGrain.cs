@@ -52,8 +52,9 @@ public class ReceiverGrain : Grain, IReceiverGrain
                 m_IsLoginSucess = true;
                 m_UserId = userId;
 
-                // 登录成功, 激活UserGrain.
-                await GrainFactory.GetGrain<IUserGrain>(userId).OnLogin(this.GetPrimaryKey());
+                // 登录成功, 激活IPlayerSessionGrain和IPlayerGrain.
+                await GrainFactory.GetGrain<IPlayerSessionGrain>(userId).OnLogin(this.GetPrimaryKey());
+                await GrainFactory.GetGrain<IPlayerGrain>(userId).OnLogin();
                 await sessionGrain.SendResponse(package.RpcId, LoginResponse.Create(userId));
             }
             catch (GameException e)
@@ -84,7 +85,7 @@ public class ReceiverGrain : Grain, IReceiverGrain
         }
 
         // 转发给UserGrain进行处理.
-        var userGrain = GrainFactory.GetGrain<IUserGrain>(m_UserId);
+        var userGrain = GrainFactory.GetGrain<IPlayerGrain>(m_UserId);
         await userGrain.OnReceive(package);
     }
 
