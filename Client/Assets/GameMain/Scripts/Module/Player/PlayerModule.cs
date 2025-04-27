@@ -29,18 +29,6 @@ namespace GameMain
         /// </summary>
         public DateTime CreateTime { get; private set; }
 
-        /// <summary>
-        /// 更新玩家信息。
-        /// </summary>
-        /// <param name="playerPush">玩家信息推送消息包。</param>
-        public void UpdatePlayerInfo(PlayerPush playerPush)
-        {
-            PlayerId = playerPush.PlayerId;
-            PlayerName = playerPush.PlayerName;
-            LoginTime = playerPush.LoginTime;
-            CreateTime = playerPush.CreateTime;
-        }
-
         protected override void OnDestroy()
         {
         }
