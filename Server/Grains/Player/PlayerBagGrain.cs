@@ -1,4 +1,6 @@
-﻿using IGrains;
+﻿using Grains.Extensions;
+using GrainStates.Player;
+using IGrains;
 using Protocol;
 
 namespace Grains.Player;
@@ -8,17 +10,38 @@ namespace Grains.Player;
 /// </summary>
 public class PlayerBagGrain : PlayerFeatureGrainBase, IPlayerBagGrain
 {
+    private readonly IPersistentState<BagState> m_BagState;
+
+    public PlayerBagGrain(
+        [PersistentState(GrainsConst.MongoStorageProviderName, BagState.StorageName)]
+        IPersistentState<BagState> bagState)
+    {
+        m_BagState = bagState;
+    }
+
+    public override async Task OnActivateAsync(CancellationToken cancellationToken)
+    {
+        await base.OnActivateAsync(cancellationToken);
+        await m_BagState.ReadStateAsync(cancellationToken);
+    }
+
     /// <summary>
     /// 登录成功。
     /// </summary>
     public override async Task OnLoginSuccess()
     {
-        var bagPush = BagPush.Create(new Dictionary<int, long>()
-        {
-            { 1, 1000 },
-            { 2, 1000 },
-        });
+        var bagPush = BagPush.Create(m_BagState.State.ItemDict.Clone());
 
         await Send(bagPush);
+
+        // 测试，启动一个定时器，每5s发送一次数据给客户端。
+        this.RegisterGrainTimer(OnTimerInvoke, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+    }
+
+    private Task OnTimerInvoke()
+    {
+        var bagPush = BagPush.Create(m_BagState.State.ItemDict.Clone());
+
+        return Send(bagPush);
     }
 }

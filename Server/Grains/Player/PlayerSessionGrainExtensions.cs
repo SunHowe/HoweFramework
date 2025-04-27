@@ -4,7 +4,7 @@ using ServerProtocol;
 
 namespace Grains;
 
-public static class UserSessionGrainExtensions
+public static class PlayerSessionGrainExtensions
 {
     /// <summary>
     /// 发送协议包给客户端.
