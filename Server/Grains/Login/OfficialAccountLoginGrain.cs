@@ -24,7 +24,7 @@ public class OfficialAccountLoginGrain : Grain<OfficialAccountState>, IOfficialA
         {
             // new create.
             var userId = Guid.NewGuid();
-            State.UserId = Guid.NewGuid();
+            State.UserId = userId;
             State.PasswordHash = passwordHash;
             await WriteStateAsync();
 
