@@ -44,7 +44,7 @@ namespace HoweFramework
             NetworkChannel = null;
         }
 
-        private void OnReceivePacket(object sender, GameEventArgs e)
+        private bool OnReceivePacket(object sender, GameEventArgs e)
         {
             var packet = (Packet)e;
 
@@ -54,7 +54,10 @@ namespace HoweFramework
 
                 var requestId = remoteRequest.RequestId;
                 RequestDispatcher.SetResponse(requestId, response);
+                return true;
             }
+
+            return false;
         }
     }
 }

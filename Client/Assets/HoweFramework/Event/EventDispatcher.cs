@@ -18,7 +18,7 @@ namespace HoweFramework
         /// 事件处理器字典。
         /// </summary>
         private readonly MultiDictionary<int, GameEventHandler> m_EventHandlerDict = new();
-        
+
         /// <summary>
         /// 缓存的事件处理器节点。
         /// </summary>
@@ -34,14 +34,14 @@ namespace HoweFramework
         /// </summary>
         private readonly ConcurrentQueue<EventItem> m_EventItemQueue = new();
 
-        private GameEventHandler m_DefaultHandler;
+        private GameEventHandlerFunc m_DefaultHandler;
         private EventDispatcherMode m_Mode;
 
         /// <summary>
         /// 设置默认事件处理函数。
         /// </summary>
         /// <param name="handler">要设置的默认事件处理函数。</param>
-        public void SetDefaultHandler(GameEventHandler handler)
+        public void SetDefaultHandler(GameEventHandlerFunc handler)
         {
             m_DefaultHandler = handler;
         }
@@ -193,7 +193,7 @@ namespace HoweFramework
 
         private void HandleEvent(object sender, GameEventArgs e)
         {
-            bool noHandlerException = false;
+            bool noHandlerException = true;
             if (m_EventHandlerDict.TryGetValue(e.Id, out var range))
             {
                 LinkedListNode<GameEventHandler> current = range.First;
@@ -223,11 +223,13 @@ namespace HoweFramework
             }
             else if (m_DefaultHandler != null)
             {
-                m_DefaultHandler(sender, e);
+                noHandlerException = !m_DefaultHandler(sender, e);
             }
-            else if ((m_Mode & EventDispatcherMode.AllowNoHandler) != EventDispatcherMode.AllowNoHandler)
+
+            // 无人处理事件，检测是否需要抛异常。
+            if (noHandlerException && (m_Mode & EventDispatcherMode.AllowNoHandler) == EventDispatcherMode.AllowNoHandler)
             {
-                noHandlerException = true;
+                noHandlerException = false;
             }
 
             if (e.IsReleaseAfterFire)

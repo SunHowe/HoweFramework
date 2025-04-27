@@ -317,7 +317,7 @@ namespace HoweFramework
             /// 设置默认事件处理函数。
             /// </summary>
             /// <param name="handler">要设置的默认事件处理函数。</param>
-            public void SetDefaultHandler(GameEventHandler handler)
+            public void SetDefaultHandler(GameEventHandlerFunc handler)
             {
                 m_ReceivePacketPool.SetDefaultHandler(handler);
             }

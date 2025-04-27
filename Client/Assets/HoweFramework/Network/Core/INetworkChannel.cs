@@ -138,7 +138,7 @@ namespace HoweFramework
         /// 设置默认事件处理函数。
         /// </summary>
         /// <param name="handler">要设置的默认事件处理函数。</param>
-        void SetDefaultHandler(GameEventHandler handler);
+        void SetDefaultHandler(GameEventHandlerFunc handler);
 
         /// <summary>
         /// 连接到远程主机。
