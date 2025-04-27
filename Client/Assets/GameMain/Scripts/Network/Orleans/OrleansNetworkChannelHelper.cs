@@ -59,7 +59,7 @@ namespace GameMain
             else
             {
                 // 读取包体数据到缓冲区。
-                if (source.Read(m_PacketBodyBuffer, 0, header.PacketLength) != PacketHeaderLength)
+                if (source.Read(m_PacketBodyBuffer, 0, header.PacketLength) != header.PacketLength)
                 {
                     customErrorData = new ErrorCodeException(ErrorCode.NetworkDeserializePacketHeaderError, "Packet header length is invalid.");
                     return null;
