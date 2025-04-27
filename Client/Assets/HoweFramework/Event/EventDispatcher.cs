@@ -226,6 +226,7 @@ namespace HoweFramework
                     {
                         Log.Error($"Handle event '{e.Id}' error: {ex.Message}\n{ex.StackTrace}");
                     }
+                }
             }
             else if (m_DefaultHandler != null)
             {
