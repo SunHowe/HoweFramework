@@ -225,7 +225,7 @@ namespace HoweFramework
             {
                 m_DefaultHandler(sender, e);
             }
-            else if ((m_Mode & EventDispatcherMode.AllowNoHandler) == 0)
+            else if ((m_Mode & EventDispatcherMode.AllowNoHandler) != EventDispatcherMode.AllowNoHandler)
             {
                 noHandlerException = true;
             }
