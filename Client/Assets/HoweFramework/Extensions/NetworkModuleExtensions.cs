@@ -1,4 +1,7 @@
+using System;
+using System.Linq;
 using System.Net;
+using System.Reflection;
 using Cysharp.Threading.Tasks;
 
 namespace HoweFramework
@@ -79,6 +82,23 @@ namespace HoweFramework
         public static UniTask<IResponse> ConnectAsync(this INetworkChannel networkChannel, string address, int port)
         {
             return ConnectAsync(networkChannel, IPAddress.Parse(address), port);
+        }
+
+        /// <summary>
+        /// 映射注册网络消息包处理器。
+        /// </summary>
+        /// <param name="networkChannel">网络频道。</param>
+        /// <param name="assembly">程序集。</param>
+        public static void MappingPacketHandler(this INetworkChannel networkChannel, Assembly assembly)
+        {
+            var baseType = typeof(IPacketHandler);
+            var types = assembly.GetTypes().Where(type => baseType.IsAssignableFrom(type) && !type.IsAbstract && type.IsClass);
+            
+            foreach (var type in types)
+            {
+                var handler = (IPacketHandler)Activator.CreateInstance(type);
+                networkChannel.RegisterHandler(handler);
+            }
         }
     }
 }
