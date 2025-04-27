@@ -31,6 +31,24 @@ namespace HoweFramework
     }
 
     /// <summary>
+    /// 文本模板格式化器。
+    /// </summary>
+    public interface ITextTemplateFormatter : IDisposable
+    {
+        /// <summary>
+        /// 设置文本模板变量。
+        /// </summary>
+        ITextTemplateFormatter SetVar(string key, string value);
+
+        /// <summary>
+        /// 获取格式化后的文本。
+        /// </summary>
+        /// <param name="autoDispose">是否自动释放。</param>
+        /// <returns>格式化后的文本。</returns>
+        string GetText(bool autoDispose = true);
+    }
+
+    /// <summary>
     /// 文本工具类。
     /// </summary>
     public static class TextUtility
@@ -101,6 +119,60 @@ namespace HoweFramework
             }
 
             s_TextTemplateHelper.RemoveGlobalTemplateValue(key);
+        }
+
+        /// <summary>
+        /// 设置文本模板变量。
+        /// </summary>
+        /// <param name="text">文本。</param>
+        /// <param name="key">键。</param>
+        /// <param name="value">值。</param>
+        /// <returns>文本模板格式化器。</returns>
+        public static ITextTemplateFormatter SetVar(this string text, string key, string value)
+        {
+            return TextTemplateFormatter.Create(text).SetVar(key, value);
+        }
+    }
+
+    internal sealed class TextTemplateFormatter : ITextTemplateFormatter, IReference
+    {
+        private string m_Text;
+        private readonly Dictionary<string, string> m_Dictionary = new ();
+
+        public void Clear()
+        {
+            m_Text = null;
+            m_Dictionary.Clear();
+        }
+
+        public void Dispose()
+        {
+            ReferencePool.Release(this);
+        }
+
+        public string GetText(bool autoDispose = true)
+        {
+            var text = TextUtility.ParseTemplate(m_Text, m_Dictionary);
+
+            if (autoDispose)
+            {
+                Dispose();
+            }
+
+            return text;
+        }
+
+        public ITextTemplateFormatter SetVar(string key, string value)
+        {
+            m_Dictionary[key] = value;
+            return this;
+        }
+
+        public static TextTemplateFormatter Create(string text)
+        {
+            var formatter = ReferencePool.Acquire<TextTemplateFormatter>();
+            formatter.m_Text = text;
+            return formatter;
         }
     }
 }
