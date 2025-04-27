@@ -50,11 +50,10 @@ namespace HoweFramework
 
             if (packet is IRemoteResponse remoteResponse)
             {
-                var requestId = remoteResponse.RequestId;
-                var response = remoteResponse.Response;
-                remoteResponse.PickResponse();
+                packet.SetIsReleaseAfterFire(false);
 
-                RequestDispatcher.SetResponse(requestId, response);
+                var requestId = remoteResponse.RequestId;
+                RequestDispatcher.SetResponse(requestId, remoteResponse);
             }
         }
     }

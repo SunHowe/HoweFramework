@@ -1,4 +1,6 @@
-using MemoryPack;
+#if !NETCOREAPP
+using HoweFramework;
+#endif
 
 namespace Protocol
 {
@@ -6,34 +8,75 @@ namespace Protocol
     /// 协议接口。
     /// </summary>
     public interface IProtocol
-#if !NETCOREAPP
-     : HoweFramework.IReference
-#endif
     {
         /// <summary>
         /// 协议ID.
         /// </summary>
-        ushort Id { get; }
+        int Id { get; }
+    }
+
+    /// <summary>
+    /// 请求协议接口。
+    /// </summary>
+    public interface IProtocolRequest
+#if !NETCOREAPP
+        : IProtocol, IRemoteRequest
+#else
+        : IProtocol
+#endif
+    {
+#if NETCOREAPP
+        /// <summary>
+        /// 请求ID.
+        /// </summary>
+        int RequestId { get; set; }
+#endif
     }
 
     /// <summary>
     /// 响应协议接口。
     /// </summary>
-    public interface IProtocolResponse : IProtocol
+    public interface IProtocolResponse
+#if !NETCOREAPP
+        : IProtocol, IRemoteResponse
+#else
+        : IProtocol
+#endif
     {
+#if NETCOREAPP
+        /// <summary>
+        /// 请求ID.
+        /// </summary>
+        int RequestId { get; set; }
+
         /// <summary>
         /// 错误码.
         /// </summary>
-        [MemoryPackIgnore]
         int ErrorCode { get; set; }
+#endif
     }
 
     /// <summary>
     /// 协议基类。
     /// </summary>
-    public abstract class ProtocolBase : IProtocol
+    public abstract class ProtocolBase
+#if !NETCOREAPP
+        : Packet, IProtocol
+#else
+        : IProtocol
+#endif
     {
-        public abstract ushort Id { get; }
-        public abstract void Clear();
+#if NETCOREAPP
+        public abstract int Id { get; }
+        
+        public virtual void Clear()
+        {
+        }
+#else
+        public void Dispose()
+        {
+            ReferencePool.Release(this);
+        }
+#endif
     }
 }

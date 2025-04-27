@@ -36,7 +36,7 @@ namespace GameMain
         public override Packet DeserializePacket(IPacketHeader packetHeader, Stream source, out object customErrorData)
         {
             var header = (OrleansPacketHeader)packetHeader;
-
+            
             var messageType = ProtocolBinder.GetProtocolType(header.ProtocolId);
             if (messageType == null)
             {
@@ -64,7 +64,7 @@ namespace GameMain
                     customErrorData = new ErrorCodeException(ErrorCode.NetworkDeserializePacketHeaderError, "Packet header length is invalid.");
                     return null;
                 }
-                
+
                 protocol = ReferencePool.Acquire(messageType) as ProtocolBase;
                 if (protocol == null)
                 {
@@ -91,13 +91,9 @@ namespace GameMain
             if (protocol is IProtocolResponse response)
             {
                 response.ErrorCode = header.ErrorCode;
+            }
 
-                return OrleansResponsePacket.Create(header.RpcId, protocol);
-            }
-            else
-            {
-                return OrleansNotifyPacket.Create(protocol);
-            }
+            return protocol;
         }
 
         /// <summary>
@@ -146,27 +142,27 @@ namespace GameMain
         /// <returns>是否序列化成功。</returns>
         public override bool Serialize<T>(T packet, Stream destination)
         {
-            if (packet is not OrleansRequestPacket orleansPacket)
+            if (packet is not IRemoteRequest remoteRequest)
             {
-                throw new ErrorCodeException(ErrorCode.NetworkSerializeError, "Only accept OrleansRequestPacket.");
+                throw new ErrorCodeException(ErrorCode.NetworkSerializeError, "Only accept IRemoteRequest Packet.");
             }
 
             // 写入协议id(ushort)。
-            destination.Write(BitConverter.GetBytes(orleansPacket.Id), 0, 2);
+            destination.Write(BitConverter.GetBytes(packet.Id), 0, 2);
 
             // 偏移包体长度(ushort)。
             var seekPosition = destination.Position;
             destination.Seek(2, SeekOrigin.Current);
 
             // 写入请求id(int)。
-            destination.Write(BitConverter.GetBytes(orleansPacket.RequestId), 0, 4);
+            destination.Write(BitConverter.GetBytes(remoteRequest.RequestId), 0, 4);
 
             // 写入魔法数字(int)。
-            var magicNumber = 0x12345678;
+            var magicNumber = 0x12345678 ^ packet.Id ^ remoteRequest.RequestId;
             destination.Write(BitConverter.GetBytes(magicNumber), 0, 4);
 
             // 序列化包体内容。
-            var bytes = MemoryPackSerializer.Serialize(orleansPacket.Protocol.GetType(), orleansPacket.Protocol);
+            var bytes = MemoryPackSerializer.Serialize(packet.GetType(), packet);
             destination.Write(bytes, 0, bytes.Length);
             var endPosition = destination.Position;
 

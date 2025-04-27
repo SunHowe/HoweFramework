@@ -108,25 +108,43 @@ namespace ProtocolGenerator
             sourceBuilder.AppendLine($"    public partial class {className}");
             sourceBuilder.AppendLine("    {");
             sourceBuilder.AppendLine($"        public const ushort ProtocolId = {protocolId};");
+            sourceBuilder.AppendLine($"        public override int Id => {protocolId};");
 
             // 检查是否实现了IProtocolResponse接口
             var IProtocolResponseInterface = classSymbol.ContainingAssembly.GetTypeByMetadataName("Protocol.IProtocolResponse");
+            var IProtocolRequestInterface = classSymbol.ContainingAssembly.GetTypeByMetadataName("Protocol.IProtocolRequest");
             var isResponseType = IProtocolResponseInterface != null &&
                                  classSymbol.AllInterfaces.Any(i =>
                                      i.Equals(IProtocolResponseInterface, SymbolEqualityComparer.Default));
+            var isRequestType = IProtocolRequestInterface != null &&
+                                classSymbol.AllInterfaces.Any(i =>
+                                    i.Equals(IProtocolRequestInterface, SymbolEqualityComparer.Default));
             if (isResponseType)
             {
                 sourceBuilder.AppendLine("        [MemoryPack.MemoryPackIgnore]");
                 sourceBuilder.AppendLine("        public int ErrorCode { get; set; }");
+                
+                sourceBuilder.AppendLine("        [MemoryPack.MemoryPackIgnore]");
+                sourceBuilder.AppendLine("        public int RequestId { get; set; }");
+            }
+            else if (isRequestType)
+            {
+                sourceBuilder.AppendLine("        [MemoryPack.MemoryPackIgnore]");
+                sourceBuilder.AppendLine("        public int RequestId { get; set; }");
             }
 
-            sourceBuilder.AppendLine($"        public override ushort Id => {protocolId};");
             sourceBuilder.AppendLine("        public override void Clear()");
             sourceBuilder.AppendLine("        {");
+            sourceBuilder.AppendLine("            base.Clear();");
 
             if (isResponseType)
             {
+                sourceBuilder.AppendLine("            RequestId = default;");
                 sourceBuilder.AppendLine("            ErrorCode = default;");
+            }
+            else if (isRequestType)
+            {
+                sourceBuilder.AppendLine("            RequestId = default;");
             }
 
             // 遍历所有属性，并将其设置为default。

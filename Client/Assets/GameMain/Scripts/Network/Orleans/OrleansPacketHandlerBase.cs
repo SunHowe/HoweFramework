@@ -21,19 +21,7 @@ namespace GameMain
         /// <param name="packet">网络消息包。</param>
         public void Handle(object sender, GameEventArgs packet)
         {
-            OrleansPacket orleansPacket = packet as OrleansPacket;
-            if (orleansPacket == null)
-            {
-                return;
-            }
-
-            T protocol = orleansPacket.Protocol as T;
-            if (protocol == null)
-            {
-                return;
-            }
-
-            Handle(sender, protocol);
+            Handle(sender, (T)packet);
         }
 
         /// <summary>
