@@ -35,6 +35,8 @@ namespace HoweFramework
         /// </summary>
         public const int Unknown = 5;
 
+        #region [UI]
+
         /// <summary>
         /// 界面未打开。
         /// </summary>
@@ -100,6 +102,10 @@ namespace HoweFramework
         /// </summary>
         public const int UIFormClosed = 112;
 
+        #endregion
+
+        #region [Resource]
+
         /// <summary>
         /// 资源核心加载器未设置。
         /// </summary>
@@ -145,6 +151,10 @@ namespace HoweFramework
         /// </summary>
         public const int ResSceneUnloading = 209;
 
+        #endregion
+
+        #region [Procedure]
+
         /// <summary>
         /// 流程状态机已经启动。
         /// </summary>
@@ -159,6 +169,10 @@ namespace HoweFramework
         /// 流程状态机未运行。
         /// </summary>
         public const int ProcedureNotRunning = 303;
+
+        #endregion
+
+        #region [Network]   
 
         /// <summary>
         /// 地址族错误。
@@ -220,8 +234,10 @@ namespace HoweFramework
         /// </summary>
         public const int NetworkPacketRequestNotRemoteRequest = 412;
 
+        #endregion
+
         #region [WebRequest]
-        
+
         public const int WebRequestBadRequest = 501;
         public const int WebRequestUnauthorized = 502;
         public const int WebRequestPaymentRequired = 503;
@@ -263,6 +279,8 @@ namespace HoweFramework
 
         #endregion
     
+        #region [Sound]
+
         /// <summary>
         /// 声音组已存在。
         /// </summary>
@@ -278,7 +296,10 @@ namespace HoweFramework
         /// </summary>
         public const int SoundNotExist = 603;
 
-        
+        #endregion
+
+        #region [Request]
+
         /// <summary>
         /// 响应包类型不匹配。
         /// </summary>
@@ -293,5 +314,7 @@ namespace HoweFramework
         /// 请求调度器正在销毁。
         /// </summary>
         public const int RequestDispatcherDisposing = 703;
+
+        #endregion
     }
 }
