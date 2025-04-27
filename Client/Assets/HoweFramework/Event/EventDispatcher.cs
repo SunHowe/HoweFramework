@@ -196,6 +196,8 @@ namespace HoweFramework
             bool noHandlerException = true;
             if (m_EventHandlerDict.TryGetValue(e.Id, out var range))
             {
+                noHandlerException = false;
+                
                 LinkedListNode<GameEventHandler> current = range.First;
                 while (current != null && current != range.Terminal)
                 {
