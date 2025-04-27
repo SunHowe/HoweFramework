@@ -21,6 +21,11 @@ namespace GameMain
         LoadLocalization,
 
         /// <summary>
+        /// 加载模块流程。
+        /// </summary>
+        LoadModule,
+
+        /// <summary>
         /// 登录流程。
         /// </summary>
         Login,

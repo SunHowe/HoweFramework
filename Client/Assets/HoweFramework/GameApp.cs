@@ -96,13 +96,21 @@ namespace HoweFramework
         /// <summary>
         /// 添加模块。
         /// </summary>
-        private T AddModule<T>() where T : ModuleBase<T>
+        public T AddModule<T>() where T : ModuleBase<T>
         {
             var module = Activator.CreateInstance<T>();
-            module.Init();
-
-            m_ModuleList.Add(module);
+            AddModule(module);
             return module;
+        }
+
+        /// <summary>
+        /// 添加模块。
+        /// </summary>
+        /// <param name="module">模块。</param>
+        public void AddModule(ModuleBase module)
+        {
+            module.Init();
+            m_ModuleList.Add(module);
         }
     }
 }
