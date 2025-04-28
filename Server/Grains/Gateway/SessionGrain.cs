@@ -17,7 +17,7 @@ public class SessionGrain : Grain, ISessionGrain
         base.OnActivateAsync(cancellationToken);
 
         var streamProvider = this.GetStreamProvider(StreamingProviderConst.ProviderName);
-        var streamId = StreamId.Create(StreamingProviderConst.StreamId, this.GetPrimaryKey());
+        var streamId = StreamId.Create(StreamingProviderConst.StreamGatewaySession, this.GetPrimaryKey());
         m_Stream = streamProvider.GetStream<ServerPackage>(streamId);
 
         return Task.CompletedTask;

@@ -57,7 +57,7 @@ public class GatewaySession : TcpSession
     private async Task ConnectGameServer()
     {
         var streamProvider = m_ClusterClient.GetStreamProvider(StreamingProviderConst.ProviderName);
-        var streamId = StreamId.Create(StreamingProviderConst.StreamId, Id);
+        var streamId = StreamId.Create(StreamingProviderConst.StreamGatewaySession, Id);
         var stream = streamProvider.GetStream<ServerPackage>(streamId);
         m_SubscriptionHandle = await stream.SubscribeAsync(OnReceiveGameServerPackage);
 
