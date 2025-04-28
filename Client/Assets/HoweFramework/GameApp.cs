@@ -78,8 +78,10 @@ namespace HoweFramework
         /// <param name="realElapseSeconds">真实间隔。</param>
         public void Update(float elapseSeconds, float realElapseSeconds)
         {
-            foreach (var module in m_ModuleList)
+            var count = m_ModuleList.Count;
+            for (int i = 0; i < count; i++)
             {
+                ModuleBase module = m_ModuleList[i];
                 module.Update(elapseSeconds, realElapseSeconds);
             }
         }
