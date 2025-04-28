@@ -41,6 +41,8 @@ namespace GameMain
             CreateTime = playerPush.CreateTime;
 
             EventModule.Instance.Dispatch(this, PlayerInfoUpdateEventArgs.Create());
+
+            Log.Info($"玩家信息更新: PlayerId={PlayerId} PlayerName={PlayerName} LoginTime={LoginTime} CreateTime={CreateTime}");
         }
 
         protected override void OnDestroy()

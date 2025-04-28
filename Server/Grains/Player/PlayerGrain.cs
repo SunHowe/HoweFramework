@@ -12,6 +12,7 @@ public class PlayerGrain : Grain, IPlayerGrain
     public async Task OnLogin()
     {
         // 触发各模块的登录成功事件.
+        await GrainFactory.GetGrain<IPlayerBasicGrain>(this.GetPrimaryKey()).OnLoginSuccess();
         await GrainFactory.GetGrain<IPlayerBagGrain>(this.GetPrimaryKey()).OnLoginSuccess();
     }
 

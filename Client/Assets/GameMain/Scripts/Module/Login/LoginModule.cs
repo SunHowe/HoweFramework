@@ -61,6 +61,7 @@ namespace GameMain
             }
 
             ChangeLoginState(LoginStateType.OnGame);
+            Log.Info("登录成功");
 
             return ErrorCode.Success;
         }

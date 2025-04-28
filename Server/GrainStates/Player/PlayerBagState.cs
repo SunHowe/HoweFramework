@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace GrainStates.Player;
 
+/// <summary>
+/// 玩家背包状态。
+/// </summary>
 [Serializable]
-public class BagState
+public class PlayerBagState
 {
-    public const string StorageName = "PlayerBag";
-    
     /// <summary>
     /// 背包道具数量。
     /// </summary>

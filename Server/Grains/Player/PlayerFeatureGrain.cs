@@ -6,7 +6,7 @@ namespace Grains.Player;
 /// <summary>
 /// 玩家功能模块抽象类。
 /// </summary>
-public abstract class PlayerFeatureGrainBase : Grain, IPlayerFeatureGrain
+public abstract class PlayerFeatureGrain<T> : Grain<T>, IPlayerFeatureGrain
 {
     public abstract Task OnLoginSuccess();
     
