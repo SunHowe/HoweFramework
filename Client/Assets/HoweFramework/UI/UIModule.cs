@@ -174,7 +174,10 @@ namespace HoweFramework
                 switch (request)
                 {
                     case OpenFormRequest openFormRequest:
-                        RealHandleOpenFormRequest(openFormRequest);
+                        if (!openFormRequest.CancellationToken.IsCancellationRequested)
+                        {
+                            RealHandleOpenFormRequest(openFormRequest);
+                        }
                         break;
                     case CloseFormRequest closeFormRequest:
                         RealHandleCloseFormRequest(closeFormRequest);
