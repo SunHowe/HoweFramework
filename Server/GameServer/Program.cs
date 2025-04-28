@@ -1,5 +1,7 @@
 ﻿using Grains;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Orleans.Configuration;
 using ServerProtocol;
 
@@ -12,6 +14,13 @@ internal static class Program
         var host = Host.CreateDefaultBuilder(args)
             .UseOrleans((context, siloBuilder) =>
             {
+                siloBuilder.ConfigureLogging(config =>
+                {
+                    config.SetMinimumLevel(LogLevel.Information);
+                    config.ClearProviders();
+                    config.AddConsole();
+                    config.AddDebug();
+                });
                 siloBuilder.UseLocalhostClustering(); // 本地开发集群
                 siloBuilder.Configure<ClusterOptions>(options =>
                 {
