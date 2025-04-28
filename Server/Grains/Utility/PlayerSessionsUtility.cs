@@ -27,6 +27,25 @@ public static class PlayerSessionsUtility
     /// <param name="grainFactory">Grain工厂。</param>
     /// <param name="playerList">玩家列表。</param>
     /// <param name="protocol">协议。</param>
+    public static async Task Broadcast(this IGrainFactory grainFactory, IEnumerable<Guid> playerList, IProtocol protocol)
+    {
+        var serverPackage = ServerPackageHelper.Pack(protocol);
+        var taskBuffer = new List<Task>();
+        foreach (var playerId in playerList)
+        {
+            var session = grainFactory.GetGrain<IPlayerSessionGrain>(playerId);
+            taskBuffer.Add(session.Send(serverPackage));
+        }
+        
+        await Task.WhenAll(taskBuffer);
+    }
+
+    /// <summary>
+    /// 广播协议到客户端。
+    /// </summary>
+    /// <param name="grainFactory">Grain工厂。</param>
+    /// <param name="playerList">玩家列表。</param>
+    /// <param name="protocol">协议。</param>
     public static async Task Broadcast(this IGrainFactory grainFactory, List<Guid> playerList, IProtocol protocol)
     {
         var serverPackage = ServerPackageHelper.Pack(protocol);
