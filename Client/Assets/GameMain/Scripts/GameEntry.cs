@@ -22,6 +22,7 @@ namespace GameMain
                 new ProcedureLoadLocalization(),
                 new ProcedureLoadModule(),
                 new ProcedureLogin(),
+                new ProcedureLobby(),
             };
             
             ProcedureModule.Instance.Launch((int)ProcedureId.Splash, procedures);

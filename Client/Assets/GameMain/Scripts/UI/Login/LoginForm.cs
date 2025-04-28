@@ -108,26 +108,7 @@ namespace GameMain.UI.Login
 
             // var demoObject2 = MemoryPackSerializer.Deserialize<DemoObject>(bytes);
             // Log.Info($"Deserialize: {demoObject2.Id} {demoObject2.Name}");
-            LoginAsync("accountId", "password").Forget();
-        }
-
-        private async UniTask LoginAsync(string account, string password)
-        {
-            var code = await NetworkModule.Instance.ConnectAsync("127.0.0.1", 9000).GetErrorCode();
-            if (code != ErrorCode.Success)
-            {
-                Log.Error($"Connect failed: {code}");
-                return;
-            }
-            
-            using var response = await LoginRequest.Create(account, password).SendPacketAsync<LoginResponse>();
-            if (response.ErrorCode != ErrorCode.Success)
-            {
-                Log.Error($"Login failed: {response.ErrorCode}");
-                return;
-            }
-
-            Log.Info($"Login success: {response.UserId}");
+            LoginModule.Instance.Login("127.0.0.1", 9000, "account", "password").Forget();
         }
 
         // [MemoryPackable]

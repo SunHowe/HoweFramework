@@ -11,6 +11,7 @@ namespace GameMain
 
         public override void OnEnter()
         {
+            GameApp.Instance.AddModule<LoginModule>(); // 登录模块。
             GameApp.Instance.AddModule<PlayerModule>(); // 玩家模块。
         }
 

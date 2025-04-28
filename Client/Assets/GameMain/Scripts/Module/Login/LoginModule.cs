@@ -27,7 +27,7 @@ namespace GameMain
         /// <param name="port">端口。</param>
         /// <param name="account">账号。</param>
         /// <param name="password">密码。</param>
-        public async UniTask<int> Login(IPAddress ipAddress, int port, string account, string password)
+        public async UniTask<int> Login(string ipAddress, int port, string account, string password)
         {
             if (LoginState != LoginStateType.NoLogin)
             {
