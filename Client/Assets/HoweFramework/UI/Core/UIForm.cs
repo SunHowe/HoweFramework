@@ -186,6 +186,7 @@ namespace HoweFramework
             InnerSetRequestResponse(CommonResponse.Create(ErrorCode.UIFormNewOpenRequest));
             Request = request;
             request.OnSetResponse += OnRequestSetResponse;
+            request.CancellationToken.Register(OnRequestCancel, request);
 
             if (!IsLoaded)
             {
@@ -304,6 +305,17 @@ namespace HoweFramework
 
             // 关闭界面。
             CloseForm();
+        }
+
+        /// <summary>
+        /// 请求取消。
+        /// </summary>
+        private void OnRequestCancel(object param)
+        {
+            if (param is OpenFormRequest request && Request == request)
+            {
+                request.SetResponse(CommonResponse.Create(ErrorCode.RequestCanceled));
+            }
         }
 
         /// <summary>
