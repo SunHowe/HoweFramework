@@ -1,4 +1,4 @@
-﻿using Grains;
+﻿using DataTable;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -21,6 +21,8 @@ internal static class Program
                     config.AddConsole();
                     config.AddDebug();
                 });
+                siloBuilder.Services.AddSingleton<IDataTableService, DataTableService>();
+                
                 siloBuilder.UseLocalhostClustering(); // 本地开发集群
                 siloBuilder.Configure<ClusterOptions>(options =>
                 {
@@ -39,6 +41,8 @@ internal static class Program
                 siloBuilder.AddMemoryGrainStorage("PubSubStore");
             })
             .Build();
+
+        var dataTableService = host.Services.GetService<IDataTableService>();
 
         await host.RunAsync();
     }
