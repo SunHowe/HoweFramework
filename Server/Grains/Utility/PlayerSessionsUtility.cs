@@ -41,17 +41,23 @@ public static class PlayerSessionsUtility
     }
 
     /// <summary>
-    /// 广播协议到客户端。
+    /// 广播协议到客户端，排除指定玩家。
     /// </summary>
     /// <param name="grainFactory">Grain工厂。</param>
     /// <param name="playerList">玩家列表。</param>
+    /// <param name="exceptPlayerId">排除的玩家Id。</param>
     /// <param name="protocol">协议。</param>
-    public static async Task Broadcast(this IGrainFactory grainFactory, List<Guid> playerList, IProtocol protocol)
+    public static async Task BroadcastExcept(this IGrainFactory grainFactory, IEnumerable<Guid> playerList, Guid exceptPlayerId, IProtocol protocol)
     {
         var serverPackage = ServerPackageHelper.Pack(protocol);
-        var taskBuffer = new List<Task>(playerList.Count);
+        var taskBuffer = new List<Task>();
         foreach (var playerId in playerList)
         {
+            if (playerId == exceptPlayerId)
+            {
+                continue;
+            }
+
             var session = grainFactory.GetGrain<IPlayerSessionGrain>(playerId);
             taskBuffer.Add(session.Send(serverPackage));
         }
