@@ -10,6 +10,11 @@ namespace HoweFramework
     public interface IGameContext : IDisposable
     {
         /// <summary>
+        /// 事件调度器。
+        /// </summary>
+        IEventDispatcher EventDispatcher { get; }
+
+        /// <summary>
         /// 游戏运行状态.
         /// </summary>
         GameStatus GameStatus { get; }
