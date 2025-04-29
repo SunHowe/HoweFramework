@@ -218,7 +218,7 @@ namespace HoweFramework
                     }
 
                     uiForm = CreateUIForm(request.FormId);
-                    uiForm.Init(++m_UIFormSerialId, GetUIFormGroup(request.FormId), m_UIFormHelper, uiFormLogic);
+                    uiForm.Init(++m_UIFormSerialId, GetUIFormGroup(uiFormLogic.FormGroupId), m_UIFormHelper, uiFormLogic);
                 }
 
                 // 处理界面打开前逻辑。
