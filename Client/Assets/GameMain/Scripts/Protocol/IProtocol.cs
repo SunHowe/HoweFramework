@@ -1,4 +1,6 @@
 using MemoryPack;
+using System;
+
 #if !NETCOREAPP
 using HoweFramework;
 #endif
@@ -62,7 +64,7 @@ namespace Protocol
     /// </summary>
     public abstract class ProtocolBase
 #if !NETCOREAPP
-        : Packet, IProtocol
+        : Packet, IProtocol, IDisposable
 #else
         : IProtocol
 #endif
