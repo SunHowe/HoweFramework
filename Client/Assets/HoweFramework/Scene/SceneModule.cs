@@ -32,6 +32,12 @@ namespace HoweFramework
             try
             {
                 var scene = await ResModule.Instance.GetResCoreLoader().LoadScene(sceneAssetName);
+                
+                if (!m_SceneOrder.ContainsKey(sceneAssetName))
+                {
+                    m_SceneOrder.Add(sceneAssetName, 0);
+                }
+
                 RefreshSceneOrder();
             }
             catch
