@@ -130,10 +130,11 @@ namespace HoweFramework
         /// <summary>
         /// 添加管理器实例.
         /// </summary>
-        protected void AddManager<T>() where T : IGameManager, new()
+        protected T AddManager<T>() where T : IGameManager, new()
         {
             var manager = new T();
             AddManager(manager);
+            return manager;
         }
 
         protected abstract void OnAwake();
