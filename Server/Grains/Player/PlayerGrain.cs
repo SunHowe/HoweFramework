@@ -37,7 +37,7 @@ public class PlayerGrain : Grain, IPlayerGrain
             return;
         }
 
-        var response = await handler.Handle(sessionGrain, protocol);
+        var response = await handler.Handle(GrainFactory, this.GetPrimaryKey(), protocol);
         await sessionGrain.SendResponse(package.RpcId, response);
     }
 }

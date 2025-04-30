@@ -11,13 +11,13 @@ public abstract class ProtocolHandler<T, TResponse> : IProtocolHandler
     where T : IProtocol
     where TResponse : IProtocolResponse, new()
 {
-    public async Task<IProtocolResponse> Handle(IPlayerSessionGrain sessionGrain, IProtocol request)
+    public async Task<IProtocolResponse> Handle(IGrainFactory grainFactory, Guid guid, IProtocol request)
     {
         var response = new TResponse();
 
         try
         {
-            await OnHandle(sessionGrain, (T)request, response);
+            await OnHandle(grainFactory, guid, (T)request, response);
         }
         catch (GameException e)
         {
@@ -27,13 +27,13 @@ public abstract class ProtocolHandler<T, TResponse> : IProtocolHandler
         catch (Exception e)
         {
             Console.WriteLine(e);
-            response.ErrorCode = HoweFramework.ErrorCode.Exception;
+            response.ErrorCode = ErrorCode.Exception;
         }
 
         return response;
     }
 
-    protected abstract Task OnHandle(IPlayerSessionGrain sessionGrain, T request, TResponse response);
+    protected abstract Task OnHandle(IGrainFactory grainFactory, Guid guid, T request, TResponse response);
 }
 
 /// <summary>

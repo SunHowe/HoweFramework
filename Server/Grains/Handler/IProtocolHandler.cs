@@ -8,5 +8,5 @@ namespace Grains;
 /// </summary>
 public interface IProtocolHandler
 {
-    Task<IProtocolResponse> Handle(IPlayerSessionGrain sessionGrain, IProtocol request);
+    Task<IProtocolResponse> Handle(IGrainFactory grainFactory, Guid guid, IProtocol request);
 }
