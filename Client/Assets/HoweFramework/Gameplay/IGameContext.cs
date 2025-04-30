@@ -3,7 +3,7 @@ using System;
 namespace HoweFramework
 {
     public delegate void UpdateDelegate(float elapseSeconds);
-    
+
     /// <summary>
     /// 玩法上下文接口.
     /// </summary>
@@ -15,35 +15,45 @@ namespace HoweFramework
         IEventDispatcher EventDispatcher { get; }
 
         /// <summary>
+        /// 游戏对象池。
+        /// </summary>
+        IGameObjectPool GameObjectPool { get; }
+
+        /// <summary>
+        /// 资源加载器。
+        /// </summary>
+        IResLoader ResLoader { get; }
+
+        /// <summary>
         /// 游戏运行状态.
         /// </summary>
         GameStatus GameStatus { get; }
-        
+
         /// <summary>
         /// 当前游戏时间.
         /// </summary>
         float GameTime { get; }
-        
+
         /// <summary>
         /// 当前游戏逻辑帧时间.
         /// </summary>
         float GameFixedTime { get; }
-        
+
         /// <summary>
         /// 当前游戏逻辑帧序号.
         /// </summary>
         int GameFrame { get; }
-        
+
         /// <summary>
         /// 当前游戏逻辑帧帧率.
         /// </summary>
         int GameFrameRate { get; }
-        
+
         /// <summary>
         /// 游戏逻辑帧deltaTime.
         /// </summary>
         float GameFixedDeltaTime { get; }
-        
+
         /// <summary>
         /// 初始化回调.
         /// </summary>
@@ -68,7 +78,7 @@ namespace HoweFramework
         /// 结束游戏
         /// </summary>
         void StopGame();
-        
+
         /// <summary>
         /// 帧更新回调.
         /// </summary>
@@ -78,7 +88,7 @@ namespace HoweFramework
         /// 获取游戏管理器实例.
         /// </summary>
         IGameManager GetManager(int managerType);
-        
+
         /// <summary>
         /// 注册帧更新能力.
         /// </summary>
@@ -93,12 +103,12 @@ namespace HoweFramework
         /// 注册固定帧更新能力.
         /// </summary>
         void RegisterFixedUpdate(object target, UpdateDelegate updateDelegate);
-        
+
         /// <summary>
         /// 注销固定帧更新能力.
         /// </summary>
         void UnregisterFixedUpdate(object target, UpdateDelegate updateDelegate);
-        
+
         /// <summary>
         /// 注册帧后更新能力.
         /// </summary>

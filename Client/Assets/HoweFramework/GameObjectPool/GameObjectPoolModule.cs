@@ -29,7 +29,7 @@ namespace HoweFramework
         /// <param name="assetKey">资源Key。</param>
         /// <param name="token">取消令牌。</param>
         /// <returns>实例化后的游戏对象。</returns>
-        public UniTask<GameObject> InstantatieAsync(string assetKey, CancellationToken token = default) => m_GameObjectPool.InstantatieAsync(assetKey, token);
+        public UniTask<GameObject> InstantiateAsync(string assetKey, CancellationToken token = default) => m_GameObjectPool.InstantiateAsync(assetKey, token);
 
         /// <summary>
         /// 预加载游戏对象。
