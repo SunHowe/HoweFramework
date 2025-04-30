@@ -169,6 +169,11 @@ namespace HoweFramework
 
         public void Release(GameObject gameObject)
         {
+            if (gameObject == null)
+            {
+                return;
+            }
+            
             var component = gameObject.GetComponent<PooledGameObject>();
             if (component == null || string.IsNullOrEmpty(component.AssetKey))
             {
