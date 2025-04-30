@@ -1,4 +1,5 @@
 ﻿using DataTable;
+using Grains;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -39,6 +40,8 @@ internal static class Program
 
                 siloBuilder.AddMemoryStreams(StreamingProviderConst.ProviderName);
                 siloBuilder.AddMemoryGrainStorage("PubSubStore");
+
+                siloBuilder.AddStartupTask<GameServerStarupTask>();
             })
             .Build();
 
