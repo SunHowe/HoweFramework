@@ -169,7 +169,8 @@ namespace GameMain
                 m_FixedUpdateContext.Update(GameFixedDeltaTime, ContinueFunc);
                 m_LateFixedUpdateContext.Update(GameFixedDeltaTime, ContinueFunc);
             }
-
+                
+            EventDispatcher.Update();
             m_UpdateContext.Update(elapseSeconds, ContinueFunc);
             m_LateUpdateContext.Update(elapseSeconds, ContinueFunc);
             
