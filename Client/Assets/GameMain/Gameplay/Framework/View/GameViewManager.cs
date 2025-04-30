@@ -17,6 +17,8 @@ namespace GameMain
         {
             var id = ++m_IdIncrease;
             var viewObject = ViewObject.Create(this, id);
+            viewObject.ParentTransform = ViewRoot;
+            
             m_ViewObjectDict.Add(id, viewObject);
             return viewObject;
         }

@@ -179,6 +179,20 @@ namespace GameMain
         private bool m_IsOnLerpEulerAngles;
         private bool m_IsOnLerpScale;
 
+        /// <summary>
+        /// 强制同步。
+        /// </summary>
+        public void ForceSync()
+        {
+            m_ViewComponent.Position = m_TransformComponent.Position;
+            m_ViewComponent.EulerAngles = m_TransformComponent.EulerAngles;
+            m_ViewComponent.Scale = m_TransformComponent.Scale;
+
+            m_IsOnLerpPosition = false;
+            m_IsOnLerpEulerAngles = false;
+            m_IsOnLerpScale = false;
+        }
+
         protected override void OnAwake()
         {
             m_LerpDuration = Context.GameFixedDeltaTime;
