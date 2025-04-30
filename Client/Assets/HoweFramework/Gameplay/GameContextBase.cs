@@ -9,6 +9,8 @@ namespace HoweFramework
     public abstract partial class GameContextBase : IGameContext
     {
         public IEventDispatcher EventDispatcher { get; private set; }
+        public IGameObjectPool GameObjectPool { get; private set; }
+        public IResLoader ResLoader { get; private set; }
 
         public GameStatus GameStatus { get; private set; }
         public float GameTime { get; private set; }
@@ -24,6 +26,9 @@ namespace HoweFramework
         public void Awake()
         {
             EventDispatcher = EventModule.Instance.CreateEventDispatcher();
+            ResLoader = ResModule.Instance.CreateResLoader();
+            GameObjectPool = GameObjectPoolModule.Instance.CreateGameObjectPool(ResLoader);
+
             GameStatus = GameStatus.None;
             GameTime = 0f;
             GameFixedTime = 0f;
@@ -61,6 +66,8 @@ namespace HoweFramework
             m_LateFixedUpdateContext.Dispose();
             
             EventDispatcher.Dispose();
+            GameObjectPool.Dispose();
+            ResLoader.Dispose();
         }
 
         public void StartGame()
