@@ -96,7 +96,7 @@ namespace HoweFramework
             return gameObjects.Count;
         }
 
-        public async UniTask<GameObject> InstantatieAsync(string assetKey, CancellationToken token = default)
+        public async UniTask<GameObject> InstantiateAsync(string assetKey, CancellationToken token = default)
         {
             GameObject gameObject;
             if (m_GameObjectDict.TryGetValue(assetKey, out var gameObjects))
