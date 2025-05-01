@@ -206,12 +206,47 @@ namespace ProtocolGenerator
             }
 
             // 遍历所有属性，并将其设置为default。
-
             foreach (var property in classSymbol.GetMembers().OfType<IPropertySymbol>())
             {
                 sourceBuilder.AppendLine($"            {property.Name} = default;");
             }
 
+            sourceBuilder.AppendLine("        }");
+
+            #endregion
+
+            #region [ToString方法]
+
+            sourceBuilder.AppendLine("        public override string ToString()");
+            sourceBuilder.AppendLine("        {");
+            sourceBuilder.Append("            return $\"{{ ");
+            isFirst = true;
+
+            if (isResponseType)
+            {
+                isFirst = false;
+                sourceBuilder.Append("RequestId = {RequestId}, ErrorCode = {ErrorCode}");
+            }
+            else if (isRequestType)
+            {
+                isFirst = false;
+                sourceBuilder.Append("RequestId = {RequestId}");
+            }
+            
+            foreach (var property in classSymbol.GetMembers().OfType<IPropertySymbol>())
+            {
+                if (isFirst)
+                {
+                    isFirst = false;
+                }
+                else
+                {
+                    sourceBuilder.Append(", ");
+                }
+
+                sourceBuilder.Append($"{property.Name} = {{{property.Name}}}");
+            }
+            sourceBuilder.AppendLine(" }}\";");
             sourceBuilder.AppendLine("        }");
 
             #endregion
