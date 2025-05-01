@@ -51,6 +51,18 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 使用离线模式初始化YooAsset资源管线.
+        /// </summary>
+        public static UniTask InitYooAssetOfflineMode(this ResModule module)
+        {
+            var buildinFileSystemParams = FileSystemParameters.CreateDefaultBuildinFileSystemParameters();
+            var initParameters = new OfflinePlayModeParameters();
+            initParameters.BuildinFileSystemParameters = buildinFileSystemParams;
+
+            return s_YooAssetResLoader.InitResourcePackageAsync(initParameters);
+        }
+
+        /// <summary>
         /// 更新资源清单.
         /// </summary>
         /// <param name="module">资源模块.</param>

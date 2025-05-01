@@ -34,7 +34,11 @@ namespace GameMain
 
         private async UniTask InitAsync()
         {
+#if UNITY_EDITOR
             await ResModule.Instance.InitYooAssetEditorSimulateMode();
+#else
+            await ResModule.Instance.InitYooAssetOfflineMode();
+#endif
             await ResModule.Instance.RequestUpdatePackageManifest();
 
             SoundUtility.InitSoundGroup();

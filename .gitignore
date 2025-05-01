@@ -2,3 +2,7 @@
 .idea
 .vscode/
 .DS_Store
+Client/Assets/StreamingAssets
+Client/Assets/StreamingAssets.meta
+Client/Build.app
+Client/Build_BackUpThisFolder_ButDontShipItWithYourGame
