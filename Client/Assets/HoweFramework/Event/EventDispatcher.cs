@@ -209,7 +209,7 @@ namespace HoweFramework
                     }
                     catch (Exception ex)
                     {
-                        Log.Error($"Handle event '{e.Id}' error: {ex.Message}");
+                        Log.Error($"Handle event '{e.Id}' error: {ex.Message}\n{ex.StackTrace}");
                     }
 
                     current = m_CachedNodes[e];

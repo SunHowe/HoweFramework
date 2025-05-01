@@ -526,6 +526,8 @@ namespace HoweFramework
                         packet = m_SendPacketPool.Dequeue();
                     }
 
+                    Log.Debug($"Send packet[{packet.GetType().Name}]: {packet.ToString()}");
+
                     bool serializeResult = false;
                     try
                     {
@@ -632,6 +634,7 @@ namespace HoweFramework
 
                     if (packet != null)
                     {
+                        Log.Debug($"Receive packet[{packet.GetType().Name}]: {packet.ToString()}");
                         m_ReceivePacketPool.Dispatch(this, packet);
                     }
 
