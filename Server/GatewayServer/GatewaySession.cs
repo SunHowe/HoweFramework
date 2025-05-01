@@ -44,9 +44,16 @@ public class GatewaySession : TcpSession
 
     protected override void OnReceived(byte[] buffer, long offset, long size)
     {
-        var package = ParseMessage(buffer, offset, size);
-        messageQueue.Enqueue(package);
-        _ = ProcessQueueAsync().ConfigureAwait(false);
+        try
+        {
+            var package = ParseMessage(buffer, offset, size);
+            messageQueue.Enqueue(package);
+            _ = ProcessQueueAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Gateway Session({Id}) caught an exception: {e}");
+        }
     }
 
     protected override void OnError(SocketError error)
