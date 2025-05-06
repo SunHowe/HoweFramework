@@ -87,18 +87,26 @@ namespace GameMain.UI.Login
             //     Log.Info($"GET Response: {response.ResponseText}");
             // });
 
-            const string Template1 = "Hello {name}!";
-            const string Template2 = "Hello {name=LiLei}! Today is {today}. {nokey}";
+            // const string Template1 = "Hello {name}!";
+            // const string Template2 = "Hello {name=LiLei}! Today is {today}. {nokey}";
 
-            TextUtility.AddGlobalTemplateValue("today", DateTime.Now.DayOfWeek.ToString());
+            // TextUtility.AddGlobalTemplateValue("today", DateTime.Now.DayOfWeek.ToString());
 
-            var result1 = TextUtility.ParseTemplate(Template1, new Dictionary<string, string>(){
-                { "name", "HanMeimei" }
-            });
-            var result2 = TextUtility.ParseTemplate(Template2, null);
+            // var result1 = TextUtility.ParseTemplate(Template1, new Dictionary<string, string>(){
+            //     { "name", "HanMeimei" }
+            // });
+            // var result2 = TextUtility.ParseTemplate(Template2, null);
 
-            Log.Info($"Template1: {result1}");
-            Log.Info($"Template2: {result2}");
+            // Log.Info($"Template1: {result1}");
+            // Log.Info($"Template2: {result2}");
+
+            LoginAsync().Forget();
+        }
+
+        private async UniTask LoginAsync()
+        {
+            using var response = await UIModule.Instance.OpenUIForm(UIFormId.LoginAccountForm).As<LoginAccountResponse>();
+            Log.Info($"登录界面返回: Code={response.ErrorCode} Account={response.Account} Password={response.Password}");
         }
         
         // [Serializable]
