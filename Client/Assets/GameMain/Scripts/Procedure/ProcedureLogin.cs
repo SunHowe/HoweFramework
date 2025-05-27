@@ -14,10 +14,7 @@ namespace GameMain
         public override void OnEnter()
         {
             // 打开登录界面。
-            UIModule.Instance.OpenUIForm(UIFormId.LoginForm).As<CommonResponse>().ContinueWith(response => {
-                Log.Info($"登录界面返回: Code={response.ErrorCode} UserData={response.UserData}");
-                response.Dispose();
-            });
+            UIModule.Instance.OpenUIForm(UIFormId.LoginForm).Forget();
         }
 
         public override void OnLeave()

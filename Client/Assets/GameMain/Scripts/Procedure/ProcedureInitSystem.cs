@@ -3,11 +3,11 @@ using HoweFramework;
 namespace GameMain
 {
     /// <summary>
-    /// 加载模块流程。
+    /// 初始化游戏系统流程。
     /// </summary>
-    public sealed class ProcedureLoadModule : ProcedureBase
+    public sealed class ProcedureInitSystem : ProcedureBase
     {
-        public override int Id => (int)ProcedureId.LoadModule;
+        public override int Id => (int)ProcedureId.InitSystem;
 
         public override void OnEnter()
         {
