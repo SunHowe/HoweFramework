@@ -5,7 +5,7 @@ namespace HoweFramework
     /// <summary>
     /// 事件调度器接口。
     /// </summary>
-    public interface IEventDispatcher : IDisposable
+    public interface IEventDispatcher : IEventSubscribe, IDisposable
     {
         /// <summary>
         /// 待处理的事件数量。
@@ -31,20 +31,6 @@ namespace HoweFramework
         /// <param name="handler">要检查的事件处理函数。</param>
         /// <returns>是否存在事件处理函数。</returns>
         bool Check(int id, GameEventHandler handler);
-
-        /// <summary>
-        /// 订阅事件。
-        /// </summary>
-        /// <param name="id">事件id。</param>
-        /// <param name="handler">事件处理器。</param>
-        void Subscribe(int id, GameEventHandler handler);
-
-        /// <summary>
-        /// 取消订阅事件。
-        /// </summary>
-        /// <param name="id">事件id。</param>
-        /// <param name="handler">事件处理器。</param>
-        void Unsubscribe(int id, GameEventHandler handler);
 
         /// <summary>
         /// 派发事件(线程安全)。

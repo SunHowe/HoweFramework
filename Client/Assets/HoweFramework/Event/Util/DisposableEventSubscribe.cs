@@ -5,7 +5,7 @@ namespace HoweFramework
     /// <summary>
     /// 可释放的事件订阅辅助工具。
     /// </summary>
-    public sealed class DisposableEventSubscribe : IDisposable
+    public sealed class DisposableEventSubscribe : IEventSubscribe, IDisposable
     {
         /// <summary>
         /// 绑定的事件调度器。
