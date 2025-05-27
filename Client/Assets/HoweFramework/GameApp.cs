@@ -99,7 +99,7 @@ namespace HoweFramework
         /// <summary>
         /// 添加模块。
         /// </summary>
-        public T AddModule<T>() where T : ModuleBase<T>
+        internal T AddModule<T>() where T : ModuleBase<T>
         {
             var module = Activator.CreateInstance<T>();
             AddModule(module);
@@ -110,7 +110,7 @@ namespace HoweFramework
         /// 添加模块。
         /// </summary>
         /// <param name="module">模块。</param>
-        public void AddModule(ModuleBase module)
+        internal void AddModule(ModuleBase module)
         {
             module.Init();
             m_ModuleList.Add(module);
