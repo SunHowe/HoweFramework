@@ -1,0 +1,32 @@
+using HoweFramework;
+
+namespace GameMain
+{
+    /// <summary>
+    /// 初始化游戏系统流程。
+    /// </summary>
+    public sealed class ProcedureInitSystem : ProcedureBase
+    {
+        public override int Id => (int)ProcedureId.InitSystem;
+
+        public override void OnEnter()
+        {
+#if OFFLINE_MODE
+            SystemModule.Instance.RegisterSystem<ILoginSystem, OfflineLoginSystem>();
+#else
+            SystemModule.Instance.RegisterSystem<ILoginSystem, OnlineLoginSystem>();
+            SystemModule.Instance.RegisterSystem<IPlayerSystem, OnlinePlayerSystem>();
+#endif
+        }
+
+        public override void OnLeave()
+        {
+        }
+
+        public override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        {
+            ChangeNextProcedure();
+        }
+    }
+}
+

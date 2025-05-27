@@ -48,11 +48,21 @@ namespace HoweFramework
         {
             if (m_Tcs == null)
             {
+                response.Dispose();
                 return;
             }
 
             OnSetResponse?.Invoke(this);
             m_Tcs.TrySetResult(response);
+        }
+
+        /// <summary>
+        /// 设置响应错误码。
+        /// </summary>
+        /// <param name="errorCode">错误码。</param>
+        public void SetResponse(int errorCode)
+        {
+            SetResponse(CommonResponse.Create(errorCode));
         }
 
         /// <summary>

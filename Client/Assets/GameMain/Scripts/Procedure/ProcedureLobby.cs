@@ -20,7 +20,7 @@ namespace GameMain
 
         public override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
-            if (LoginModule.Instance.LoginState < LoginStateType.OnGame)
+            if (LoginSystem.Instance.LoginState.Value < LoginStateType.OnGame)
             {
                 ChangeProcedure((int)ProcedureId.Login);
             }

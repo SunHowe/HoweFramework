@@ -108,7 +108,7 @@ namespace GameMain.UI.Login
 
             // var demoObject2 = MemoryPackSerializer.Deserialize<DemoObject>(bytes);
             // Log.Info($"Deserialize: {demoObject2.Id} {demoObject2.Name}");
-            LoginModule.Instance.Login("127.0.0.1", 9000, "account", "password").Forget();
+            LoginSystem.Instance.Login("127.0.0.1", 9000, "account", "password").Forget();
         }
 
         // [MemoryPackable]

@@ -1,5 +1,7 @@
 # HoweFramework
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/SunHowe/HoweFramework)
+
 ## 介绍
 
 Unity3d客户端开发框架，部分模块采用现有的工具或参考现有的框架实现。
