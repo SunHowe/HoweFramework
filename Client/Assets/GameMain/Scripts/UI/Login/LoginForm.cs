@@ -107,6 +107,23 @@ namespace GameMain.UI.Login
         {
             using var response = await UIModule.Instance.OpenUIForm(UIFormId.LoginAccountForm).As<LoginAccountResponse>();
             Log.Info($"登录界面返回: Code={response.ErrorCode} Account={response.Account} Password={response.Password}");
+
+            if (response.ErrorCode != 0)
+            {
+                return;
+            }
+
+            var code = await LoginSystem.Instance.Login(response.Account, response.Password);
+            Log.Info($"登录结果: Code={code}");
+
+            if (code != 0)
+            {
+                return;
+            }
+
+            Log.Info($"登录成功: UserId={LoginSystem.Instance.UserId.Value}");
+
+            Request?.SetResponse(ErrorCode.Success);
         }
         
         // [Serializable]
