@@ -27,6 +27,11 @@ namespace GameMain
         /// </summary>
         Numeric = 4,
 
+        /// <summary>
+        /// 状态组件。
+        /// </summary>
+        State = 5,
+
         #endregion
     }
 }
