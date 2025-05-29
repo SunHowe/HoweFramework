@@ -22,6 +22,11 @@ namespace GameMain
         /// </summary>
         ViewTransformSync = 3,
 
+        /// <summary>
+        /// 数值组件。
+        /// </summary>
+        Numeric = 4,
+
         #endregion
     }
 }
