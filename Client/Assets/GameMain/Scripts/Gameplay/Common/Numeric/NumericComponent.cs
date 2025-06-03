@@ -10,14 +10,19 @@ namespace GameMain
     public sealed class NumericComponent : GameComponentBase
     {
         /// <summary>
+        /// 数值子类型位数。
+        /// </summary>
+        public const int NUMERIC_SUB_TYPE_BITS = 4;
+
+        /// <summary>
         /// 数值子类型掩码。
         /// </summary>
-        private const int NUMERIC_SUB_TYPE_MASK = 0b1111;
+        public const int NUMERIC_SUB_TYPE_MASK = (1 << NUMERIC_SUB_TYPE_BITS) - 1;
 
         /// <summary>
         /// 数值id掩码。
         /// </summary>
-        private const int NUMERIC_ID_MASK = ~NUMERIC_SUB_TYPE_MASK;
+        public const int NUMERIC_ID_MASK = ~NUMERIC_SUB_TYPE_MASK;
 
         /// <summary>
         /// 数值字典。
