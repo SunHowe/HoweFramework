@@ -17,14 +17,6 @@ namespace GameMain
         {
         }
 
-        public override void OnStartGame()
-        {
-        }
-
-        public override void OnStopGame()
-        {
-        }
-
         protected override void OnDispose()
         {
             foreach (var entity in m_EntityDict.Values)

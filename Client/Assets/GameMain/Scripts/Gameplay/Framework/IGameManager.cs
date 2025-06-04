@@ -21,15 +21,5 @@ namespace GameMain
         /// 初始化回调.
         /// </summary>
         void Awake(IGameContext context);
-
-        /// <summary>
-        /// 开始游戏回调.
-        /// </summary>
-        void OnStartGame();
-
-        /// <summary>
-        /// 结束游戏回调.
-        /// </summary>
-        void OnStopGame();
     }
 }

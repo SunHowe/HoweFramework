@@ -16,7 +16,7 @@ namespace HoweFramework
 
             private readonly string m_Name;
             protected readonly Queue<Packet> m_SendPacketPool;
-            protected readonly IEventDispatcher m_ReceivePacketPool;
+            protected readonly IThreadSafeEventDispatcher m_ReceivePacketPool;
             protected readonly INetworkChannelHelper m_NetworkChannelHelper;
             protected AddressFamily m_AddressFamily;
             protected bool m_ResetHeartBeatElapseSecondsWhenReceivePacket;
@@ -45,7 +45,7 @@ namespace HoweFramework
             {
                 m_Name = name ?? string.Empty;
                 m_SendPacketPool = new Queue<Packet>();
-                m_ReceivePacketPool = EventModule.Instance.CreateEventDispatcher();
+                m_ReceivePacketPool = EventModule.Instance.CreateThreadSafeEventDispatcher();
                 m_NetworkChannelHelper = networkChannelHelper;
                 m_AddressFamily = AddressFamily.Unknown;
                 m_ResetHeartBeatElapseSecondsWhenReceivePacket = false;
@@ -256,7 +256,7 @@ namespace HoweFramework
                     return;
                 }
 
-                m_ReceivePacketPool.Update();
+                m_ReceivePacketPool.UpdateEvents();
 
                 if (m_HeartBeatInterval > 0f)
                 {
@@ -411,7 +411,7 @@ namespace HoweFramework
                         m_SendPacketPool.Clear();
                     }
 
-                    m_ReceivePacketPool.Clear();
+                    m_ReceivePacketPool.ClearEvents();
 
                     lock (m_HeartBeatState)
                     {
@@ -635,7 +635,7 @@ namespace HoweFramework
                     if (packet != null)
                     {
                         Log.Debug($"Receive packet[{packet.GetType().Name}]: {packet.ToString()}");
-                        m_ReceivePacketPool.Dispatch(this, packet);
+                        m_ReceivePacketPool.ThreadSafeDispatch(this, packet);
                     }
 
                     m_ReceiveState.PrepareForPacketHeader(m_NetworkChannelHelper.PacketHeaderLength);

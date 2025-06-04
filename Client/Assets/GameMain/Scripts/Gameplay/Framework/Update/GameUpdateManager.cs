@@ -4,14 +4,23 @@ using HoweFramework;
 
 namespace GameMain
 {
-    public partial class GameContextBase
+    /// <summary>
+    /// 游戏更新管理器。
+    /// </summary>
+    public sealed class GameUpdateManager : GameManagerBase, IGameUpdateManager
     {
+        public float GameTime { get; private set; }
+        public float GameFixedTime { get; private set; }
+        public int GameFrame { get; private set; }
+        public float GameFixedDeltaTime { get; private set; }
+        public int GameFrameRate { get; }
+
         private sealed class UpdateContext : IDisposable
         {
             private readonly List<UpdateInfo> m_UpdateInfoList = new();
             private readonly Dictionary<object, UpdateDict> m_UpdateDict = new();
 
-            public void Register(object target, UpdateDelegate updateDelegate)
+            public void Register(object target, GameUpdateDelegate updateDelegate)
             {
                 if (m_UpdateDict.TryGetValue(target, out var updateDict))
                 {
@@ -34,7 +43,7 @@ namespace GameMain
                 }
             }
 
-            public void Unregister(object target, UpdateDelegate updateDelegate)
+            public void Unregister(object target, GameUpdateDelegate updateDelegate)
             {
                 if (!m_UpdateDict.TryGetValue(target, out var updateDict))
                 {
@@ -106,7 +115,7 @@ namespace GameMain
 
         private sealed class UpdateDict : IReference
         {
-            public Dictionary<UpdateDelegate, UpdateInfo> Dict = new();
+            public Dictionary<GameUpdateDelegate, UpdateInfo> Dict = new();
 
             public void Clear()
             {
@@ -122,7 +131,7 @@ namespace GameMain
         private sealed class UpdateInfo : IReference
         {
             public object Target { get; set; }
-            public UpdateDelegate UpdateDelegate { get; set; }
+            public GameUpdateDelegate UpdateDelegate { get; set; }
             public bool IsRemove { get; set; }
             public UpdateDict UpdateDict { get; set; }
 
@@ -134,7 +143,7 @@ namespace GameMain
                 UpdateDict = null;
             }
 
-            public static UpdateInfo Create(object target, UpdateDelegate updateDelegate, UpdateDict updateDict)
+            public static UpdateInfo Create(object target, GameUpdateDelegate updateDelegate, UpdateDict updateDict)
             {
                 var inst = ReferencePool.Acquire<UpdateInfo>();
                 inst.Target = target;
@@ -150,10 +159,33 @@ namespace GameMain
         private readonly UpdateContext m_FixedUpdateContext = new();
         private readonly UpdateContext m_LateUpdateContext = new();
         private readonly UpdateContext m_LateFixedUpdateContext = new();
+        private float m_NextFixedUpdateTime;
+
+        public GameUpdateManager(int frameRate = 20)
+        {
+            GameFrameRate = frameRate;
+        }
+
+        protected override void OnAwake()
+        {
+            GameTime = 0f;
+            GameFixedTime = 0f;
+            GameFrame = 0;
+            GameFixedDeltaTime = 1f / GameFrameRate;
+            m_NextFixedUpdateTime = GameFixedDeltaTime;
+        }
+
+        protected override void OnDispose()
+        {
+            m_UpdateContext.Dispose();
+            m_FixedUpdateContext.Dispose();
+            m_LateUpdateContext.Dispose();
+            m_LateFixedUpdateContext.Dispose();
+        }
 
         public void Update(float elapseSeconds)
         {
-            if (GameStatus != GameStatus.Running)
+            if (Context.GameStatus != GameStatus.Running)
             {
                 return;
             }
@@ -170,51 +202,50 @@ namespace GameMain
                 m_LateFixedUpdateContext.Update(GameFixedDeltaTime, ContinueFunc);
             }
                 
-            EventDispatcher.Update();
             m_UpdateContext.Update(elapseSeconds, ContinueFunc);
             m_LateUpdateContext.Update(elapseSeconds, ContinueFunc);
             
             return;
 
-            bool ContinueFunc() => GameStatus != GameStatus.Stopped;
+            bool ContinueFunc() => Context.GameStatus != GameStatus.Stopped;
         }
 
-        public void RegisterUpdate(object target, UpdateDelegate updateDelegate)
+        public void RegisterUpdate(object target, GameUpdateDelegate updateDelegate)
         {
             m_UpdateContext.Register(target, updateDelegate);
         }
 
-        public void UnregisterUpdate(object target, UpdateDelegate updateDelegate)
+        public void UnregisterUpdate(object target, GameUpdateDelegate updateDelegate)
         {
             m_UpdateContext.Unregister(target, updateDelegate);
         }
 
-        public void RegisterFixedUpdate(object target, UpdateDelegate updateDelegate)
+        public void RegisterFixedUpdate(object target, GameUpdateDelegate updateDelegate)
         {
             m_FixedUpdateContext.Register(target, updateDelegate);
         }
 
-        public void UnregisterFixedUpdate(object target, UpdateDelegate updateDelegate)
+        public void UnregisterFixedUpdate(object target, GameUpdateDelegate updateDelegate)
         {
             m_FixedUpdateContext.Unregister(target, updateDelegate);
         }
 
-        public void RegisterLateUpdate(object target, UpdateDelegate updateDelegate)
+        public void RegisterLateUpdate(object target, GameUpdateDelegate updateDelegate)
         {
             m_LateUpdateContext.Register(target, updateDelegate);
         }
 
-        public void UnregisterLateUpdate(object target, UpdateDelegate updateDelegate)
+        public void UnregisterLateUpdate(object target, GameUpdateDelegate updateDelegate)
         {
             m_LateUpdateContext.Unregister(target, updateDelegate);
         }
 
-        public void RegisterLateFixedUpdate(object target, UpdateDelegate updateDelegate)
+        public void RegisterLateFixedUpdate(object target, GameUpdateDelegate updateDelegate)
         {
             m_LateFixedUpdateContext.Register(target, updateDelegate);
         }
 
-        public void UnregisterLateFixedUpdate(object target, UpdateDelegate updateDelegate)
+        public void UnregisterLateFixedUpdate(object target, GameUpdateDelegate updateDelegate)
         {
             m_LateFixedUpdateContext.Unregister(target, updateDelegate);
         }

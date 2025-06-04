@@ -12,7 +12,7 @@ namespace HoweFramework
         private static int s_ReferenceId = 0;
 
         private int m_EventId;
-        private IEventDispatcher m_EventDispatcher;
+        private IEventSubscribe m_EventSubscribe;
         private AutoResetUniTaskCompletionSource<bool> m_UniTaskCompletionSource;
         private CancellationTokenSource m_CancellationTokenSource;
         private UniTask<bool> m_UniTask;
@@ -21,7 +21,7 @@ namespace HoweFramework
         public void Clear()
         {
             m_EventId = 0;
-            m_EventDispatcher = null;
+            m_EventSubscribe = null;
             m_UniTaskCompletionSource = null;
             m_ReferenceId = 0;
             m_UniTask = default;
@@ -34,7 +34,7 @@ namespace HoweFramework
                 return;
             }
 
-            m_EventDispatcher.Unsubscribe(m_EventId, OnEvent);
+            m_EventSubscribe.Unsubscribe(m_EventId, OnEvent);
 
             if (m_CancellationTokenSource != null)
             {
@@ -68,18 +68,18 @@ namespace HoweFramework
         /// <param name="eventDispatcher">事件调度器。若未指定则使用默认事件调度器。</param>
         /// <param name="token">取消令牌。</param>
         /// <returns>事件等待器。</returns>
-        public static EventAwaitable Create(int eventId, IEventDispatcher eventDispatcher = null, CancellationToken token = default)
+        public static EventAwaitable Create(int eventId, IEventSubscribe eventSubscribe = null, CancellationToken token = default)
         {
-            eventDispatcher ??= EventModule.Instance.EventDispatcher;
+            eventSubscribe ??= EventModule.Instance.EventDispatcher;
 
             var eventAwaitable = ReferencePool.Acquire<EventAwaitable>();
             eventAwaitable.m_EventId = eventId;
-            eventAwaitable.m_EventDispatcher = eventDispatcher;
+            eventAwaitable.m_EventSubscribe = eventSubscribe;
             eventAwaitable.m_UniTaskCompletionSource = AutoResetUniTaskCompletionSource<bool>.Create();
             eventAwaitable.m_ReferenceId = Interlocked.Increment(ref s_ReferenceId);
             eventAwaitable.m_UniTask = eventAwaitable.m_UniTaskCompletionSource.Task;
 
-            eventDispatcher.Subscribe(eventId, eventAwaitable.OnEvent);
+            eventSubscribe.Subscribe(eventId, eventAwaitable.OnEvent);
 
             if (token != default)
             {
@@ -95,9 +95,9 @@ namespace HoweFramework
         /// <param name="eventId">事件Id。</param>
         /// <param name="eventDispatcher">事件调度器。若未指定则使用默认事件调度器。</param>
         /// <param name="token">取消令牌。</param>
-        public static async UniTask<bool> WaitAsync(int eventId, IEventDispatcher eventDispatcher = null, CancellationToken token = default)
+        public static async UniTask<bool> WaitAsync(int eventId, IEventSubscribe eventSubscribe = null, CancellationToken token = default)
         {
-            using var eventAwaitable = Create(eventId, eventDispatcher, token);
+            using var eventAwaitable = Create(eventId, eventSubscribe, token);
             return await eventAwaitable.WaitAsync();
         }
 

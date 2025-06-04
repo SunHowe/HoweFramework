@@ -14,15 +14,10 @@ namespace GameMain
         public IResLoader ResLoader { get; private set; }
 
         public GameStatus GameStatus { get; private set; }
-        public float GameTime { get; private set; }
-        public float GameFixedTime { get; private set; }
-        public int GameFrame { get; private set; }
-        public float GameFixedDeltaTime { get; private set; }
-        public virtual int GameFrameRate => 20;
 
         private readonly Dictionary<int, IGameManager> m_GameManagerDict = new();
         private readonly List<IGameManager> m_GameManagerList = new();
-        private float m_NextFixedUpdateTime;
+        private SimpleEvent<GameStatus> m_GameStatusChangeEvent;
 
         public void Awake()
         {
@@ -31,11 +26,7 @@ namespace GameMain
             GameObjectPool = GameObjectPoolModule.Instance.CreateGameObjectPool(ResLoader);
 
             GameStatus = GameStatus.None;
-            GameTime = 0f;
-            GameFixedTime = 0f;
-            GameFrame = 0;
-            GameFixedDeltaTime = 1f / GameFrameRate;
-            m_NextFixedUpdateTime = GameFixedDeltaTime;
+            m_GameStatusChangeEvent = SimpleEvent<GameStatus>.Create();
 
             OnAwake();
 
@@ -60,11 +51,6 @@ namespace GameMain
 
             m_GameManagerDict.Clear();
             m_GameManagerList.Clear();
-
-            m_UpdateContext.Dispose();
-            m_FixedUpdateContext.Dispose();
-            m_LateUpdateContext.Dispose();
-            m_LateFixedUpdateContext.Dispose();
             
             EventDispatcher.Dispose();
             GameObjectPool.Dispose();
@@ -79,11 +65,7 @@ namespace GameMain
             }
 
             GameStatus = GameStatus.Running;
-
-            foreach (var manager in m_GameManagerList)
-            {
-                manager.OnStartGame();
-            }
+            m_GameStatusChangeEvent.Dispatch(GameStatus);
         }
 
         public void PauseGame()
@@ -94,6 +76,7 @@ namespace GameMain
             }
 
             GameStatus = GameStatus.Pause;
+            m_GameStatusChangeEvent.Dispatch(GameStatus);
         }
 
         public void ResumeGame()
@@ -104,6 +87,7 @@ namespace GameMain
             }
 
             GameStatus = GameStatus.Running;
+            m_GameStatusChangeEvent.Dispatch(GameStatus);
         }
 
         public void StopGame()
@@ -114,17 +98,22 @@ namespace GameMain
             }
             
             GameStatus = GameStatus.Stopped;
-
-            for (var index = m_GameManagerList.Count - 1; index >= 0; index--)
-            {
-                var manager = m_GameManagerList[index];
-                manager.OnStopGame();
-            }
+            m_GameStatusChangeEvent.Dispatch(GameStatus);
         }
 
         public IGameManager GetManager(int managerType)
         {
             return m_GameManagerDict.GetValueOrDefault(managerType);
+        }
+
+        public void SubscribeGameStatusChange(SimpleEventHandler<GameStatus> handler)
+        {
+            m_GameStatusChangeEvent.Subscribe(handler);
+        }
+
+        public void UnsubscribeGameStatusChange(SimpleEventHandler<GameStatus> handler)
+        {
+            m_GameStatusChangeEvent.Unsubscribe(handler);
         }
 
         /// <summary>

@@ -10,16 +10,16 @@ namespace HoweFramework
         /// <summary>
         /// 绑定的事件调度器。
         /// </summary>
-        private readonly IEventDispatcher m_EventDispatcher;
+        private readonly IEventSubscribe m_EventSubscribe;
 
         /// <summary>
         /// 事件处理器字典。
         /// </summary>
         private readonly MultiDictionary<int, GameEventHandler> m_EventHandlerDict = new();
 
-        public DisposableEventSubscribe(IEventDispatcher eventDispatcher = null)
+        public DisposableEventSubscribe(IEventSubscribe eventDispatcher = null)
         {
-            m_EventDispatcher = eventDispatcher ?? EventModule.Instance.EventDispatcher;
+            m_EventSubscribe = eventDispatcher ?? EventModule.Instance.EventDispatcher;
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace HoweFramework
         /// <param name="handler">事件处理器。</param>
         public void Subscribe(int id, GameEventHandler handler)
         {
-            m_EventDispatcher.Subscribe(id, handler);
+            m_EventSubscribe.Subscribe(id, handler);
             m_EventHandlerDict.Add(id, handler);
         }
 
@@ -40,7 +40,7 @@ namespace HoweFramework
         /// <param name="handler">事件处理器。</param>
         public void Unsubscribe(int id, GameEventHandler handler)
         {
-            m_EventDispatcher.Unsubscribe(id, handler);
+            m_EventSubscribe.Unsubscribe(id, handler);
             m_EventHandlerDict.Remove(id, handler);
         }
 
@@ -53,7 +53,7 @@ namespace HoweFramework
             {
                 foreach (var handler in range)
                 {
-                    m_EventDispatcher.Unsubscribe(id, handler);
+                    m_EventSubscribe.Unsubscribe(id, handler);
                 }
             }
 
