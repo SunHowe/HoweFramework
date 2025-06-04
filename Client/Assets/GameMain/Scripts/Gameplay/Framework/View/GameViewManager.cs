@@ -47,13 +47,5 @@ namespace GameMain
             m_ViewObjectDict.Clear();
             m_IdIncrease = 0;
         }
-
-        public override void OnStartGame()
-        {
-        }
-
-        public override void OnStopGame()
-        {
-        }
     }
 }

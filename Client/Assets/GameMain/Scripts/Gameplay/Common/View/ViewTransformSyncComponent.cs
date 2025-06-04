@@ -11,6 +11,7 @@ namespace GameMain
     {
         private TransformComponent m_TransformComponent;
         private ViewComponent m_ViewComponent;
+        private IGameUpdateManager m_GameUpdateManager;
 
         /// <summary>
         /// 是否暂停同步。
@@ -31,17 +32,17 @@ namespace GameMain
                 {
                     if (m_IsOnLerpPosition)
                     {
-                        Context.UnregisterLateUpdate(this, OnUpdateLerpPosition);
+                        m_GameUpdateManager.UnregisterLateUpdate(this, OnUpdateLerpPosition);
                     }
 
                     if (m_IsOnLerpEulerAngles)
                     {
-                        Context.UnregisterLateUpdate(this, OnUpdateLerpEulerAngles);
+                        m_GameUpdateManager.UnregisterLateUpdate(this, OnUpdateLerpEulerAngles);
                     }
 
                     if (m_IsOnLerpScale)
                     {
-                        Context.UnregisterLateUpdate(this, OnUpdateLerpScale);
+                        m_GameUpdateManager.UnregisterLateUpdate(this, OnUpdateLerpScale);
                     }
                 }
                 else
@@ -93,7 +94,7 @@ namespace GameMain
                 }
 
                 // 如果正在插值，则取消插值更新，并立即同步位置。
-                Context.UnregisterLateUpdate(this, OnUpdateLerpPosition);
+                m_GameUpdateManager.UnregisterLateUpdate(this, OnUpdateLerpPosition);
                 m_ViewComponent.Position = m_TransformComponent.Position;
                 m_IsOnLerpPosition = false;
             }
@@ -125,7 +126,7 @@ namespace GameMain
                 }
 
                 // 如果正在插值，则取消插值更新，并立即同步欧拉角。
-                Context.UnregisterLateUpdate(this, OnUpdateLerpEulerAngles);
+                m_GameUpdateManager.UnregisterLateUpdate(this, OnUpdateLerpEulerAngles);
                 m_ViewComponent.EulerAngles = m_TransformComponent.EulerAngles;
                 m_IsOnLerpEulerAngles = false;
             }
@@ -157,7 +158,7 @@ namespace GameMain
                 }
 
                 // 如果正在插值，则取消插值更新，并立即同步缩放。
-                Context.UnregisterLateUpdate(this, OnUpdateLerpScale);
+                m_GameUpdateManager.UnregisterLateUpdate(this, OnUpdateLerpScale);
                 m_ViewComponent.Scale = m_TransformComponent.Scale;
                 m_IsOnLerpScale = false;
             }
@@ -195,8 +196,10 @@ namespace GameMain
 
         protected override void OnAwake()
         {
-            m_LerpDuration = Context.GameFixedDeltaTime;
-            m_FrameRate = Context.GameFrameRate;
+            m_GameUpdateManager = Context.GetManager<IGameUpdateManager>();
+
+            m_LerpDuration = m_GameUpdateManager.GameFixedDeltaTime;
+            m_FrameRate = m_GameUpdateManager.GameFrameRate;
 
             m_TransformComponent = Entity.GetComponent<TransformComponent>();
             m_ViewComponent = Entity.GetComponent<ViewComponent>();
@@ -215,9 +218,9 @@ namespace GameMain
 
         protected override void OnDispose()
         {
-            Context.UnregisterLateUpdate(this, OnUpdateLerpPosition);
-            Context.UnregisterLateUpdate(this, OnUpdateLerpEulerAngles);
-            Context.UnregisterLateUpdate(this, OnUpdateLerpScale);
+            m_GameUpdateManager.UnregisterLateUpdate(this, OnUpdateLerpPosition);
+            m_GameUpdateManager.UnregisterLateUpdate(this, OnUpdateLerpEulerAngles);
+            m_GameUpdateManager.UnregisterLateUpdate(this, OnUpdateLerpScale);
 
             m_TransformComponent.OnPositionUpdated -= OnTransformPositionUpdated;
             m_TransformComponent.OnEulerAnglesUpdated -= OnTransformEulerAnglesUpdated;
@@ -225,6 +228,7 @@ namespace GameMain
 
             m_TransformComponent = null;
             m_ViewComponent = null;
+            m_GameUpdateManager = null;
 
             m_IsPause = false;
 
@@ -268,7 +272,7 @@ namespace GameMain
             }
 
             m_IsOnLerpPosition = true;
-            Context.RegisterLateUpdate(this, OnUpdateLerpPosition);
+            m_GameUpdateManager.RegisterLateUpdate(this, OnUpdateLerpPosition);
         }
 
         private void OnTransformEulerAnglesUpdated(Vector3 eulerAngles)
@@ -295,7 +299,7 @@ namespace GameMain
             }
 
             m_IsOnLerpEulerAngles = true;
-            Context.RegisterLateUpdate(this, OnUpdateLerpEulerAngles);
+            m_GameUpdateManager.RegisterLateUpdate(this, OnUpdateLerpEulerAngles);
         }
 
         private void OnTransformScaleUpdated(Vector3 scale)
@@ -322,7 +326,7 @@ namespace GameMain
             }
 
             m_IsOnLerpScale = true;
-            Context.RegisterLateUpdate(this, OnUpdateLerpScale);
+            m_GameUpdateManager.RegisterLateUpdate(this, OnUpdateLerpScale);
         }
 
         private void OnUpdateLerpPosition(float elapseSeconds)
@@ -333,7 +337,7 @@ namespace GameMain
                 // 插值结束。
                 m_IsOnLerpPosition = false;
                 m_ViewComponent.Position = m_TransformComponent.Position;
-                Context.UnregisterLateUpdate(this, OnUpdateLerpPosition);
+                m_GameUpdateManager.UnregisterLateUpdate(this, OnUpdateLerpPosition);
                 return;
             }
             
@@ -348,7 +352,7 @@ namespace GameMain
                 // 插值结束。
                 m_IsOnLerpEulerAngles = false;
                 m_ViewComponent.EulerAngles = m_TransformComponent.EulerAngles;
-                Context.UnregisterLateUpdate(this, OnUpdateLerpEulerAngles);
+                m_GameUpdateManager.UnregisterLateUpdate(this, OnUpdateLerpEulerAngles);
                 return;
             }
 
@@ -363,7 +367,7 @@ namespace GameMain
                 // 插值结束。
                 m_IsOnLerpScale = false;
                 m_ViewComponent.Scale = m_TransformComponent.Scale;
-                Context.UnregisterLateUpdate(this, OnUpdateLerpScale);
+                m_GameUpdateManager.UnregisterLateUpdate(this, OnUpdateLerpScale);
                 return;
             }
 

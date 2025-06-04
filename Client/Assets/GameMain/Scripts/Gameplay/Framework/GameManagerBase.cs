@@ -25,8 +25,6 @@ namespace GameMain
         }
 
         protected abstract void OnAwake();
-        public abstract void OnStartGame();
-        public abstract void OnStopGame();
         protected abstract void OnDispose();
     }
 }

@@ -5,7 +5,8 @@ namespace GameMain
     /// </summary>
     public enum GameManagerType
     {
-        Entity = 1,
-        View = 2,
+        Update = 1,
+        Entity = 2,
+        View = 3,
     }
 }
