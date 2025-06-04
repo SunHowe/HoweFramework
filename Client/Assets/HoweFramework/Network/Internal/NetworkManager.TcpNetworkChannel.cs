@@ -127,7 +127,7 @@ namespace HoweFramework
                     m_SendPacketPool.Clear();
                 }
 
-                m_ReceivePacketPool.Clear();
+                m_ReceivePacketPool.ClearEvents();
 
                 lock (m_HeartBeatState)
                 {
