@@ -18,14 +18,14 @@ namespace HoweFramework
         public GameEventHandler Handler { get; private set; }
 
         private bool m_Referenced = false;
-        private IEventDispatcher m_EventDispatcher = null;
+        private IEventSubscribe m_EventSubscribe = null;
 
         public void Clear()
         {
             EventId = 0;
             Handler = null;
             m_Referenced = false;
-            m_EventDispatcher = null;
+            m_EventSubscribe = null;
         }
 
         public void Dispose()
@@ -35,9 +35,9 @@ namespace HoweFramework
                 return;
             }
 
-            if (m_EventDispatcher != null)
+            if (m_EventSubscribe != null)
             {
-                m_EventDispatcher.Unsubscribe(EventId, Handler);
+                m_EventSubscribe.Unsubscribe(EventId, Handler);
             }
 
             ReferencePool.Release(this);
@@ -48,19 +48,19 @@ namespace HoweFramework
         /// </summary>
         /// <param name="eventId">事件Id。</param>
         /// <param name="handler">事件处理函数。</param>
-        /// <param name="eventDispatcher">事件调度器。若未指定则使用默认事件调度器。</param>
+        /// <param name="eventSubscribe">事件订阅器。若未指定则使用默认事件订阅器。</param>
         /// <returns>事件捕获器。</returns>
-        public static EventCapture Create(int eventId, GameEventHandler handler, IEventDispatcher eventDispatcher = null)
+        public static EventCapture Create(int eventId, GameEventHandler handler, IEventSubscribe eventSubscribe = null)
         {
-            eventDispatcher ??= EventModule.Instance.EventDispatcher;
+            eventSubscribe ??= EventModule.Instance.EventDispatcher;
             
             EventCapture eventCapture = ReferencePool.Acquire<EventCapture>();
             eventCapture.EventId = eventId;
             eventCapture.Handler = handler;
             eventCapture.m_Referenced = true;
-            eventCapture.m_EventDispatcher = eventDispatcher;
+            eventCapture.m_EventSubscribe = eventSubscribe;
 
-            eventDispatcher.Subscribe(eventId, handler);
+            eventSubscribe.Subscribe(eventId, handler);
 
             return eventCapture;
         }
