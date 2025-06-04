@@ -19,7 +19,10 @@ namespace GameMain
 
         protected override void OnDispose()
         {
-            foreach (var entity in m_EntityDict.Values)
+            using var resuableList = ReusableList<GameEntity>.Create();
+            resuableList.AddRange(m_EntityDict.Values);
+
+            foreach (var entity in resuableList)
             {
                 entity.DisposeFromManager();
                 ReferencePool.Release(entity);
