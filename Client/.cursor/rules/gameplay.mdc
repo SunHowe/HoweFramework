@@ -1,0 +1,52 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Gameplay 目录结构与玩法架构设计说明
+
+`/Assets/GameMain/Scripts/Gameplay` 目录实现了一套基于实体-组件（Entity-Component）模式的玩法架构，核心思想如下：
+
+## 架构设计
+
+- **实体（Entity）**：通过 `IGameEntity` 接口和 `GameEntity` 实现，代表游戏世界中的对象。每个实体可动态挂载多个组件，具备唯一ID和上下文引用。
+- **组件（Component）**：所有组件需继承自 `GameComponentBase`，实现 `IGameComponent` 接口。组件负责实体的具体功能和数据，支持生命周期管理（Awake/Dispose）。
+- **组件注册与管理**：实体通过 `AddComponent`、`GetComponent`、`RemoveComponent` 等方法动态管理组件，组件类型唯一标识，支持运行时扩展。
+- **上下文（Context）**：通过 `IGameContext` 统一管理实体、组件及系统，便于依赖注入和全局访问。
+- **系统扩展**：支持如更新管理、事件分发等系统功能，便于玩法逻辑的解耦与扩展。
+
+## 主要目录与文件
+
+- **Framework/**：玩法架构核心实现，包含实体、组件、上下文、管理器等基础抽象与运行机制。
+- **Common/**：实现了多种通用组件，供具体玩法复用，提升开发效率和一致性。
+
+具体的游戏玩法相关的组件、管理器应根据玩法名建立文件夹进行管理。
+
+## 已实现的通用组件功能
+
+### 1. 数值组件（NumericComponent）
+- 支持多种数值子类型（基础值、百分比、常量、最终值等，详见 `NumericSubType` 枚举）。
+- 提供数值的动态获取、设置、事件订阅与派发，自动计算最终属性值。
+- 适用于角色属性、战斗数值等场景。
+
+### 2. 状态组件（StateComponent）
+- 支持任意状态的添加、移除、检查。
+- 支持状态事件的订阅与派发，便于实现如"眩晕"、"无敌"等状态管理。
+- 状态由提供者驱动，支持多来源叠加与自动清理。
+
+### 3. 变换组件（TransformComponent）
+- 管理实体的位置、旋转（欧拉角）、缩放，支持事件通知。
+- 提供扩展方法（如 `GetPosition`、`GetTargetDirection`）便于获取实体空间信息。
+
+### 4. 视图组件（ViewComponent）
+- 管理实体的表现层（GameObject/Transform），支持资源加载、父节点设置、可见性控制等。
+- 支持视图加载/卸载事件，便于表现层与逻辑层解耦。
+
+### 5. 视图同步组件（ViewTransformSyncComponent）
+- 实现 Transform 与 View 的属性同步，支持插值动画和平滑过渡。
+- 可配置同步暂停、插值类型（位置、旋转、缩放）等，适用于表现层与逻辑层分离的场景。
+
+---
+
+> 本规则文件用于帮助 Cursor 理解 Gameplay 目录的实体-组件玩法架构设计思想、结构及其通用组件实现，便于代码导航与理解。所有自定义玩法组件建议继承自 `GameComponentBase` 并遵循本架构规范。
+

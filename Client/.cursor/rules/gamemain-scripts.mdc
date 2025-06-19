@@ -1,0 +1,23 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# GameMain/Scripts 目录结构与作用说明
+
+`/Assets/GameMain/Scripts` 目录用于存放项目的游戏逻辑与业务代码，所有脚本需基于并遵循 [HoweFramework](mdc:howeframework.mdc) 框架的结构与约束进行开发。
+
+主要子模块说明：
+
+- **Gameplay/**：核心玩法、角色、关卡等游戏主逻辑实现。
+- **UI/**：具体业务相关的 UI 逻辑与界面控制。
+- **Procedure/**：流程控制与状态切换，通常配合框架的流程模块使用。
+- **System/**：游戏内各类系统（如任务、背包、成就等）业务逻辑。
+- **Network/**：与服务器的业务通信逻辑，基于框架网络模块扩展。
+- **Sound/**：游戏音效与音乐的业务层管理。
+- **DataTable/**：项目自定义的数据表解析与管理。
+
+此外，`GameEntry.cs` 为游戏主入口脚本，负责初始化和启动各业务模块。
+
+> 本规则文件用于帮助 Cursor 理解 GameMain/Scripts 目录的结构、职责及其与 HoweFramework 框架的关系，便于代码导航与理解。
+
