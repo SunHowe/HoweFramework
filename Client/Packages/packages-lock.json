@@ -7,7 +7,7 @@
       "dependencies": {
         "com.unity.test-framework": "1.1.9"
       },
-      "hash": "190c358cd2694db831698489a716093a837628ad"
+      "hash": "c784f5a74d7e12162c72d7c2f2374036679abacf"
     },
     "com.cysharp.memorypack": {
       "version": "https://github.com/Cysharp/MemoryPack.git?path=src/MemoryPack.Unity/Assets/MemoryPack.Unity#1.21.4",
