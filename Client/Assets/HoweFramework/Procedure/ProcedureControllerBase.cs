@@ -16,6 +16,11 @@ namespace HoweFramework
         private DisposableGroup m_DisposableGroup;
 
         /// <summary>
+        /// 帧定时器id。
+        /// </summary>
+        private int m_FrameTimerId;
+
+        /// <summary>
         /// 初始化。
         /// </summary>
         public void Initialize()
@@ -29,6 +34,8 @@ namespace HoweFramework
         public void Dispose()
         {
             OnDispose();
+            
+            DisableFrameTimer();
             m_DisposableGroup?.Dispose();
             m_DisposableGroup = null;
         }
@@ -42,5 +49,39 @@ namespace HoweFramework
         /// 销毁时调用。
         /// </summary>
         protected abstract void OnDispose();
+
+        /// <summary>
+        /// 帧定时器回调。需要通过EnableFrameTimer启用。
+        /// </summary>
+        protected virtual void OnUpdate()
+        {
+        }
+
+        /// <summary>
+        /// 启用帧定时器。
+        /// </summary>
+        protected void EnableFrameTimer()
+        {
+            if (m_FrameTimerId != 0)
+            {
+                return;
+            }
+
+            m_FrameTimerId = TimerModule.Instance.AddFrameTimer(OnUpdate);
+        }
+
+        /// <summary>
+        /// 禁用帧定时器。
+        /// </summary>
+        protected void DisableFrameTimer()
+        {
+            if (m_FrameTimerId == 0)
+            {
+                return;
+            }
+
+            TimerModule.Instance.RemoveTimer(m_FrameTimerId);
+            m_FrameTimerId = 0;
+        }
     }
 }
