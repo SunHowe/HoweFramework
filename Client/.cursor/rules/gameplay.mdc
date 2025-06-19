@@ -14,6 +14,7 @@ alwaysApply: true
 - **组件注册与管理**：实体通过 `AddComponent`、`GetComponent`、`RemoveComponent` 等方法动态管理组件，组件类型唯一标识，支持运行时扩展。
 - **上下文（Context）**：通过 `IGameContext` 统一管理实体、组件及系统，便于依赖注入和全局访问。
 - **系统扩展**：支持如更新管理、事件分发等系统功能，便于玩法逻辑的解耦与扩展。
+- **管理器（Manager）**：通过管理器接口与实现分离的方式，提供各类系统功能的管理与访问能力。
 
 ## 主要目录与文件
 
@@ -21,6 +22,51 @@ alwaysApply: true
 - **Common/**：实现了多种通用组件，供具体玩法复用，提升开发效率和一致性。
 
 具体的游戏玩法相关的组件、管理器应根据玩法名建立文件夹进行管理。
+
+## 管理器约束说明
+
+### 1. 接口与实现分离
+- 所有管理器必须先定义接口（继承自`IGameManager`），再实现具体类
+- 管理器接口必须使用`[GameManager]`特性标记管理器类型
+- 具体实现类建议继承自`GameManagerBase`抽象类
+- 对外暴露的必须是接口类型，不允许直接暴露实现类
+
+### 2. 生命周期管理
+- 管理器必须实现`IDisposable`接口（通过`IGameManager`继承）
+- 必须实现`Awake(IGameContext context)`方法进行初始化
+- 继承`GameManagerBase`的实现类需要实现：
+  - `OnAwake()`：初始化逻辑
+  - `OnDispose()`：销毁逻辑
+
+### 3. 上下文关联
+- 每个管理器必须关联到一个`IGameContext`实例
+- 通过`Context`属性可以访问所属的上下文
+- 管理器之间的交互应通过上下文进行
+
+### 4. 类型标识
+- 每个管理器类型必须在`GameManagerType`枚举中定义唯一标识
+- 使用`[GameManager(GameManagerType.XXX)]`特性标记接口
+- 可通过`GameManagerHelper`工具类获取管理器类型
+
+### 5. 注册与获取
+- 管理器实例由`GameContextBase`统一管理
+- 使用`AddManager()`方法注册管理器实例
+- 通过`GetManager()`或`GetManager<T>()`获取管理器实例
+
+### 6. 已实现的管理器
+
+1. **实体管理器** (`IGameEntityManager`)
+   - 负责游戏实体的创建、获取和销毁
+   - 管理实体和组件的唯一标识分配
+
+2. **更新管理器** (`IGameUpdateManager`)
+   - 提供游戏更新循环
+   - 支持普通更新、固定更新和延迟更新
+   - 管理游戏时间和帧率
+
+3. **视图管理器** (`IGameViewManager`)
+   - 管理游戏对象的显示层
+   - 处理资源加载和对象池
 
 ## 已实现的通用组件功能
 
@@ -49,4 +95,6 @@ alwaysApply: true
 ---
 
 > 本规则文件用于帮助 Cursor 理解 Gameplay 目录的实体-组件玩法架构设计思想、结构及其通用组件实现，便于代码导航与理解。所有自定义玩法组件建议继承自 `GameComponentBase` 并遵循本架构规范。
+
+
 
