@@ -162,5 +162,13 @@ namespace GameMain
         {
             component.Entity.GetComponents(components);
         }
+
+        /// <summary>
+        /// 获取管理器.
+        /// </summary>
+        public static T GetManager<T>(this IGameComponent component) where T : IGameManager
+        {
+            return component.Context.GetManager<T>();
+        }
     }
 }
