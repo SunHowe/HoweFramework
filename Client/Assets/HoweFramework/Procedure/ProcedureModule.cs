@@ -46,7 +46,7 @@ namespace HoweFramework
             }
 
             Procedure = launchProcedure;
-            Procedure.OnEnter();
+            Procedure.Enter();
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace HoweFramework
                 return;
             }
 
-            Procedure.OnLeave();
+            Procedure.Leave();
             Procedure = null;
         }
 
@@ -79,9 +79,9 @@ namespace HoweFramework
                 throw new ErrorCodeException(ErrorCode.ProcedureNotExist);
             }
 
-            Procedure.OnLeave();
+            Procedure.Leave();
             Procedure = newProcedure;
-            Procedure.OnEnter();
+            Procedure.Enter();
         }
 
         protected override void OnInit()
@@ -92,7 +92,7 @@ namespace HoweFramework
         {
             if (Procedure != null)
             {
-                Procedure.OnLeave();
+                Procedure.Leave();
                 Procedure = null;
             }
         }
@@ -104,7 +104,7 @@ namespace HoweFramework
                 return;
             }
 
-            Procedure.OnUpdate(elapseSeconds, realElapseSeconds);
+            Procedure.Update(elapseSeconds, realElapseSeconds);
         }
     }
 }

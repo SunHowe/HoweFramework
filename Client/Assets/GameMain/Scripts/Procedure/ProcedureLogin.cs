@@ -12,7 +12,7 @@ namespace GameMain
         private const string LoginSceneAssetName = "Assets/GameMain/Scene/Login.unity";
         public override int Id => (int)ProcedureId.Login;
 
-        public override void OnEnter()
+        protected override void OnEnter()
         {
             // 打开登录场景。
             SceneModule.Instance.LoadSceneAsync(LoginSceneAssetName).Forget();
@@ -21,7 +21,7 @@ namespace GameMain
             UIModule.Instance.OpenUIForm(UIFormId.LoginForm).Forget();
         }
 
-        public override void OnLeave()
+        protected override void OnLeave()
         {
             // 关闭登录界面。
             UIModule.Instance.CloseUIForm(UIFormId.LoginForm).Forget();
@@ -30,7 +30,7 @@ namespace GameMain
             SceneModule.Instance.UnloadSceneAsync(LoginSceneAssetName).Forget();
         }
 
-        public override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
         }
     }
