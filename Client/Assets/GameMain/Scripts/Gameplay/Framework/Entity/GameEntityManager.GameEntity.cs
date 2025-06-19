@@ -107,6 +107,12 @@ namespace GameMain
                 m_ComponentList.Remove(component);
                 component.DisposeFromEntity();
             }
+
+            public void GetComponents(List<IGameComponent> components)
+            {
+                components.Clear();
+                components.AddRange(m_ComponentList);
+            }
         }
     }
 }
