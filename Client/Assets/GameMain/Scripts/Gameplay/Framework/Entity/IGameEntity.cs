@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace GameMain
 {
@@ -36,5 +37,10 @@ namespace GameMain
         /// 移除指定组件.
         /// </summary>
         void RemoveComponent(int componentType);
+
+        /// <summary>
+        /// 获取所有组件.
+        /// </summary>
+        void GetComponents(List<IGameComponent> components);
     }
 }

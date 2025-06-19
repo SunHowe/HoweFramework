@@ -88,5 +88,79 @@ namespace GameMain
         {
             entity.RemoveComponent(GetComponentType(type));
         }
+
+        /// <summary>
+        /// 添加组件.
+        /// </summary>
+        public static void AddComponent(this IGameComponent component, IGameComponent addComponent)
+        {
+            component.Entity.AddComponent(addComponent);
+        }
+
+        /// <summary>
+        /// 添加组件.
+        /// </summary>
+        public static T AddComponent<T>(this IGameComponent component) where T : GameComponentBase, new()
+        {
+            return component.Entity.AddComponent<T>();
+        }
+
+        /// <summary>
+        /// 获取组件实例。
+        /// </summary>
+        public static T GetComponent<T>(this IGameComponent component) where T : GameComponentBase
+        {
+            return component.Entity.GetComponent<T>();
+        }
+
+        /// <summary>
+        /// 获取组件实例。
+        /// </summary>
+        public static IGameComponent GetComponent(this IGameComponent component, Type type)
+        {
+            return component.Entity.GetComponent(type);
+        }
+
+        /// <summary>
+        /// 移除组件.
+        /// </summary>
+        public static void RemoveComponent<T>(this IGameComponent component) where T : GameComponentBase
+        {
+            component.Entity.RemoveComponent<T>();
+        }
+
+        /// <summary>
+        /// 移除组件.
+        /// </summary>
+        public static void RemoveComponent(this IGameComponent component, Type type)
+        {
+            component.Entity.RemoveComponent(type);
+        }
+
+        /// <summary>
+        /// 获取所有组件.
+        /// </summary>
+        public static IGameComponent[] GetComponents(this IGameEntity entity)
+        {
+            using var components = ReusableList<IGameComponent>.Create();
+            entity.GetComponents(components);
+            return components.ToArray();
+        }
+
+        /// <summary>
+        /// 获取所有组件.
+        /// </summary>
+        public static IGameComponent[] GetComponents(this IGameComponent component)
+        {
+            return component.Entity.GetComponents();
+        }
+
+        /// <summary>
+        /// 获取所有组件.
+        /// </summary>
+        public static void GetComponents(this IGameComponent component, List<IGameComponent> components)
+        {
+            component.Entity.GetComponents(components);
+        }
     }
 }
