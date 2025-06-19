@@ -22,6 +22,7 @@ namespace GameMain
         public void Awake()
         {
             EventDispatcher = EventModule.Instance.CreateEventDispatcher();
+            EventDispatcher.SetMode(EventDispatcherMode.AllowNoHandler | EventDispatcherMode.AllowMultiHandler);
             ResLoader = ResModule.Instance.CreateResLoader();
             GameObjectPool = GameObjectPoolModule.Instance.CreateGameObjectPool(ResLoader);
 
