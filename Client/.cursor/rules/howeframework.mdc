@@ -1,0 +1,38 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# HoweFramework 目录结构与作用说明
+
+`/Assets/HoweFramework` 目录是本项目的核心框架代码，包含了游戏开发所需的基础模块和功能实现。该目录下的各子模块职责如下：
+
+- **Base/**：基础类与通用工具，提供框架核心基类。
+- **Network/**：网络通信相关功能。
+- **Event/**：事件系统，实现事件分发与监听。
+- **Fsm/**：有限状态机（FSM）相关实现。
+- **UI/**：UI 框架与组件。
+- **System/**：系统级功能模块。
+- **Setting/**：配置管理相关代码。
+- **Scene/**：场景管理与切换。
+- **ObjectCollector/**：Hierarchy面板对象收集与管理。
+- **GameObjectPool/**：游戏对象池，提升对象复用效率。
+- **Res/**：资源加载与管理。
+- **WebRequest/**：Web 请求相关功能。
+- **Request/**：请求封装与处理。
+- **RemoteRequest/**：远程请求相关实现。
+- **Reference/**：引用计数与对象池相关。
+- **Sound/**：音效管理。
+- **Collection/**：集合类与数据结构扩展。
+- **Localization/**：本地化与多语言支持。
+- **DataTable/**：数据表解析与管理。
+- **Procedure/**：流程管理。
+- **Timer/**：计时器相关功能。
+- **Utility/**：通用工具类。
+- **Extensions/**：扩展方法集合。
+- **SafeArea/**：安全区域适配。
+
+此外，目录下还包含如 `GameApp.cs`（应用入口）、`Log.cs`（日志系统）、`ErrorCode.cs`（错误码定义）等核心文件。
+
+> 本规则文件用于帮助 Cursor 理解 HoweFramework 目录的结构与各模块职责，便于代码导航与理解。
+
