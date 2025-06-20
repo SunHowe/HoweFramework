@@ -43,9 +43,9 @@ namespace HoweFramework
         /// 解析文本模板。
         /// </summary>
         /// <param name="template">文本模板。</param>
-        /// <param name="dictionary">参数。</param>
+        /// <param name="getTemplateValue">获取模板值委托实例。</param>
         /// <returns>解析后的文本。</returns>
-        public string ParseTemplate(string template, Dictionary<string, string> dictionary)
+        public string ParseTemplate(string template, GetTemplateValue getTemplateValue)
         {
             int pos1 = 0;
             int pos2;
@@ -89,7 +89,7 @@ namespace HoweFramework
                     // 文本中设置了默认值的情况。
                     var key = tag.Substring(0, pos3);
 
-                    if (dictionary != null && dictionary.TryGetValue(key, out value))
+                    if (getTemplateValue != null && getTemplateValue(key, out value))
                     {
                         // 从参数字典中获取值。
                     }
@@ -106,7 +106,7 @@ namespace HoweFramework
                 else
                 {
                     // 文本中没有设置默认值的情况。
-                    if (dictionary != null && dictionary.TryGetValue(tag, out value))
+                    if (getTemplateValue != null && getTemplateValue(tag, out value))
                     {
                         // 从参数字典中获取值。
                     }

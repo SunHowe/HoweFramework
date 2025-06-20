@@ -105,7 +105,7 @@ namespace HoweFramework
         /// <returns>模板文本。</returns>
         private string GetTemplateText(string template, Dictionary<string, string> dictionary)
         {
-            return TextUtility.ParseTemplate(template, dictionary);
+            return TextUtility.ParseTemplate(template, dictionary != null ? dictionary.TryGetValue : null);
         }
 
         /// <summary>
