@@ -293,6 +293,9 @@ namespace HoweFramework.Editor
                 var graph = CreateInstance<BehaviorGraph>();
                 graph.GraphName = "新行为树";
                 
+                // 确保新图有根节点
+                EnsureNewGraphHasRootNode(graph);
+                
                 SetCurrentGraph(graph);
                 UpdateFileNameLabel("新行为树*");
                 
@@ -308,6 +311,10 @@ namespace HoweFramework.Editor
                 {
                     var graph = CreateInstance<BehaviorGraph>();
                     graph.GraphName = "空行为树";
+                    
+                    // 确保新图有根节点
+                    EnsureNewGraphHasRootNode(graph);
+                    
                     SetCurrentGraph(graph);
                     UpdateFileNameLabel("空行为树*");
                     
@@ -320,6 +327,24 @@ namespace HoweFramework.Editor
                     UpdateFileNameLabel("创建失败");
                 }
             }
+        }
+
+        /// <summary>
+        /// 确保新图有根节点
+        /// </summary>
+        /// <param name="graph">新创建的行为树图</param>
+        private void EnsureNewGraphHasRootNode(BehaviorGraph graph)
+        {
+            if (graph == null)
+                return;
+
+            // 创建根节点
+            var rootTemplate = new RootNodeTemplate();
+            var rootNode = rootTemplate.CreateNode();
+            rootNode.GraphPosition = new Vector2(0, 0); // 根节点位于中心
+            
+            graph.AddNode(rootNode);
+            graph.RootNodeId = rootNode.Id;
         }
 
         /// <summary>

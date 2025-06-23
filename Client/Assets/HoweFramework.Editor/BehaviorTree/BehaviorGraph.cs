@@ -96,35 +96,6 @@ namespace HoweFramework.Editor
         {
             if (m_Nodes == null)
                 m_Nodes = new List<BehaviorNode>();
-                
-            // 确保有根节点
-            EnsureRootNode();
-        }
-        
-        /// <summary>
-        /// 确保存在根节点
-        /// </summary>
-        private void EnsureRootNode()
-        {
-            // 如果已经有根节点，直接返回
-            if (!string.IsNullOrEmpty(m_RootNodeId) && GetNode(m_RootNodeId) != null)
-                return;
-                
-            // 查找是否已经存在Root类型的节点
-            var existingRoot = Nodes.FirstOrDefault(n => n.NodeType == BehaviorNodeType.Root);
-            if (existingRoot != null)
-            {
-                m_RootNodeId = existingRoot.Id;
-                return;
-            }
-            
-            // 创建新的根节点
-            var rootTemplate = new RootNodeTemplate();
-            var rootNode = rootTemplate.CreateNode();
-            rootNode.GraphPosition = new Vector2(0, 0); // 根节点位于中心
-            
-            AddNode(rootNode);
-            m_RootNodeId = rootNode.Id;
         }
 
         /// <summary>

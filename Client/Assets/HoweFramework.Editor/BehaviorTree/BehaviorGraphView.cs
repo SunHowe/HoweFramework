@@ -114,6 +114,9 @@ namespace HoweFramework.Editor
             if (graph != null)
             {
                 Graph = CreateWorkingCopy(graph);
+                
+                // 确保工作副本有根节点
+                EnsureRootNode(Graph);
             }
             else
             {
@@ -699,6 +702,9 @@ namespace HoweFramework.Editor
                 OriginalGraph.AddNode(originalNode);
             }
 
+            // 确保原始图有正确的根节点引用
+            EnsureRootNode(OriginalGraph);
+
             EditorUtility.SetDirty(OriginalGraph);
         }
 
@@ -840,6 +846,36 @@ namespace HoweFramework.Editor
         private void ExecuteCommand(IBehaviorGraphCommand command)
         {
             m_CommandManager.ExecuteCommand(command);
+        }
+
+        /// <summary>
+        /// 确保图有根节点
+        /// </summary>
+        /// <param name="graph">行为树图</param>
+        private void EnsureRootNode(BehaviorGraph graph)
+        {
+            if (graph == null)
+                return;
+
+            // 如果已经有根节点且根节点存在，直接返回
+            if (!string.IsNullOrEmpty(graph.RootNodeId) && graph.GetNode(graph.RootNodeId) != null)
+                return;
+
+            // 查找是否已经存在Root类型的节点
+            var existingRoot = graph.Nodes.FirstOrDefault(n => n.NodeType == BehaviorNodeType.Root);
+            if (existingRoot != null)
+            {
+                graph.RootNodeId = existingRoot.Id;
+                return;
+            }
+
+            // 如果没有根节点，创建一个新的
+            var rootTemplate = new RootNodeTemplate();
+            var rootNode = rootTemplate.CreateNode();
+            rootNode.GraphPosition = new Vector2(0, 0); // 根节点位于中心
+            
+            graph.AddNode(rootNode);
+            graph.RootNodeId = rootNode.Id;
         }
 
     }
