@@ -291,7 +291,7 @@ namespace HoweFramework.Editor
                 }
 
                 var graph = CreateInstance<BehaviorGraph>();
-                graph.GraphName = "新行为树";
+                graph.GraphName = BehaviorEditorSettings.DEFAULT_GRAPH_NAME;
                 
                 // 确保新图有根节点
                 EnsureNewGraphHasRootNode(graph);

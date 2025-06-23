@@ -409,9 +409,6 @@ namespace HoweFramework.Editor
         {
             switch (eventType)
             {
-                case BehaviorGraphEventType.SetRootNode:
-                    SetRootNode(node);
-                    break;
                 case BehaviorGraphEventType.DuplicateNode:
                     DuplicateNode(node);
                     break;
@@ -421,25 +418,6 @@ namespace HoweFramework.Editor
                 case BehaviorGraphEventType.DeleteSelectedNodes:
                     DeleteSelectedNodes();
                     break;
-            }
-        }
-
-        /// <summary>
-        /// 设置根节点
-        /// </summary>
-        /// <param name="nodeView">节点视图</param>
-        private void SetRootNode(BehaviorGraphNode nodeView)
-        {
-            if (Graph != null)
-            {
-                // 使用命令系统设置根节点
-                var command = new SetRootNodeCommand(Graph, nodeView.DataNode.Id);
-                ExecuteCommand(command);
-                
-                EditorUtility.SetDirty(Graph);
-
-                // 刷新视图显示根节点状态
-                RefreshRootNodeDisplay();
             }
         }
 

@@ -78,6 +78,9 @@ namespace HoweFramework.Editor
             // 添加样式类
             AddToClassList("behavior-node");
             AddToClassList($"behavior-node--{NodeType.ToString().ToLower()}");
+            
+            // 使标题可编辑
+            MakeTitleEditable();
         }
 
         /// <summary>
@@ -130,6 +133,173 @@ namespace HoweFramework.Editor
 
             // 创建错误指示器
             CreateErrorIndicator();
+        }
+
+        /// <summary>
+        /// 使标题可编辑
+        /// </summary>
+        private void MakeTitleEditable()
+        {
+            // 检查是否为Root节点，Root节点不允许重命名
+            if (DataNode.NodeType == BehaviorNodeType.Root)
+                return;
+
+            // 获取标题标签
+            var titleLabel = this.Q<Label>("title-label");
+            if (titleLabel == null)
+                return;
+
+            // 添加双击事件来编辑标题
+            titleLabel.RegisterCallback<MouseDownEvent>(evt =>
+            {
+                if (evt.clickCount == 2 && evt.button == 0) // 双击左键
+                {
+                    StartEditingTitle();
+                    evt.StopPropagation();
+                }
+            });
+
+            // 添加右键菜单选项
+            titleLabel.RegisterCallback<ContextualMenuPopulateEvent>(evt =>
+            {
+                evt.menu.AppendAction("重命名节点", (a) => StartEditingTitle());
+            });
+        }
+
+        /// <summary>
+        /// 开始编辑标题
+        /// </summary>
+        private void StartEditingTitle()
+        {
+            // 获取标题标签
+            var titleLabel = this.Q<Label>("title-label");
+            if (titleLabel == null)
+                return;
+
+            // 创建文本输入框
+            var textField = new TextField
+            {
+                value = DataNode.Name
+                // 移除 isDelayed = true，让值变化事件立即触发
+            };
+
+            // 设置样式
+            textField.style.position = Position.Absolute;
+            textField.style.left = titleLabel.worldBound.x - worldBound.x;
+            textField.style.top = titleLabel.worldBound.y - worldBound.y;
+            textField.style.width = titleLabel.worldBound.width;
+            textField.style.height = titleLabel.worldBound.height;
+            textField.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.9f);
+            textField.style.borderTopWidth = 1;
+            textField.style.borderBottomWidth = 1;
+            textField.style.borderLeftWidth = 1;
+            textField.style.borderRightWidth = 1;
+            textField.style.borderTopColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+            textField.style.borderBottomColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+            textField.style.borderLeftColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+            textField.style.borderRightColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+
+            // 隐藏原始标题
+            titleLabel.style.display = DisplayStyle.None;
+
+            // 添加文本输入框到节点
+            Add(textField);
+
+            // 聚焦到输入框并选中所有文本
+            textField.Focus();
+            textField.SelectAll();
+
+            // 注册回车键事件（优先处理）
+            textField.RegisterCallback<KeyDownEvent>(evt =>
+            {
+                if (evt.keyCode == KeyCode.Return || evt.keyCode == KeyCode.KeypadEnter)
+                {
+                    FinishEditingTitle(textField, titleLabel, textField.value);
+                    evt.StopPropagation();
+                }
+                else if (evt.keyCode == KeyCode.Escape)
+                {
+                    CancelEditingTitle(textField, titleLabel);
+                    evt.StopPropagation();
+                }
+            });
+
+            // 注册失去焦点事件
+            textField.RegisterCallback<FocusOutEvent>(evt =>
+            {
+                FinishEditingTitle(textField, titleLabel, textField.value);
+            });
+        }
+
+        /// <summary>
+        /// 完成编辑标题
+        /// </summary>
+        /// <param name="textField">文本输入框</param>
+        /// <param name="titleLabel">标题标签</param>
+        /// <param name="newName">新名称</param>
+        private void FinishEditingTitle(TextField textField, Label titleLabel, string newName)
+        {
+            // 验证名称
+            if (string.IsNullOrWhiteSpace(newName))
+            {
+                newName = DataNode.Name; // 如果为空，保持原名称
+            }
+
+            // 更新数据
+            if (newName != DataNode.Name)
+            {
+                DataNode.Name = newName;
+                title = newName;
+                
+                // 直接更新标题标签的文本
+                if (titleLabel != null)
+                {
+                    titleLabel.text = newName;
+                }
+                
+                // 标记图为脏
+                MarkDirtyRepaint();
+                
+                // 通知图视图数据已更改
+                if (OnNodeEvent != null)
+                {
+                    // 这里可以添加一个专门的事件类型来通知数据更改
+                    // 暂时使用MarkDirtyRepaint来触发重绘
+                }
+            }
+
+            // 清理UI
+            CleanupEditingUI(textField, titleLabel);
+        }
+
+        /// <summary>
+        /// 取消编辑标题
+        /// </summary>
+        /// <param name="textField">文本输入框</param>
+        /// <param name="titleLabel">标题标签</param>
+        private void CancelEditingTitle(TextField textField, Label titleLabel)
+        {
+            CleanupEditingUI(textField, titleLabel);
+        }
+
+        /// <summary>
+        /// 清理编辑UI
+        /// </summary>
+        /// <param name="textField">文本输入框</param>
+        /// <param name="titleLabel">标题标签</param>
+        private void CleanupEditingUI(TextField textField, Label titleLabel)
+        {
+            // 移除文本输入框
+            if (textField != null && textField.parent != null)
+            {
+                textField.parent.Remove(textField);
+            }
+
+            // 显示原始标题
+            if (titleLabel != null)
+            {
+                titleLabel.style.display = DisplayStyle.Flex;
+            }
         }
 
         /// <summary>
@@ -324,16 +494,6 @@ namespace HoweFramework.Editor
         }
 
         /// <summary>
-        /// 更新节点标题
-        /// </summary>
-        /// <param name="newTitle">新标题</param>
-        public void UpdateTitle(string newTitle)
-        {
-            title = newTitle;
-            DataNode.Name = newTitle;
-        }
-
-        /// <summary>
         /// 构建右键菜单
         /// </summary>
         /// <param name="evt">菜单事件</param>
@@ -341,6 +501,13 @@ namespace HoweFramework.Editor
         {
             // 检查是否为Root节点
             bool isRootNode = DataNode.NodeType == BehaviorNodeType.Root;
+            
+            // 只有非Root节点才显示重命名选项
+            if (!isRootNode)
+            {
+                evt.menu.AppendAction("重命名节点", (a) => StartEditingTitle());
+                evt.menu.AppendSeparator();
+            }
             
             // Root节点不显示复制和删除选项
             if (!isRootNode)
@@ -356,24 +523,7 @@ namespace HoweFramework.Editor
                 {
                     evt.menu.AppendAction("删除节点", (a) => DeleteNode());
                 }
-                
-                evt.menu.AppendSeparator();
             }
-            
-            // Root节点不显示"设为根节点"选项，其他支持子节点的节点显示
-            if (!isRootNode && DataNode.SupportChildren)
-            {
-                evt.menu.AppendAction("设为根节点", (a) => SetAsRootNode());
-            }
-        }
-
-        /// <summary>
-        /// 设为根节点
-        /// </summary>
-        private void SetAsRootNode()
-        {
-            // 通过委托通知图视图
-            OnNodeEvent?.Invoke(BehaviorGraphEventType.SetRootNode, this);
         }
 
         /// <summary>
@@ -511,7 +661,6 @@ namespace HoweFramework.Editor
     /// </summary>
     public enum BehaviorGraphEventType
     {
-        SetRootNode,
         DuplicateNode,
         DeleteNode,
         DeleteSelectedNodes

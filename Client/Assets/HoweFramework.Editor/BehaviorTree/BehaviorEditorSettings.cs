@@ -33,6 +33,11 @@ namespace HoweFramework.Editor
         /// 默认的文件名
         /// </summary>
         private const string DEFAULT_FILE_NAME = "BehaviorTree";
+
+        /// <summary>
+        /// 默认的行为树名称
+        /// </summary>
+        public const string DEFAULT_GRAPH_NAME = "New Behavior Tree";
         
         #endregion
         
