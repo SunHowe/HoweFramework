@@ -50,7 +50,7 @@ namespace HoweFramework.Editor
         /// </summary>
         private bool m_HasUserMadeChanges;
 
-        [MenuItem("HoweFramework/行为树编辑器")]
+        [MenuItem("Game Framework/行为树编辑器")]
         public static void OpenWindow()
         {
             var window = GetWindow<BehaviorGraphWindow>();
@@ -332,7 +332,7 @@ namespace HoweFramework.Editor
                 SaveGraph();
             }
 
-            var path = EditorUtility.OpenFilePanel("打开行为树", "Assets", "asset");
+            var path = EditorUtility.OpenFilePanel("打开行为树", BehaviorEditorSettings.DefaultDirectory, "asset");
             if (string.IsNullOrEmpty(path))
                 return;
 
@@ -347,6 +347,9 @@ namespace HoweFramework.Editor
             {
                 SetCurrentGraph(graph);
                 UpdateFileNameLabel(graph.name);
+                
+                // 更新目录设置
+                BehaviorEditorSettings.UpdateDirectory(path);
                 
                 // 重置用户操作标记（打开文件时重置）
                 m_HasUserMadeChanges = false;
@@ -397,7 +400,7 @@ namespace HoweFramework.Editor
 
             m_GraphView?.SaveGraphState();
 
-            var path = EditorUtility.SaveFilePanel("保存行为树", "Assets", m_CurrentGraph.GraphName ?? "BehaviorTree", "asset");
+            var path = EditorUtility.SaveFilePanel("保存行为树", BehaviorEditorSettings.DefaultDirectory, m_CurrentGraph.GraphName ?? BehaviorEditorSettings.DefaultFileName, "asset");
             if (string.IsNullOrEmpty(path))
                 return;
 
@@ -425,6 +428,9 @@ namespace HoweFramework.Editor
             AssetDatabase.Refresh();
 
             UpdateFileNameLabel(m_CurrentGraph.name);
+            
+            // 更新目录设置
+            BehaviorEditorSettings.UpdateDirectory(path);
             
             // 保存后重置标记（已保存，无需再提示）
             m_HasUserMadeChanges = false;
