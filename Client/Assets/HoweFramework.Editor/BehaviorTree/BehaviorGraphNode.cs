@@ -167,6 +167,21 @@ namespace HoweFramework.Editor
         }
 
         /// <summary>
+        /// 开始重命名节点（公共方法）
+        /// </summary>
+        public void StartRenaming()
+        {
+            // 检查是否为Root节点，Root节点不允许重命名
+            if (DataNode.NodeType == BehaviorNodeType.Root)
+            {
+                UnityEngine.Debug.LogWarning("Root节点不允许重命名");
+                return;
+            }
+
+            StartEditingTitle();
+        }
+
+        /// <summary>
         /// 开始编辑标题
         /// </summary>
         private void StartEditingTitle()

@@ -510,10 +510,50 @@ namespace HoweFramework.Editor
         /// <param name="evt">键盘事件</param>
         private void OnKeyDown(KeyDownEvent evt)
         {
-            if (evt.keyCode == KeyCode.Delete || evt.keyCode == KeyCode.Backspace)
+            // 检查是否按下了Ctrl键
+            bool isCtrlPressed = evt.ctrlKey || evt.commandKey; // commandKey用于Mac
+            
+            if (isCtrlPressed)
             {
-                DeleteSelectedNodes();
-                evt.StopPropagation();
+                switch (evt.keyCode)
+                {
+                    case KeyCode.C: // Ctrl+C - 复制选中节点
+                        CopySelectedNodes();
+                        evt.StopPropagation();
+                        break;
+                    case KeyCode.V: // Ctrl+V - 粘贴节点
+                        PasteNodes();
+                        evt.StopPropagation();
+                        break;
+                    case KeyCode.D: // Ctrl+D - 克隆选中节点
+                        DuplicateSelectedNodes();
+                        evt.StopPropagation();
+                        break;
+                    case KeyCode.Z: // Ctrl+Z - 撤销
+                        Undo();
+                        evt.StopPropagation();
+                        break;
+                    case KeyCode.Y: // Ctrl+Y - 重做
+                        Redo();
+                        evt.StopPropagation();
+                        break;
+                }
+            }
+            else
+            {
+                // 处理单个按键
+                switch (evt.keyCode)
+                {
+                    case KeyCode.F2: // F2 - 重命名选中节点
+                        RenameSelectedNode();
+                        evt.StopPropagation();
+                        break;
+                    case KeyCode.Delete: // Delete - 删除选中节点
+                    case KeyCode.Backspace: // Backspace - 删除选中节点
+                        DeleteSelectedNodes();
+                        evt.StopPropagation();
+                        break;
+                }
             }
         }
 
@@ -856,5 +896,194 @@ namespace HoweFramework.Editor
             graph.RootNodeId = rootNode.Id;
         }
 
+        /// <summary>
+        /// 复制选中的节点
+        /// </summary>
+        private void CopySelectedNodes()
+        {
+            if (Graph == null)
+                return;
+
+            var selectedNodes = selection.OfType<BehaviorGraphNode>().ToList();
+            if (selectedNodes.Count == 0)
+                return;
+
+            // 过滤掉Root节点
+            var nodesToCopy = selectedNodes.Where(node => !Graph.IsRootNode(node.DataNode.Id)).ToList();
+            if (nodesToCopy.Count == 0)
+            {
+                UnityEngine.Debug.LogWarning("无法复制Root节点");
+                return;
+            }
+
+            // 将节点ID列表用逗号分隔并复制到剪贴板
+            var nodeIds = nodesToCopy.Select(node => node.DataNode.Id).ToList();
+            var clipboardText = string.Join(",", nodeIds);
+            GUIUtility.systemCopyBuffer = clipboardText;
+
+            UnityEngine.Debug.Log($"已复制 {nodesToCopy.Count} 个节点到剪贴板");
+        }
+
+        /// <summary>
+        /// 粘贴节点
+        /// </summary>
+        private void PasteNodes()
+        {
+            if (Graph == null)
+                return;
+
+            var clipboardText = GUIUtility.systemCopyBuffer;
+            if (string.IsNullOrEmpty(clipboardText))
+                return;
+
+            try
+            {
+                // 分割剪贴板文本获取节点ID列表
+                var nodeIds = clipboardText.Split(',').Where(id => !string.IsNullOrEmpty(id)).ToList();
+                if (nodeIds.Count == 0)
+                    return;
+
+                // 查找要粘贴的节点
+                var nodesToPaste = new List<BehaviorNode>();
+                foreach (var nodeId in nodeIds)
+                {
+                    var node = Graph.GetNode(nodeId);
+                    if (node != null && !Graph.IsRootNode(nodeId))
+                    {
+                        nodesToPaste.Add(node);
+                    }
+                }
+
+                if (nodesToPaste.Count == 0)
+                {
+                    UnityEngine.Debug.LogWarning("剪贴板中没有找到有效的节点");
+                    return;
+                }
+
+                // 计算粘贴位置（稍微偏移以避免重叠）
+                var offset = new Vector2(20, 20);
+                var pastedNodes = new List<BehaviorNode>();
+
+                foreach (var originalNode in nodesToPaste)
+                {
+                    // 克隆节点
+                    var clonedNode = originalNode.Clone();
+                    clonedNode.GraphPosition = originalNode.GraphPosition + offset;
+                    
+                    // 使用命令系统添加节点
+                    var command = new AddNodeCommand(Graph, clonedNode);
+                    ExecuteCommand(command);
+                    
+                    pastedNodes.Add(clonedNode);
+                }
+
+                // 创建节点视图
+                foreach (var node in pastedNodes)
+                {
+                    CreateNodeView(node);
+                }
+
+                // 选中粘贴的节点
+                ClearSelection();
+                foreach (var node in pastedNodes)
+                {
+                    if (m_NodeViews.TryGetValue(node.Id, out var nodeView))
+                    {
+                        AddToSelection(nodeView);
+                    }
+                }
+
+                EditorUtility.SetDirty(Graph);
+                UnityEngine.Debug.Log($"已粘贴 {pastedNodes.Count} 个节点");
+            }
+            catch (System.Exception e)
+            {
+                UnityEngine.Debug.LogError($"粘贴节点失败: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 克隆选中的节点
+        /// </summary>
+        private void DuplicateSelectedNodes()
+        {
+            if (Graph == null)
+                return;
+
+            var selectedNodes = selection.OfType<BehaviorGraphNode>().ToList();
+            if (selectedNodes.Count == 0)
+                return;
+
+            // 过滤掉Root节点
+            var nodesToDuplicate = selectedNodes.Where(node => !Graph.IsRootNode(node.DataNode.Id)).ToList();
+            if (nodesToDuplicate.Count == 0)
+            {
+                UnityEngine.Debug.LogWarning("无法克隆Root节点");
+                return;
+            }
+
+            var duplicatedNodes = new List<BehaviorNode>();
+
+            foreach (var nodeView in nodesToDuplicate)
+            {
+                // 使用命令系统复制节点
+                var command = new DuplicateNodeCommand(Graph, nodeView.DataNode);
+                ExecuteCommand(command);
+                
+                // 获取复制后的节点
+                var allNodes = Graph.Nodes;
+                var duplicatedNode = allNodes.LastOrDefault(n => n.Name == nodeView.DataNode.Name && n.Id != nodeView.DataNode.Id);
+                if (duplicatedNode != null)
+                {
+                    duplicatedNodes.Add(duplicatedNode);
+                }
+            }
+
+            // 创建节点视图
+            foreach (var node in duplicatedNodes)
+            {
+                CreateNodeView(node);
+            }
+
+            // 选中复制的节点
+            ClearSelection();
+            foreach (var node in duplicatedNodes)
+            {
+                if (m_NodeViews.TryGetValue(node.Id, out var nodeView))
+                {
+                    AddToSelection(nodeView);
+                }
+            }
+
+            EditorUtility.SetDirty(Graph);
+            UnityEngine.Debug.Log($"已克隆 {duplicatedNodes.Count} 个节点");
+        }
+
+        /// <summary>
+        /// 重命名选中的节点
+        /// </summary>
+        private void RenameSelectedNode()
+        {
+            if (Graph == null)
+                return;
+
+            var selectedNodes = selection.OfType<BehaviorGraphNode>().ToList();
+            if (selectedNodes.Count == 0)
+            {
+                UnityEngine.Debug.LogWarning("没有选中任何节点");
+                return;
+            }
+
+            if (selectedNodes.Count > 1)
+            {
+                UnityEngine.Debug.LogWarning("只能重命名单个节点，请只选中一个节点");
+                return;
+            }
+
+            var selectedNode = selectedNodes[0];
+            
+            // 触发节点的重命名功能
+            selectedNode.StartRenaming();
+        }
     }
 }
