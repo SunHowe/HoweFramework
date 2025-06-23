@@ -916,12 +916,33 @@ namespace HoweFramework.Editor
                 return;
             }
 
-            // 将节点ID列表用逗号分隔并复制到剪贴板
+            // 收集节点ID和它们之间的连接关系
             var nodeIds = nodesToCopy.Select(node => node.DataNode.Id).ToList();
+            var connections = new List<string>();
+            
+            // 分析选中节点之间的连接关系
+            foreach (var node in nodesToCopy)
+            {
+                foreach (var childId in node.DataNode.ChildrenIds)
+                {
+                    // 只记录选中节点之间的连接关系
+                    if (nodeIds.Contains(childId))
+                    {
+                        connections.Add($"{node.DataNode.Id}->{childId}");
+                    }
+                }
+            }
+
+            // 将节点ID和连接关系用特殊分隔符组合
             var clipboardText = string.Join(",", nodeIds);
+            if (connections.Count > 0)
+            {
+                clipboardText += "|" + string.Join(",", connections);
+            }
+            
             GUIUtility.systemCopyBuffer = clipboardText;
 
-            UnityEngine.Debug.Log($"已复制 {nodesToCopy.Count} 个节点到剪贴板");
+            UnityEngine.Debug.Log($"已复制 {nodesToCopy.Count} 个节点和 {connections.Count} 个连接关系到剪贴板");
         }
 
         /// <summary>
@@ -938,8 +959,16 @@ namespace HoweFramework.Editor
 
             try
             {
-                // 分割剪贴板文本获取节点ID列表
-                var nodeIds = clipboardText.Split(',').Where(id => !string.IsNullOrEmpty(id)).ToList();
+                // 分割剪贴板文本获取节点ID列表和连接关系
+                var parts = clipboardText.Split('|');
+                var nodeIds = parts[0].Split(',').Where(id => !string.IsNullOrEmpty(id)).ToList();
+                
+                List<string> connections = new List<string>();
+                if (parts.Length > 1 && !string.IsNullOrEmpty(parts[1]))
+                {
+                    connections = parts[1].Split(',').Where(conn => !string.IsNullOrEmpty(conn)).ToList();
+                }
+
                 if (nodeIds.Count == 0)
                     return;
 
@@ -962,30 +991,67 @@ namespace HoweFramework.Editor
 
                 // 计算粘贴位置（稍微偏移以避免重叠）
                 var offset = new Vector2(20, 20);
-                var pastedNodes = new List<BehaviorNode>();
+                var clonedNodes = new List<BehaviorNode>();
+                var originalToClonedMapping = new Dictionary<string, string>(); // 原始ID -> 克隆ID的映射
+                var connectionsToAdd = new List<BatchPasteNodesCommand.ConnectionInfo>();
 
+                // 第一步：准备克隆节点
                 foreach (var originalNode in nodesToPaste)
                 {
                     // 克隆节点
                     var clonedNode = originalNode.Clone();
                     clonedNode.GraphPosition = originalNode.GraphPosition + offset;
                     
-                    // 使用命令系统添加节点
-                    var command = new AddNodeCommand(Graph, clonedNode);
-                    ExecuteCommand(command);
+                    // 清空克隆节点的连接关系（避免与外部节点连接）
+                    clonedNode.ChildrenIds.Clear();
+                    clonedNode.ParentId = null;
                     
-                    pastedNodes.Add(clonedNode);
+                    clonedNodes.Add(clonedNode);
+                    originalToClonedMapping[originalNode.Id] = clonedNode.Id;
                 }
 
-                // 创建节点视图
-                foreach (var node in pastedNodes)
+                // 第二步：准备连接关系
+                foreach (var connection in connections)
+                {
+                    var connectionParts = connection.Split("->");
+                    if (connectionParts.Length == 2)
+                    {
+                        var originalParentId = connectionParts[0];
+                        var originalChildId = connectionParts[1];
+                        
+                        // 查找对应的克隆节点ID
+                        if (originalToClonedMapping.TryGetValue(originalParentId, out var clonedParentId) &&
+                            originalToClonedMapping.TryGetValue(originalChildId, out var clonedChildId))
+                        {
+                            connectionsToAdd.Add(new BatchPasteNodesCommand.ConnectionInfo
+                            {
+                                ParentId = clonedParentId,
+                                ChildId = clonedChildId
+                            });
+                        }
+                    }
+                }
+
+                // 第三步：使用批量命令执行粘贴操作
+                var batchCommand = new BatchPasteNodesCommand(Graph, clonedNodes, connectionsToAdd, () =>
+                {
+                    // 撤销时的回调：重新填充视图
+                    PopulateView();
+                });
+                ExecuteCommand(batchCommand);
+
+                // 第四步：创建节点视图
+                foreach (var node in clonedNodes)
                 {
                     CreateNodeView(node);
                 }
 
-                // 选中粘贴的节点
+                // 第五步：刷新连接线显示
+                RefreshEdges();
+
+                // 第六步：选中粘贴的节点
                 ClearSelection();
-                foreach (var node in pastedNodes)
+                foreach (var node in clonedNodes)
                 {
                     if (m_NodeViews.TryGetValue(node.Id, out var nodeView))
                     {
@@ -994,7 +1060,7 @@ namespace HoweFramework.Editor
                 }
 
                 EditorUtility.SetDirty(Graph);
-                UnityEngine.Debug.Log($"已粘贴 {pastedNodes.Count} 个节点");
+                UnityEngine.Debug.Log($"已粘贴 {clonedNodes.Count} 个节点，恢复了 {connectionsToAdd.Count} 个连接关系");
             }
             catch (System.Exception e)
             {
