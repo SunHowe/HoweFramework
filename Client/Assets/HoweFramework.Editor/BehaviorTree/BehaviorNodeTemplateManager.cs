@@ -108,8 +108,6 @@ namespace HoweFramework.Editor
             }
         }
 
-
-
         /// <summary>
         /// 获取所有模板
         /// </summary>
@@ -153,7 +151,17 @@ namespace HoweFramework.Editor
                 .ToList()
                 .AsReadOnly();
         }
+
+        /// <summary>
+        /// 基于RuntimeTypeName获取模板实例
+        /// </summary>
+        /// <param name="typeName">运行时类型名</param>
+        /// <returns>模板实例或null</returns>
+        public BehaviorNodeTemplate GetTemplateByRuntimeTypeName(string typeName)
+        {
+            if (string.IsNullOrEmpty(typeName))
+                return null;
+            return m_Templates.FirstOrDefault(t => t.RuntimeTypeName == typeName);
+        }
     }
-
-
 } 
