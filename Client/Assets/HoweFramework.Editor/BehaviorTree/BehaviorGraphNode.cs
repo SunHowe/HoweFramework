@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Linq;
 
 namespace HoweFramework.Editor
 {
@@ -45,6 +46,11 @@ namespace HoweFramework.Editor
         /// 节点事件委托
         /// </summary>
         public System.Action<BehaviorGraphEventType, BehaviorGraphNode> OnNodeEvent;
+
+        /// <summary>
+        /// 错误信息列表
+        /// </summary>
+        public List<string> ErrorMessages { get; private set; } = new List<string>();
 
         /// <summary>
         /// 构造函数
@@ -589,14 +595,16 @@ namespace HoweFramework.Editor
             if (m_ErrorIndicator == null)
                 return;
 
-            // 检查是否需要显示错误
-            bool showError = DataNode.SupportChildren && DataNode.ChildrenIds.Count == 0;
-            
+            // 只要有错误信息就显示
+            bool showError = ErrorMessages.Count > 0 || (DataNode.SupportChildren && DataNode.ChildrenIds.Count == 0);
             m_ErrorIndicator.style.display = showError ? DisplayStyle.Flex : DisplayStyle.None;
-            
+
             if (showError)
             {
-                m_ErrorIndicator.tooltip = "此节点支持子节点但没有连接任何子节点";
+                if (ErrorMessages.Count > 0)
+                    m_ErrorIndicator.tooltip = string.Join("\n", ErrorMessages);
+                else
+                    m_ErrorIndicator.tooltip = "此节点支持子节点但没有连接任何子节点";
             }
         }
 
@@ -648,6 +656,97 @@ namespace HoweFramework.Editor
                 // 移除根节点样式
                 RemoveFromClassList("root-node");
             }
+        }
+
+        /// <summary>
+        /// 设置错误信息（覆盖）
+        /// </summary>
+        public void SetErrorMessages(IEnumerable<string> errors)
+        {
+            ErrorMessages.Clear();
+            if (errors != null)
+                ErrorMessages.AddRange(errors);
+            UpdateErrorState();
+        }
+
+        /// <summary>
+        /// 添加一条错误信息
+        /// </summary>
+        public void AddErrorMessage(string error)
+        {
+            if (!string.IsNullOrEmpty(error))
+            {
+                ErrorMessages.Add(error);
+                UpdateErrorState();
+            }
+        }
+
+        /// <summary>
+        /// 与模板同步和校验
+        /// </summary>
+        public void SyncWithTemplate(BehaviorNodeTemplateManager templateManager)
+        {
+            ErrorMessages.Clear();
+
+            // 跳过Root节点
+            if (DataNode.NodeType == BehaviorNodeType.Root)
+                return;
+
+            var template = templateManager.GetTemplateByRuntimeTypeName(DataNode.TypeName);
+            if (template == null)
+            {
+                AddErrorMessage($"未找到对应模板: {DataNode.TypeName}");
+                Debug.LogError($"节点[{DataNode.Name}]未找到对应模板: {DataNode.TypeName}");
+                return;
+            }
+
+            if (DataNode.SupportChildren != template.SupportChildren || DataNode.MaxChildrenCount != template.MaxChildrenCount)
+            {
+                AddErrorMessage($"节点结构与模板不一致（SupportChildren/MaxChildrenCount），请删除重建");
+                Debug.LogError($"节点[{DataNode.Name}]的SupportChildren/MaxChildrenCount与模板不一致，请删除重建！");
+                return;
+            }
+
+            var templateProps = template.DefaultProperties;
+            var nodeProps = DataNode.Properties;
+            var templatePropDict = templateProps.ToDictionary(p => p.Id);
+            var nodePropDict = nodeProps.ToDictionary(p => p.Id);
+            // 属性名/类型变更
+            foreach (var prop in nodeProps.ToList())
+            {
+                if (templatePropDict.TryGetValue(prop.Id, out var tplProp))
+                {
+                    if (prop.Name != tplProp.PropertyName || prop.ValueType != tplProp.ValueType)
+                    {
+                        AddErrorMessage($"属性[{prop.Name}]定义已变更，已自动同步为模板定义");
+                        Debug.LogWarning($"节点[{DataNode.Name}]属性[{prop.Name}]定义已变更，自动同步为模板定义");
+                        prop.Name = tplProp.PropertyName;
+                        prop.ValueType = tplProp.ValueType;
+                        prop.Value = tplProp.DefaultValue;
+                    }
+                }
+            }
+
+            // 新增属性
+            foreach (var tplProp in templateProps)
+            {
+                if (!nodePropDict.ContainsKey(tplProp.Id))
+                {
+                    DataNode.Properties.Add(new BehaviorNodeProperty(tplProp.Id, tplProp.PropertyName, tplProp.ValueType, tplProp.DefaultValue));
+                    Debug.Log($"节点[{DataNode.Name}]自动补充新属性[{tplProp.PropertyName}]，使用默认值");
+                }
+            }
+
+            // 被删除的属性
+            var toRemove = nodeProps.Where(p => !templatePropDict.ContainsKey(p.Id)).ToList();
+            foreach (var delProp in toRemove)
+            {
+                DataNode.Properties.Remove(delProp);
+                AddErrorMessage($"属性[{delProp.Name}]已被模板删除，已自动移除");
+                Debug.LogError($"节点[{DataNode.Name}]属性[{delProp.Name}]已被模板删除，已自动移除");
+            }
+            
+            UpdateErrorState();
         }
     }
 

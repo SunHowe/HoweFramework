@@ -109,12 +109,10 @@ namespace HoweFramework.Editor
         public void SetGraph(BehaviorGraph graph)
         {
             OriginalGraph = graph;
-            
             // 创建工作副本，避免直接修改原始数据
             if (graph != null)
             {
                 Graph = CreateWorkingCopy(graph);
-                
                 // 确保工作副本有根节点
                 EnsureRootNode(Graph);
             }
@@ -122,8 +120,12 @@ namespace HoweFramework.Editor
             {
                 Graph = null;
             }
-            
             PopulateView();
+            // 节点与模板同步校验（迁移到节点视图）
+            foreach (var nodeView in m_NodeViews.Values)
+            {
+                nodeView.SyncWithTemplate(m_TemplateManager);
+            }
         }
 
         /// <summary>
