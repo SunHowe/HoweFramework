@@ -91,7 +91,7 @@ namespace HoweFramework.Editor
             // 初始化默认属性
             foreach (var propertyTemplate in DefaultProperties)
             {
-                var property = new BehaviorNodeProperty(propertyTemplate.PropertyName, propertyTemplate.ValueType, propertyTemplate.DefaultValue);
+                var property = new BehaviorNodeProperty(propertyTemplate.Id, propertyTemplate.PropertyName, propertyTemplate.ValueType, propertyTemplate.DefaultValue);
                 node.Properties.Add(property);
             }
 
@@ -168,6 +168,11 @@ namespace HoweFramework.Editor
     public class BehaviorNodePropertyTemplate
     {
         /// <summary>
+        /// 属性唯一ID
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
         /// 属性名
         /// </summary>
         public string PropertyName { get; set; }
@@ -200,13 +205,15 @@ namespace HoweFramework.Editor
         /// <summary>
         /// 构造函数
         /// </summary>
+        /// <param name="id">属性唯一ID</param>
         /// <param name="propertyName">属性名</param>
         /// <param name="valueType">值类型</param>
         /// <param name="displayName">显示名</param>
         /// <param name="defaultValue">默认值</param>
         /// <param name="isRequired">是否必需</param>
-        public BehaviorNodePropertyTemplate(string propertyName, BehaviorNodePropertyValueType valueType, string displayName = null, object defaultValue = null, bool isRequired = false)
+        public BehaviorNodePropertyTemplate(int id, string propertyName, BehaviorNodePropertyValueType valueType, string displayName = null, object defaultValue = null, bool isRequired = false)
         {
+            Id = id;
             PropertyName = propertyName;
             ValueType = valueType;
             DisplayName = displayName ?? propertyName;

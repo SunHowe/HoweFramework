@@ -136,61 +136,6 @@ namespace HoweFramework.Editor
         }
 
         /// <summary>
-        /// 获取属性值
-        /// </summary>
-        /// <param name="propertyName">属性名</param>
-        /// <returns>属性值</returns>
-        public object GetPropertyValue(string propertyName)
-        {
-            var property = Properties.Find(p => p.Name == propertyName);
-            return property?.Value;
-        }
-
-        /// <summary>
-        /// 设置属性值
-        /// </summary>
-        /// <param name="propertyName">属性名</param>
-        /// <param name="value">属性值</param>
-        public void SetPropertyValue(string propertyName, object value)
-        {
-            var property = Properties.Find(p => p.Name == propertyName);
-            if (property != null)
-            {
-                property.Value = value;
-            }
-            else
-            {
-                var valueType = GetValueTypeFromObject(value);
-                Properties.Add(new BehaviorNodeProperty(propertyName, valueType, value));
-            }
-        }
-
-        /// <summary>
-        /// 从对象获取值类型
-        /// </summary>
-        /// <param name="value">值对象</param>
-        /// <returns>值类型</returns>
-        private BehaviorNodePropertyValueType GetValueTypeFromObject(object value)
-        {
-            if (value == null)
-                return BehaviorNodePropertyValueType.String;
-
-            var type = value.GetType();
-            if (type == typeof(bool))
-                return BehaviorNodePropertyValueType.Bool;
-            if (type == typeof(int))
-                return BehaviorNodePropertyValueType.Int;
-            if (type == typeof(long))
-                return BehaviorNodePropertyValueType.Long;
-            if (type == typeof(float))
-                return BehaviorNodePropertyValueType.Float;
-            if (type == typeof(double))
-                return BehaviorNodePropertyValueType.Double;
-            
-            return BehaviorNodePropertyValueType.String;
-        }
-
-        /// <summary>
         /// 检查是否可以添加子节点
         /// </summary>
         /// <returns>是否可以添加</returns>
@@ -295,6 +240,7 @@ namespace HoweFramework.Editor
     [Serializable]
     public class BehaviorNodeProperty
     {
+        [SerializeField] private int m_Id;
         [SerializeField] private string m_Name;
         [SerializeField] private BehaviorNodePropertyValueType m_ValueType;
         [SerializeField] private bool m_BoolValue;
@@ -303,6 +249,15 @@ namespace HoweFramework.Editor
         [SerializeField] private float m_FloatValue;
         [SerializeField] private double m_DoubleValue;
         [SerializeField] private string m_StringValue;
+
+        /// <summary>
+        /// 属性唯一ID
+        /// </summary>
+        public int Id
+        {
+            get => m_Id;
+            set => m_Id = value;
+        }
 
         /// <summary>
         /// 属性名
@@ -433,21 +388,23 @@ namespace HoweFramework.Editor
         /// </summary>
         public BehaviorNodeProperty()
         {
+            m_Id = 0;
             m_StringValue = string.Empty;
         }
 
         /// <summary>
         /// 构造函数
         /// </summary>
+        /// <param name="id">属性唯一ID</param>
         /// <param name="name">属性名</param>
         /// <param name="valueType">值类型</param>
         /// <param name="value">属性值</param>
-        public BehaviorNodeProperty(string name, BehaviorNodePropertyValueType valueType, object value = null)
+        public BehaviorNodeProperty(int id, string name, BehaviorNodePropertyValueType valueType, object value = null)
         {
+            m_Id = id;
             m_Name = name;
             m_ValueType = valueType;
             m_StringValue = string.Empty;
-            
             if (value != null)
             {
                 SetValue(value);
@@ -527,7 +484,7 @@ namespace HoweFramework.Editor
         /// <returns>克隆的属性</returns>
         public BehaviorNodeProperty Clone()
         {
-            return new BehaviorNodeProperty(Name, ValueType, Value);
+            return new BehaviorNodeProperty(Id, Name, ValueType, Value);
         }
     }
 } 
