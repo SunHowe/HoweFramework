@@ -53,7 +53,7 @@ namespace HoweFramework.Editor
         public BehaviorGraphNode(BehaviorNode dataNode)
         {
             DataNode = dataNode;
-            NodeType = GetNodeTypeFromTypeName(dataNode.TypeName);
+            NodeType = dataNode.NodeType;
             
             Initialize();
             UpdateNodeAppearance();
@@ -122,7 +122,7 @@ namespace HoweFramework.Editor
             }
             
             // 添加类型标签
-            var typeLabel = new Label(isRootNode ? "ROOT" : NodeType.ToString());
+            var typeLabel = new Label(NodeType.ToString());
             typeLabel.AddToClassList("node-type-label");
             typeLabel.style.fontSize = isRootNode ? 10 : 9;
             typeLabel.style.color = isRootNode ? new Color(1f, 0.8f, 0.2f, 1f) : new Color(0.8f, 0.8f, 0.8f, 1f);
@@ -454,26 +454,6 @@ namespace HoweFramework.Editor
             }
 
             return container;
-        }
-
-        /// <summary>
-        /// 从类型名获取节点类型
-        /// </summary>
-        /// <param name="typeName">类型名</param>
-        /// <returns>节点类型</returns>
-        private BehaviorNodeType GetNodeTypeFromTypeName(string typeName)
-        {
-            if (string.IsNullOrEmpty(typeName))
-                return BehaviorNodeType.Action;
-
-            if (typeName.Contains("Action"))
-                return BehaviorNodeType.Action;
-            else if (typeName.Contains("Composite"))
-                return BehaviorNodeType.Composite;
-            else if (typeName.Contains("Decor"))
-                return BehaviorNodeType.Decor;
-
-            return BehaviorNodeType.Action;
         }
 
         /// <summary>
