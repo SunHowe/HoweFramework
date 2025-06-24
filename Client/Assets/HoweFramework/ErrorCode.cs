@@ -283,7 +283,7 @@ namespace HoweFramework
         public const int WebRequestNetworkAuthenticationRequired = 538;
 
         #endregion
-    
+
         #region [Sound]
 
         /// <summary>
@@ -338,6 +338,119 @@ namespace HoweFramework
         /// 登录认证失败。
         /// </summary>
         public const int LoginAuthFailed = 803;
+
+        #endregion
+
+        #region [BehaviorTree]
+
+        /// <summary>
+        /// 行为节点处于Running状态，下次将从这个节点继续执行。
+        /// </summary>
+        public const int BehaviorRunningState = 901;
+
+        /// <summary>
+        /// 行为树装饰节点已存在子节点。
+        /// </summary>
+        public const int BehaviorTreeDecorNodeAlreadyHasChild = 902;
+
+        /// <summary>
+        /// 行为树装饰节点没有子节点。
+        /// </summary>
+        public const int BehaviorTreeDecorNodeNoChild = 903;
+
+        /// <summary>
+        /// 行为树复合节点没有子节点。
+        /// </summary>
+        public const int BehaviorTreeCompositeNodeNoChild = 904;
+
+        /// <summary>
+        /// 行为树选择器节点没有成功。
+        /// </summary>
+        public const int BehaviorTreeSelectorNoSuccess = 905;
+
+        #endregion
+
+        #region [SwipeCard 10001-10099]
+
+        /// <summary>
+        /// 周目状态不是等待操作。
+        /// </summary>
+        public const int SwipeCardRoundStateNotWaitOperate = 10001;
+
+        /// <summary>
+        /// 周目状态不是等待显示。
+        /// </summary>
+        public const int SwipeCardRoundStateNotWaitDisplay = 10002;
+
+        /// <summary>
+        /// 周目状态不是周目结束。
+        /// </summary>
+        public const int SwipeCardRoundStateNotRoundEnd = 10003;
+
+        /// <summary>
+        /// 卡牌操作方法无效。
+        /// </summary>
+        public const int SwipeCardMethodInvalid = 10004;
+
+        /// <summary>
+        /// 卡牌操作方法未注册。
+        /// </summary>
+        public const int SwipeCardMethodNotRegister = 10005;
+
+        /// <summary>
+        /// 卡牌操作方法条件不匹配。
+        /// </summary>
+        public const int SwipeCardMethodConditionNotMatch = 10006;
+
+        /// <summary>
+        /// 周目状态不是初始化游戏。
+        /// </summary>
+        public const int SwipeCardRoundStateNotGameInit = 10007;
+
+        /// <summary>
+        /// 周目状态不是初始化周目。
+        /// </summary>
+        public const int SwipeCardRoundStateNotRoundInit = 10008;
+
+        /// <summary>
+        /// 周目状态不是游戏未初始化。
+        /// </summary>
+        public const int SwipeCardRoundStateNotNone = 10009;
+
+        /// <summary>
+        /// 主题配置不存在。
+        /// </summary>
+        public const int SwipeCardThemeConfigNotFound = 10010;
+
+        /// <summary>
+        /// 周目卡牌数量无效。
+        /// </summary>
+        public const int SwipeCardRoundCardCountInvalid = 10011;
+
+        /// <summary>
+        /// 卡牌配置不存在。
+        /// </summary>
+        public const int SwipeCardCardConfigNotFound = 10012;
+
+        /// <summary>
+        /// 周目配置列表为空。
+        /// </summary>
+        public const int SwipeCardRoundConfigListEmpty = 10013;
+
+        /// <summary>
+        /// 游戏失败。
+        /// </summary>
+        public const int SwipeCardGameLose = 10014;
+
+        /// <summary>
+        /// 通关条件未注册。
+        /// </summary>
+        public const int SwipeCardPassGameConditionNotRegister = 10015;
+
+        /// <summary>
+        /// 资源不足。
+        /// </summary>
+        public const int SwipeCardResourceNotEnough = 10016;
 
         #endregion
     }

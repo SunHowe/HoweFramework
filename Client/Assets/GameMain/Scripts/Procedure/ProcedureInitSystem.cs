@@ -9,7 +9,7 @@ namespace GameMain
     {
         public override int Id => (int)ProcedureId.InitSystem;
 
-        public override void OnEnter()
+        protected override void OnEnter()
         {
 #if OFFLINE_MODE
             SystemModule.Instance.RegisterSystem<ILoginSystem, OfflineLoginSystem>();
@@ -19,11 +19,11 @@ namespace GameMain
 #endif
         }
 
-        public override void OnLeave()
+        protected override void OnLeave()
         {
         }
 
-        public override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
             ChangeNextProcedure();
         }

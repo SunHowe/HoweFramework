@@ -9,16 +9,16 @@ namespace GameMain
     {
         public override int Id => (int)ProcedureId.Lobby;
 
-        public override void OnEnter()
+        protected override void OnEnter()
         {
             // 打开大厅界面。
         }
 
-        public override void OnLeave()
+        protected override void OnLeave()
         {
         }
 
-        public override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
             if (LoginSystem.Instance.LoginState.Value < LoginStateType.OnGame)
             {

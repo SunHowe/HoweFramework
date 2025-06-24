@@ -8,5 +8,6 @@ namespace GameMain
         Update = 1,
         Entity = 2,
         View = 3,
+        Random = 4,
     }
 }

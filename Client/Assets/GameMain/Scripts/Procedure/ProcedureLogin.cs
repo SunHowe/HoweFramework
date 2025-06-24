@@ -16,7 +16,7 @@ namespace GameMain
 
         private CancellationTokenSource m_CancellationTokenSource;
 
-        public override void OnEnter()
+        protected override void OnEnter()
         {
             m_CancellationTokenSource = new CancellationTokenSource();
             
@@ -27,7 +27,7 @@ namespace GameMain
             UIModule.Instance.OpenUIForm(UIFormId.LoginForm, m_CancellationTokenSource.Token).Forget();
         }
 
-        public override void OnLeave()
+        protected override void OnLeave()
         {
             m_CancellationTokenSource.Cancel();
             m_CancellationTokenSource.Dispose();
@@ -36,7 +36,7 @@ namespace GameMain
             SceneModule.Instance.UnloadSceneAsync(LoginSceneAssetName).Forget();
         }
 
-        public override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
             if (LoginSystem.Instance.LoginState.Value == LoginStateType.OnGame)
             {

@@ -1,0 +1,154 @@
+/* 行为树编辑器样式表 */
+
+/* 节点基础样式 */
+.behavior-node {
+    min-width: 120px;
+    min-height: 80px;
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 行为节点样式 */
+.behavior-node--action {
+    background-color: rgba(64, 89, 64, 0.9);
+    border-color: rgba(150, 180, 150, 0.6);
+}
+
+.behavior-node--action:selected {
+    border-color: rgba(100, 150, 255, 1);
+    background-color: rgba(74, 99, 74, 1);
+}
+
+.behavior-node--action:hover {
+    background-color: rgba(74, 99, 74, 1);
+    border-color: rgba(180, 210, 180, 0.8);
+}
+
+/* 复合节点样式 */
+.behavior-node--composite {
+    background-color: rgba(64, 76, 115, 0.9);
+    border-color: rgba(150, 160, 200, 0.6);
+}
+
+.behavior-node--composite:selected {
+    border-color: rgba(100, 150, 255, 1);
+    background-color: rgba(74, 86, 125, 1);
+}
+
+.behavior-node--composite:hover {
+    background-color: rgba(74, 86, 125, 1);
+    border-color: rgba(180, 190, 230, 0.8);
+}
+
+/* 装饰节点样式 */
+.behavior-node--decor {
+    background-color: rgba(115, 89, 64, 0.9);
+    border-color: rgba(200, 170, 140, 0.6);
+}
+
+.behavior-node--decor:selected {
+    border-color: rgba(100, 150, 255, 1);
+    background-color: rgba(125, 99, 74, 1);
+}
+
+.behavior-node--decor:hover {
+    background-color: rgba(125, 99, 74, 1);
+    border-color: rgba(230, 200, 170, 0.8);
+}
+
+/* 根节点样式 */
+.root-node {
+    border-color: rgba(255, 215, 0, 1);
+    border-width: 3px;
+}
+
+.root-node .node-type-label {
+    color: rgba(255, 215, 0, 1);
+    font-weight: bold;
+}
+
+/* 节点类型标签 */
+.node-type-label {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    -unity-text-align: middle-center;
+    margin-top: 2px;
+}
+
+/* 属性容器 */
+.properties-container {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 4px;
+    margin-top: 4px;
+}
+
+.properties-foldout {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* 属性元素 */
+.property-element {
+    margin-bottom: 4px;
+    padding: 2px;
+}
+
+.property-label {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2px;
+}
+
+.property-field {
+    font-size: 10px;
+    min-height: 18px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+/* 工具栏文件名标签 */
+.filename-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-left: 8px;
+    margin-right: 8px;
+    -unity-text-align: middle-left;
+}
+
+/* 端口样式 */
+.port {
+    --port-color: rgba(255, 255, 255, 0.6);
+}
+
+.port:hover {
+    --port-color: rgba(255, 255, 255, 1);
+}
+
+/* 连接线样式 */
+.edge {
+    --edge-width: 2px;
+    --edge-color: rgba(255, 255, 255, 0.6);
+}
+
+.edge:selected {
+    --edge-color: rgba(255, 215, 0, 1);
+    --edge-width: 3px;
+}
+
+/* 网格背景 */
+.grid-background {
+    --grid-background-color: rgba(40, 40, 40, 1);
+    --line-color: rgba(255, 255, 255, 0.1);
+    --thick-line-color: rgba(255, 255, 255, 0.2);
+    --spacing: 20;
+}
+
+/* 选择框样式 */
+.selection-border {
+    border-color: rgba(255, 215, 0, 1);
+    border-width: 2px;
+    background-color: rgba(255, 215, 0, 0.1);
+} 

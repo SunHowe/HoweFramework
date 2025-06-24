@@ -13,18 +13,18 @@ namespace GameMain
 
         private bool m_IsInited = false;
 
-        public override void OnEnter()
+        protected override void OnEnter()
         {
             // 在这里进行一些必要的初始化流程。
             m_IsInited = false;
             InitAsync().Forget();
         }
 
-        public override void OnLeave()
+        protected override void OnLeave()
         {
         }
 
-        public override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
             if (m_IsInited)
             {

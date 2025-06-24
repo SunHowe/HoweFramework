@@ -12,7 +12,7 @@ namespace GameMain
 
         private bool m_IsComplete;
 
-        public override void OnEnter()
+        protected override void OnEnter()
         {
             m_IsComplete = false;
 
@@ -23,11 +23,11 @@ namespace GameMain
             LocalizationModule.Instance.LoadAsync().ContinueWith(() => m_IsComplete = true).Forget();
         }
 
-        public override void OnLeave()
+        protected override void OnLeave()
         {
         }
 
-        public override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
             if (m_IsComplete)
             {

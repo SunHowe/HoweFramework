@@ -4,6 +4,14 @@ using System.Collections.Generic;
 namespace HoweFramework
 {
     /// <summary>
+    /// 获取模板值委托。
+    /// </summary>
+    /// <param name="key">键。</param>
+    /// <param name="value">值。</param>
+    /// <returns>是否获取到值。</returns>
+    public delegate bool GetTemplateValue(string key, out string value);
+
+    /// <summary>
     /// 文本模板辅助器。
     /// </summary>
     public interface ITextTemplateHelper : IDisposable
@@ -12,9 +20,9 @@ namespace HoweFramework
         /// 解析文本模板。
         /// </summary>
         /// <param name="template">文本模板。</param>
-        /// <param name="dictionary">参数。</param>
+        /// <param name="getTemplateValue">获取模板值委托实例。</param>
         /// <returns>解析后的文本。</returns>
-        string ParseTemplate(string template, Dictionary<string, string> dictionary);
+        string ParseTemplate(string template, GetTemplateValue getTemplateValue);
 
         /// <summary>
         /// 添加全局文本模板值。
@@ -80,16 +88,16 @@ namespace HoweFramework
         /// 解析文本模板。
         /// </summary>
         /// <param name="template">文本模板。</param>
-        /// <param name="dictionary">参数。</param>
+        /// <param name="getTemplateValue">获取模板值委托实例。</param>
         /// <returns>解析后的文本。</returns>
-        public static string ParseTemplate(string template, Dictionary<string, string> dictionary)
+        public static string ParseTemplate(string template, GetTemplateValue getTemplateValue)
         {
             if (s_TextTemplateHelper == null)
             {
                 throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Text template helper is not set.");
             }
 
-            return s_TextTemplateHelper.ParseTemplate(template, dictionary);
+            return s_TextTemplateHelper.ParseTemplate(template, getTemplateValue);
         }
 
         /// <summary>
@@ -152,7 +160,7 @@ namespace HoweFramework
 
         public string GetText(bool autoDispose = true)
         {
-            var text = TextUtility.ParseTemplate(m_Text, m_Dictionary);
+            var text = TextUtility.ParseTemplate(m_Text, m_Dictionary.TryGetValue);
 
             if (autoDispose)
             {
