@@ -76,5 +76,11 @@ namespace HoweFramework
         /// </summary>
         /// <returns>字符串。</returns>
         string ReadString();
+
+        /// <summary>
+        /// 读取可序列化对象。
+        /// </summary>
+        /// <returns>可序列化对象。</returns>
+        T ReadObject<T>() where T : ISerializable;
     }
 }

@@ -76,5 +76,11 @@ namespace HoweFramework
         /// </summary>
         /// <param name="value">字符串。</param>
         void WriteString(string value);
+
+        /// <summary>
+        /// 写入可序列化对象。
+        /// </summary>
+        /// <param name="value">可序列化对象。</param>
+        void WriteObject<T>(T value) where T : ISerializable;
     }
 }

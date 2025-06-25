@@ -56,19 +56,6 @@ namespace HoweFramework
             return result;
         }
 
-        /// <summary>
-        /// 创建缓冲区读取器。
-        /// </summary>
-        /// <param name="buffer">缓冲区。</param>
-        /// <returns>缓冲区读取器。</returns>
-        public static DefaultBufferReader Create(byte[] buffer)
-        {
-            var reader = ReferencePool.Acquire<DefaultBufferReader>();
-            reader.m_Buffer = buffer;
-            reader.BufferSize = buffer.Length;
-            return reader;
-        }
-
         public bool ReadBool()
         {
             if (Position + 1 > BufferSize)
@@ -141,6 +128,36 @@ namespace HoweFramework
             string value = ConverterUtility.GetString(m_Buffer, Position, length);
             Position += length;
             return value;
+        }
+
+        public T ReadObject<T>() where T : ISerializable
+        {
+            T instance;
+
+            if (typeof(IReference).IsAssignableFrom(typeof(T)))
+            {
+                instance = (T)ReferencePool.Acquire(typeof(T));
+            }
+            else
+            {
+                instance = Activator.CreateInstance<T>();
+            }
+
+            instance.Deserialize(this);
+            return instance;
+        }
+
+        /// <summary>
+        /// 创建缓冲区读取器。
+        /// </summary>
+        /// <param name="buffer">缓冲区。</param>
+        /// <returns>缓冲区读取器。</returns>
+        public static DefaultBufferReader Create(byte[] buffer)
+        {
+            var reader = ReferencePool.Acquire<DefaultBufferReader>();
+            reader.m_Buffer = buffer;
+            reader.BufferSize = buffer.Length;
+            return reader;
         }
     }
 }

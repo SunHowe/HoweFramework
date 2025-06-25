@@ -105,6 +105,33 @@ namespace HoweFramework
             Position += byteCount;
         }
 
+        public void WriteObject<T>(T value) where T : ISerializable
+        {
+            if (value == null)
+            {
+                WriteInt32(0);
+                return;
+            }
+
+            var cachePosition = Position;
+            var valueBeginPosition = Position + 4;
+
+            Position = valueBeginPosition;
+            value.Serialize(this);
+
+            var valueEndPosition = Position;
+            var byteCount = valueEndPosition - valueBeginPosition;
+
+            Position = cachePosition;
+            WriteInt32(byteCount);
+
+            Position = valueEndPosition;
+        }
+
+        /// <summary>
+        /// 确保缓冲区有足够的空间。
+        /// </summary>
+        /// <param name="size">需要确保的缓冲区大小。</param>
         private void EnsureCapacity(int size)
         {
             if (Position + size <= BufferSize)
@@ -113,6 +140,15 @@ namespace HoweFramework
             }
 
             Array.Resize(ref m_Buffer, Position + size);
+        }
+
+        /// <summary>
+        /// 创建缓冲区写入器。
+        /// </summary>
+        /// <returns>缓冲区写入器。</returns>
+        public static DefaultBufferWriter Create()
+        {
+            return ReferencePool.Acquire<DefaultBufferWriter>();
         }
     }
 }
