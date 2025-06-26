@@ -42,6 +42,31 @@ namespace HoweFramework
             ChildrenIds.Clear();
         }
 
+        /// <summary>
+        /// 根据配置创建行为节点。
+        /// </summary>
+        /// <returns>行为节点。</returns>
+        public IBehaviorNode CreateBehaviorNode()
+        {
+            var nodeType = AssemblyUtility.GetRuntimeType(RuntimeTypeName);
+            if (nodeType == null)
+            {
+                return null;
+            }
+
+            if (ReferencePool.Acquire(nodeType) is not BehaviorNodeBase node)
+            {
+                return null;
+            }
+
+            foreach (var property in Properties)
+            {
+                node.SetProperty(property);
+            }
+
+            return node;
+        }
+
         public static BehaviorNodeConfig Create()
         {
 #if UNITY_EDITOR

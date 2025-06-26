@@ -132,6 +132,12 @@ namespace HoweFramework
 
         public T ReadObject<T>() where T : ISerializable
         {
+            var byteCount = ReadInt32();
+            if (byteCount == -1)
+            {
+                return default;
+            }
+
             T instance;
 
             if (typeof(IReference).IsAssignableFrom(typeof(T)))
@@ -143,7 +149,10 @@ namespace HoweFramework
                 instance = Activator.CreateInstance<T>();
             }
 
+            var endPosition = Position + byteCount;
             instance.Deserialize(this);
+            Position = endPosition;
+
             return instance;
         }
 

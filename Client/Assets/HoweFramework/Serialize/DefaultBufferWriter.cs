@@ -103,8 +103,13 @@ namespace HoweFramework
                 WriteInt32(0);
                 return;
             }
-            int byteCount = ConverterUtility.GetBytes(value, m_Buffer, Position + 4); // 预留4字节写长度
-            WriteInt32(byteCount); // 实际写入长度
+
+            var byteCount = ConverterUtility.GetByteCount(value);
+            EnsureCapacity(byteCount + 4);
+
+            ConverterUtility.GetBytes(value, m_Buffer, Position + 4);
+            WriteInt32(byteCount);
+
             Position += byteCount;
         }
 
@@ -112,7 +117,7 @@ namespace HoweFramework
         {
             if (value == null)
             {
-                WriteInt32(0);
+                WriteInt32(-1);
                 return;
             }
 

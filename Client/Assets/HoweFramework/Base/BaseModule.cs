@@ -25,12 +25,15 @@ namespace HoweFramework
 
         protected override void OnInit()
         {
+            // 注册框架程序集。
+            AssemblyUtility.RegisterRuntimeAssembly(GetType().Assembly);
         }
 
         protected override void OnDestroy()
         {
             JsonUtility.DisposeJsonHelper();
             TextUtility.DisposeTextTemplateHelper();
+            AssemblyUtility.Clear();
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)

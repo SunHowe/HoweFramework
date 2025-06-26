@@ -223,7 +223,6 @@ namespace HoweFramework.Editor
     [Serializable]
     public class BehaviorNodeProperty
     {
-        [SerializeField] private int m_Id;
         [SerializeField] private string m_Name;
         [SerializeField] private BehaviorPropertyType m_ValueType;
         [SerializeField] private bool m_BoolValue;
@@ -232,15 +231,6 @@ namespace HoweFramework.Editor
         [SerializeField] private float m_FloatValue;
         [SerializeField] private double m_DoubleValue;
         [SerializeField] private string m_StringValue;
-
-        /// <summary>
-        /// 属性唯一ID
-        /// </summary>
-        public int Id
-        {
-            get => m_Id;
-            set => m_Id = value;
-        }
 
         /// <summary>
         /// 属性名
@@ -371,20 +361,16 @@ namespace HoweFramework.Editor
         /// </summary>
         public BehaviorNodeProperty()
         {
-            m_Id = 0;
-            m_StringValue = string.Empty;
         }
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="id">属性唯一ID</param>
         /// <param name="name">属性名</param>
         /// <param name="valueType">值类型</param>
         /// <param name="value">属性值</param>
-        public BehaviorNodeProperty(int id, string name, BehaviorPropertyType valueType, object value = null)
+        public BehaviorNodeProperty(string name, BehaviorPropertyType valueType, object value = null)
         {
-            m_Id = id;
             m_Name = name;
             m_ValueType = valueType;
             m_StringValue = string.Empty;
@@ -467,7 +453,7 @@ namespace HoweFramework.Editor
         /// <returns>克隆的属性</returns>
         public BehaviorNodeProperty Clone()
         {
-            return new BehaviorNodeProperty(Id, Name, ValueType, Value);
+            return new BehaviorNodeProperty(Name, ValueType, Value);
         }
 
         /// <summary>
@@ -477,7 +463,7 @@ namespace HoweFramework.Editor
         public BehaviorPropertyConfig ToRuntimeConfig()
         {
             var config = new BehaviorPropertyConfig();
-            config.Id = Id;
+            config.Name = Name;
             config.PropertyType = ValueType;
             switch (ValueType)
             {

@@ -35,19 +35,62 @@ MonoBehaviour:
     m_SupportChildren: 1
     m_MaxChildrenCount: -1
     m_ChildrenIds:
-    - b14e47c4-a07c-4555-96ec-45611eaa8e50
+    - 16f2a3ec-4a51-4bf6-9261-a2d5db6bb82f
     m_ParentId: 6ce3a23a-38fd-495b-b1a3-e3ff928275f9
     m_GraphPosition: {x: 408, y: 212}
-  - m_Id: b14e47c4-a07c-4555-96ec-45611eaa8e50
-    m_Name: Failure
-    m_TypeName: HoweFramework.BehaviorFailure
+  - m_Id: 16f2a3ec-4a51-4bf6-9261-a2d5db6bb82f
+    m_Name: Repeat
+    m_TypeName: HoweFramework.BehaviorRepeat
+    m_NodeType: 2
+    m_Properties:
+    - m_Name: RepeatCount
+      m_ValueType: 1
+      m_BoolValue: 0
+      m_IntValue: 5
+      m_LongValue: 0
+      m_FloatValue: 0
+      m_DoubleValue: 0
+      m_StringValue: 
+    - m_Name: IgnoreFailure
+      m_ValueType: 0
+      m_BoolValue: 0
+      m_IntValue: 0
+      m_LongValue: 0
+      m_FloatValue: 0
+      m_DoubleValue: 0
+      m_StringValue: 
+    m_SupportChildren: 1
+    m_MaxChildrenCount: 1
+    m_ChildrenIds:
+    - b3cc1246-6208-4ee6-a61e-799206050999
+    m_ParentId: 13e85ca3-2a22-4940-80ef-3b6b95875ba7
+    m_GraphPosition: {x: 622, y: 292}
+  - m_Id: b3cc1246-6208-4ee6-a61e-799206050999
+    m_Name: Log
+    m_TypeName: HoweFramework.BehaviorLog
     m_NodeType: 0
-    m_Properties: []
+    m_Properties:
+    - m_Name: Message
+      m_ValueType: 5
+      m_BoolValue: 0
+      m_IntValue: 0
+      m_LongValue: 0
+      m_FloatValue: 0
+      m_DoubleValue: 0
+      m_StringValue: Hello World
+    - m_Name: LogLevel
+      m_ValueType: 1
+      m_BoolValue: 0
+      m_IntValue: 0
+      m_LongValue: 0
+      m_FloatValue: 0
+      m_DoubleValue: 0
+      m_StringValue: 
     m_SupportChildren: 0
     m_MaxChildrenCount: -1
     m_ChildrenIds: []
-    m_ParentId: 13e85ca3-2a22-4940-80ef-3b6b95875ba7
-    m_GraphPosition: {x: 615, y: 292}
+    m_ParentId: 16f2a3ec-4a51-4bf6-9261-a2d5db6bb82f
+    m_GraphPosition: {x: 818, y: 362}
   m_RootNodeId: 6ce3a23a-38fd-495b-b1a3-e3ff928275f9
-  m_GraphOffset: {x: -113, y: 33}
+  m_GraphOffset: {x: -320, y: -92}
   m_GraphScale: {x: 1, y: 1, z: 1}

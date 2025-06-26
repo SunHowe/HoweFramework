@@ -118,3 +118,16 @@ MonoBehaviour:
         FilterRuleName: CollectScene
         AssetTags: 
         UserData: 
+    - GroupName: Behavior
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/GameMain/BehaviorTree
+        CollectorGUID: 9d2f086ec00ea3840942e678e18fa8b0
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectTextAsset
+        AssetTags: 
+        UserData: 

@@ -20,6 +20,21 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 设置属性。
+        /// </summary>
+        /// <param name="property">属性配置。</param>
+        internal protected virtual void SetProperty(BehaviorPropertyConfig property)
+        {
+            var propertyInfo = GetType().GetProperty(property.Name);
+            if (propertyInfo == null)
+            {
+                return;
+            }
+            
+            propertyInfo.SetValue(this, property.Value);
+        }
+
+        /// <summary>
         /// 执行行为。
         /// </summary>
         /// <returns>返回执行结果。</returns>

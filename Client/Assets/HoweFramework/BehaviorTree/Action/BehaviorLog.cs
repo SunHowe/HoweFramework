@@ -11,6 +11,11 @@ namespace HoweFramework
         public string Message { get; set; }
 
         /// <summary>
+        /// 日志级别。
+        /// </summary>
+        public int LogLevel { get; set; }
+
+        /// <summary>
         /// 执行。
         /// </summary>
         /// <returns>返回执行结果。</returns>

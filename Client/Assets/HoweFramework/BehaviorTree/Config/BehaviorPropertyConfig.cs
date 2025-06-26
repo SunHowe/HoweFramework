@@ -6,14 +6,34 @@ namespace HoweFramework
     public sealed class BehaviorPropertyConfig : IReference, ISerializable
     {
         /// <summary>
-        /// 属性ID。
+        /// 属性名。
         /// </summary>
-        public int Id { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// 属性类型。
         /// </summary>
         public BehaviorPropertyType PropertyType { get; set; }
+
+        /// <summary>
+        /// 属性值。
+        /// </summary>
+        public object Value 
+        {
+            get
+            {
+                return PropertyType switch
+                {
+                    BehaviorPropertyType.Bool => BoolValue,
+                    BehaviorPropertyType.Int => IntValue,
+                    BehaviorPropertyType.Long => LongValue,
+                    BehaviorPropertyType.Float => FloatValue,
+                    BehaviorPropertyType.Double => DoubleValue,
+                    BehaviorPropertyType.String => StringValue,
+                    _ => default,
+                };
+            }
+        }
 
         /// <summary>
         /// 布尔值。
@@ -113,7 +133,7 @@ namespace HoweFramework
             m_StringValue = default;
 
             PropertyType = default;
-            Id = default;
+            Name = default;
         }
 
         /// <summary>
@@ -137,10 +157,10 @@ namespace HoweFramework
         /// <param name="id">属性ID。</param>
         /// <param name="value">属性值。</param>
         /// <returns>创建的布尔值属性。</returns>
-        public static BehaviorPropertyConfig CreateBoolProperty(int id, bool value)
+        public static BehaviorPropertyConfig CreateBoolProperty(string name, bool value)
         {
             var config = Create();
-            config.Id = id;
+            config.Name = name;
             config.BoolValue = value;
             return config;
         }
@@ -151,10 +171,10 @@ namespace HoweFramework
         /// <param name="id">属性ID。</param>
         /// <param name="value">属性值。</param>
         /// <returns>创建的32位整数属性。</returns>
-        public static BehaviorPropertyConfig CreateIntProperty(int id, int value)
+        public static BehaviorPropertyConfig CreateIntProperty(string name, int value)
         {
             var config = Create();
-            config.Id = id;
+            config.Name = name;
             config.PropertyType = BehaviorPropertyType.Int;
             config.IntValue = value;
             return config;
@@ -166,10 +186,10 @@ namespace HoweFramework
         /// <param name="id">属性ID。</param>
         /// <param name="value">属性值。</param>
         /// <returns>创建的64位整数属性。</returns>
-        public static BehaviorPropertyConfig CreateLongProperty(int id, long value)
+        public static BehaviorPropertyConfig CreateLongProperty(string name, long value)
         {
             var config = Create();
-            config.Id = id;
+            config.Name = name;
             config.PropertyType = BehaviorPropertyType.Long;
             config.LongValue = value;
             return config;
@@ -181,10 +201,10 @@ namespace HoweFramework
         /// <param name="id">属性ID。</param>
         /// <param name="value">属性值。</param>
         /// <returns>创建的单精度浮点数属性。</returns>
-        public static BehaviorPropertyConfig CreateFloatProperty(int id, float value)
+        public static BehaviorPropertyConfig CreateFloatProperty(string name, float value)
         {
             var config = Create();
-            config.Id = id;
+            config.Name = name;
             config.PropertyType = BehaviorPropertyType.Float;
             config.FloatValue = value;
             return config;
@@ -196,10 +216,10 @@ namespace HoweFramework
         /// <param name="id">属性ID。</param>
         /// <param name="value">属性值。</param>
         /// <returns>创建的双精度浮点数属性。</returns>
-        public static BehaviorPropertyConfig CreateDoubleProperty(int id, double value)
+        public static BehaviorPropertyConfig CreateDoubleProperty(string name, double value)
         {
             var config = Create();
-            config.Id = id;
+            config.Name = name;
             config.PropertyType = BehaviorPropertyType.Double;
             config.DoubleValue = value;
             return config;
@@ -211,10 +231,10 @@ namespace HoweFramework
         /// <param name="id">属性ID。</param>
         /// <param name="value">属性值。</param>
         /// <returns>创建的字符串属性。</returns>
-        public static BehaviorPropertyConfig CreateStringProperty(int id, string value)
+        public static BehaviorPropertyConfig CreateStringProperty(string name, string value)
         {
             var config = Create();
-            config.Id = id;
+            config.Name = name;
             config.PropertyType = BehaviorPropertyType.String;
             config.StringValue = value;
             return config;
@@ -222,7 +242,7 @@ namespace HoweFramework
 
         public void Serialize(IBufferWriter writer)
         {
-            writer.WriteInt32(Id);
+            writer.WriteString(Name);
             writer.WriteInt32((int)PropertyType);
             switch (PropertyType)
             {
@@ -249,7 +269,7 @@ namespace HoweFramework
 
         public void Deserialize(IBufferReader reader)
         {
-            Id = reader.ReadInt32();
+            Name = reader.ReadString();
             PropertyType = (BehaviorPropertyType)reader.ReadInt32();
             switch (PropertyType)
             {
