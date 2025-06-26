@@ -18,6 +18,11 @@ namespace HoweFramework
         int Position { get; set; }
 
         /// <summary>
+        /// 获取已写入的缓冲区。
+        /// </summary>
+        Span<byte> WrittenBuffer { get; }
+
+        /// <summary>
         /// 写入一个字节。
         /// </summary>
         /// <param name="value">字节。</param>

@@ -180,7 +180,7 @@ namespace HoweFramework.Editor
         /// <summary>
         /// 属性值类型
         /// </summary>
-        public BehaviorNodePropertyValueType ValueType { get; set; }
+        public BehaviorPropertyType ValueType { get; set; }
 
         /// <summary>
         /// 默认值
@@ -196,7 +196,7 @@ namespace HoweFramework.Editor
         /// <param name="displayName">显示名</param>
         /// <param name="defaultValue">默认值</param>
         /// <param name="isRequired">是否必需</param>
-        public BehaviorNodePropertyTemplate(int id, string propertyName, BehaviorNodePropertyValueType valueType, object defaultValue = null)
+        public BehaviorNodePropertyTemplate(int id, string propertyName, BehaviorPropertyType valueType, object defaultValue = null)
         {
             Id = id;
             PropertyName = propertyName;

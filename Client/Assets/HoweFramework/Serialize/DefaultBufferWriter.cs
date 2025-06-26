@@ -19,6 +19,9 @@ namespace HoweFramework
         private byte[] m_Buffer = new byte[1024];
 
         /// <inheritdoc/>
+        public Span<byte> WrittenBuffer => m_Buffer.AsSpan(0, Position);
+
+        /// <inheritdoc/>
         public void Clear()
         {
             Position = 0;

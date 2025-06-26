@@ -496,6 +496,18 @@ namespace HoweFramework.Editor
 
             return clone;
         }
+    
+        /// <summary>
+        /// 转换为运行时配置
+        /// </summary>
+        /// <returns>运行时配置</returns>
+        public BehaviorTreeConfig ToRuntimeConfig()
+        {
+            var config = new BehaviorTreeConfig();
+            config.RootNodeId = RootNodeId;
+            config.Nodes.AddRange(Nodes.Select(n => n.ToRuntimeConfig()));
+            return config;
+        }
     }
 
     /// <summary>

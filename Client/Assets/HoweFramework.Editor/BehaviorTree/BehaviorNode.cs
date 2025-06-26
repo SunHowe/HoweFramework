@@ -196,42 +196,25 @@ namespace HoweFramework.Editor
 
             return clone;
         }
-    }
-
-    /// <summary>
-    /// 行为树节点属性值类型
-    /// </summary>
-    public enum BehaviorNodePropertyValueType
-    {
-        /// <summary>
-        /// 布尔值
-        /// </summary>
-        Bool,
 
         /// <summary>
-        /// 32位整数
+        /// 转换为运行时配置
         /// </summary>
-        Int,
+        /// <returns>运行时配置</returns>
+        public BehaviorNodeConfig ToRuntimeConfig()
+        {
+            var config = new BehaviorNodeConfig();
+            config.Id = Id;
+            config.RuntimeTypeName = TypeName;
+            config.ChildrenIds.AddRange(ChildrenIds);
 
-        /// <summary>
-        /// 64位整数
-        /// </summary>
-        Long,
+            foreach (var property in Properties)
+            {
+                config.Properties.Add(property.ToRuntimeConfig());
+            }
 
-        /// <summary>
-        /// 单精度浮点数
-        /// </summary>
-        Float,
-
-        /// <summary>
-        /// 双精度浮点数
-        /// </summary>
-        Double,
-
-        /// <summary>
-        /// 字符串
-        /// </summary>
-        String
+            return config;
+        }
     }
 
     /// <summary>
@@ -242,7 +225,7 @@ namespace HoweFramework.Editor
     {
         [SerializeField] private int m_Id;
         [SerializeField] private string m_Name;
-        [SerializeField] private BehaviorNodePropertyValueType m_ValueType;
+        [SerializeField] private BehaviorPropertyType m_ValueType;
         [SerializeField] private bool m_BoolValue;
         [SerializeField] private int m_IntValue;
         [SerializeField] private long m_LongValue;
@@ -271,7 +254,7 @@ namespace HoweFramework.Editor
         /// <summary>
         /// 属性值类型
         /// </summary>
-        public BehaviorNodePropertyValueType ValueType
+        public BehaviorPropertyType ValueType
         {
             get => m_ValueType;
             set => m_ValueType = value;
@@ -286,17 +269,17 @@ namespace HoweFramework.Editor
             {
                 switch (ValueType)
                 {
-                    case BehaviorNodePropertyValueType.Bool:
+                    case BehaviorPropertyType.Bool:
                         return m_BoolValue;
-                    case BehaviorNodePropertyValueType.Int:
+                    case BehaviorPropertyType.Int:
                         return m_IntValue;
-                    case BehaviorNodePropertyValueType.Long:
+                    case BehaviorPropertyType.Long:
                         return m_LongValue;
-                    case BehaviorNodePropertyValueType.Float:
+                    case BehaviorPropertyType.Float:
                         return m_FloatValue;
-                    case BehaviorNodePropertyValueType.Double:
+                    case BehaviorPropertyType.Double:
                         return m_DoubleValue;
-                    case BehaviorNodePropertyValueType.String:
+                    case BehaviorPropertyType.String:
                         return m_StringValue;
                     default:
                         return null;
@@ -314,7 +297,7 @@ namespace HoweFramework.Editor
             set
             {
                 m_BoolValue = value;
-                m_ValueType = BehaviorNodePropertyValueType.Bool;
+                m_ValueType = BehaviorPropertyType.Bool;
             }
         }
 
@@ -327,7 +310,7 @@ namespace HoweFramework.Editor
             set
             {
                 m_IntValue = value;
-                m_ValueType = BehaviorNodePropertyValueType.Int;
+                m_ValueType = BehaviorPropertyType.Int;
             }
         }
 
@@ -340,7 +323,7 @@ namespace HoweFramework.Editor
             set
             {
                 m_LongValue = value;
-                m_ValueType = BehaviorNodePropertyValueType.Long;
+                m_ValueType = BehaviorPropertyType.Long;
             }
         }
 
@@ -353,7 +336,7 @@ namespace HoweFramework.Editor
             set
             {
                 m_FloatValue = value;
-                m_ValueType = BehaviorNodePropertyValueType.Float;
+                m_ValueType = BehaviorPropertyType.Float;
             }
         }
 
@@ -366,7 +349,7 @@ namespace HoweFramework.Editor
             set
             {
                 m_DoubleValue = value;
-                m_ValueType = BehaviorNodePropertyValueType.Double;
+                m_ValueType = BehaviorPropertyType.Double;
             }
         }
 
@@ -379,7 +362,7 @@ namespace HoweFramework.Editor
             set
             {
                 m_StringValue = value;
-                m_ValueType = BehaviorNodePropertyValueType.String;
+                m_ValueType = BehaviorPropertyType.String;
             }
         }
 
@@ -399,7 +382,7 @@ namespace HoweFramework.Editor
         /// <param name="name">属性名</param>
         /// <param name="valueType">值类型</param>
         /// <param name="value">属性值</param>
-        public BehaviorNodeProperty(int id, string name, BehaviorNodePropertyValueType valueType, object value = null)
+        public BehaviorNodeProperty(int id, string name, BehaviorPropertyType valueType, object value = null)
         {
             m_Id = id;
             m_Name = name;
@@ -429,22 +412,22 @@ namespace HoweFramework.Editor
 
             switch (ValueType)
             {
-                case BehaviorNodePropertyValueType.Bool:
+                case BehaviorPropertyType.Bool:
                     m_BoolValue = Convert.ToBoolean(value);
                     break;
-                case BehaviorNodePropertyValueType.Int:
+                case BehaviorPropertyType.Int:
                     m_IntValue = Convert.ToInt32(value);
                     break;
-                case BehaviorNodePropertyValueType.Long:
+                case BehaviorPropertyType.Long:
                     m_LongValue = Convert.ToInt64(value);
                     break;
-                case BehaviorNodePropertyValueType.Float:
+                case BehaviorPropertyType.Float:
                     m_FloatValue = Convert.ToSingle(value);
                     break;
-                case BehaviorNodePropertyValueType.Double:
+                case BehaviorPropertyType.Double:
                     m_DoubleValue = Convert.ToDouble(value);
                     break;
-                case BehaviorNodePropertyValueType.String:
+                case BehaviorPropertyType.String:
                     m_StringValue = value.ToString();
                     break;
             }
@@ -457,22 +440,22 @@ namespace HoweFramework.Editor
         {
             switch (ValueType)
             {
-                case BehaviorNodePropertyValueType.Bool:
+                case BehaviorPropertyType.Bool:
                     m_BoolValue = false;
                     break;
-                case BehaviorNodePropertyValueType.Int:
+                case BehaviorPropertyType.Int:
                     m_IntValue = 0;
                     break;
-                case BehaviorNodePropertyValueType.Long:
+                case BehaviorPropertyType.Long:
                     m_LongValue = 0L;
                     break;
-                case BehaviorNodePropertyValueType.Float:
+                case BehaviorPropertyType.Float:
                     m_FloatValue = 0f;
                     break;
-                case BehaviorNodePropertyValueType.Double:
+                case BehaviorPropertyType.Double:
                     m_DoubleValue = 0.0;
                     break;
-                case BehaviorNodePropertyValueType.String:
+                case BehaviorPropertyType.String:
                     m_StringValue = string.Empty;
                     break;
             }
@@ -485,6 +468,42 @@ namespace HoweFramework.Editor
         public BehaviorNodeProperty Clone()
         {
             return new BehaviorNodeProperty(Id, Name, ValueType, Value);
+        }
+
+        /// <summary>
+        /// 转换为运行时配置
+        /// </summary>
+        /// <returns>运行时配置</returns>
+        public BehaviorPropertyConfig ToRuntimeConfig()
+        {
+            var config = new BehaviorPropertyConfig();
+            config.Id = Id;
+            config.PropertyType = ValueType;
+            switch (ValueType)
+            {
+                case BehaviorPropertyType.Bool:
+                    config.BoolValue = BoolValue;
+                    break;
+                case BehaviorPropertyType.Int:
+                    config.IntValue = IntValue;
+                    break;
+                case BehaviorPropertyType.Long:
+                    config.LongValue = LongValue;
+                    break;
+                case BehaviorPropertyType.Float:
+                    config.FloatValue = FloatValue;
+                    break;
+                case BehaviorPropertyType.Double:
+                    config.DoubleValue = DoubleValue;
+                    break;
+                case BehaviorPropertyType.String:
+                    config.StringValue = StringValue;
+                    break;
+                default:
+                    break;
+            }
+
+            return config;
         }
     }
 } 

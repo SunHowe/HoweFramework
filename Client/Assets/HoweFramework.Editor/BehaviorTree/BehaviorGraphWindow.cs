@@ -1,7 +1,8 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEditor.UIElements;
+using System;
+using System.IO;
 
 namespace HoweFramework.Editor
 {
@@ -14,11 +15,6 @@ namespace HoweFramework.Editor
         /// 图视图
         /// </summary>
         private BehaviorGraphView m_GraphView;
-
-        /// <summary>
-        /// 当前编辑的图
-        /// </summary>
-        private BehaviorGraph m_CurrentGraph;
 
         /// <summary>
         /// 工具栏
@@ -46,9 +42,26 @@ namespace HoweFramework.Editor
         private Button m_RedoButton;
 
         /// <summary>
+        /// 导出运行时配置按钮
+        /// </summary>
+        private Button m_ExportButton;
+
+        /// <summary>
         /// 用户是否进行过实际操作
         /// </summary>
         private bool m_HasUserMadeChanges;
+
+        /// <summary>
+        /// 当前的工作副本。
+        /// </summary>
+        [SerializeField]
+        private BehaviorGraph m_CurrentWorkingGraph;
+
+        /// <summary>
+        /// 当前的原始图。
+        /// </summary>
+        [SerializeField]
+        private BehaviorGraph m_CurrentOriginalGraph;
 
         [MenuItem("Game Framework/行为树编辑器")]
         public static void OpenWindow()
@@ -67,10 +80,10 @@ namespace HoweFramework.Editor
             {
                 // 设置根容器为垂直布局
                 rootVisualElement.style.flexDirection = FlexDirection.Column;
-                
+
                 // 先只创建工具栏
                 ConstructToolbar();
-                
+
                 // 延迟创建图视图
                 EditorApplication.delayCall += () =>
                 {
@@ -79,11 +92,16 @@ namespace HoweFramework.Editor
                         if (this != null) // 确保窗口还存在
                         {
                             ConstructGraphView();
-                            
-                            // 如果没有加载图，尝试加载或创建一个
-                            if (m_CurrentGraph == null)
+
+                            if (m_CurrentWorkingGraph == null)
                             {
+                                // 如果没有加载图，尝试加载或创建一个。
                                 CreateNewGraph();
+                            }
+                            else
+                            {
+                                // 如果已经加载图，设置到GraphView中。
+                                m_GraphView.SetGraph(m_CurrentWorkingGraph);
                             }
                         }
                     }
@@ -96,7 +114,7 @@ namespace HoweFramework.Editor
             catch (System.Exception e)
             {
                 Debug.LogError($"创建行为树编辑器界面时发生错误: {e.Message}\n{e.StackTrace}");
-                
+
                 // 至少确保工具栏显示
                 if (m_Toolbar == null)
                 {
@@ -156,6 +174,13 @@ namespace HoweFramework.Editor
             saveAsButton.style.marginLeft = 2;
             saveAsButton.style.marginRight = 2;
             m_Toolbar.Add(saveAsButton);
+
+            // 导出运行时配置按钮
+            m_ExportButton = new Button(ExportRuntimeConfig) { text = "导出运行时配置" };
+            m_ExportButton.style.height = 22;
+            m_ExportButton.style.marginLeft = 2;
+            m_ExportButton.style.marginRight = 2;
+            m_Toolbar.Add(m_ExportButton);
 
             // 分隔符
             var spacer1 = new VisualElement();
@@ -234,19 +259,13 @@ namespace HoweFramework.Editor
                 {
                     name = "Behavior Graph"
                 };
-                
+
                 // 不要使用StretchToParentSize，而是使用flexGrow占用剩余空间
                 m_GraphView.style.flexGrow = 1;
                 m_GraphView.style.width = Length.Percent(100);
                 m_GraphView.style.height = Length.Auto();
-                
+
                 rootVisualElement.Add(m_GraphView);
-                
-                // 如果已经有当前图，设置到GraphView中
-                if (m_CurrentGraph != null)
-                {
-                    m_GraphView.SetGraph(m_CurrentGraph);
-                }
 
                 // 订阅命令管理器的事件
                 var commandManager = m_GraphView.GetCommandManager();
@@ -263,17 +282,17 @@ namespace HoweFramework.Editor
             catch (System.Exception e)
             {
                 Debug.LogError($"创建图视图失败: {e.Message}\n{e.StackTrace}");
-                
+
                 // 创建一个占位的视图
                 var placeholder = new VisualElement();
                 placeholder.style.flexGrow = 1;
                 placeholder.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f, 1f);
-                
+
                 var label = new Label("图视图创建失败，请查看控制台");
                 label.style.unityTextAlign = TextAnchor.MiddleCenter;
                 label.style.color = Color.white;
                 placeholder.Add(label);
-                
+
                 rootVisualElement.Add(placeholder);
             }
         }
@@ -292,32 +311,32 @@ namespace HoweFramework.Editor
 
                 var graph = CreateInstance<BehaviorGraph>();
                 graph.GraphName = BehaviorEditorSettings.DEFAULT_GRAPH_NAME;
-                
-                // 确保新图有根节点
-                EnsureNewGraphHasRootNode(graph);
-                
-                SetCurrentGraph(graph);
+
+                m_CurrentOriginalGraph = graph;
+                m_CurrentWorkingGraph = CreateWorkingCopy(graph);
+
+                m_GraphView?.SetGraph(m_CurrentWorkingGraph);
                 UpdateFileNameLabel("新行为树*");
-                
+
                 // 重置用户操作标记
                 m_HasUserMadeChanges = false;
             }
             catch (System.Exception e)
             {
                 Debug.LogError($"创建新行为树失败: {e.Message}\n{e.StackTrace}");
-                
+
                 // 确保至少有一个空图
-                try 
+                try
                 {
                     var graph = CreateInstance<BehaviorGraph>();
-                    graph.GraphName = "空行为树";
-                    
-                    // 确保新图有根节点
-                    EnsureNewGraphHasRootNode(graph);
-                    
-                    SetCurrentGraph(graph);
+                    graph.GraphName = BehaviorEditorSettings.DEFAULT_GRAPH_NAME;
+
+                    m_CurrentOriginalGraph = graph;
+                    m_CurrentWorkingGraph = CreateWorkingCopy(graph);
+
+                    m_GraphView?.SetGraph(m_CurrentWorkingGraph);
                     UpdateFileNameLabel("空行为树*");
-                    
+
                     // 重置用户操作标记
                     m_HasUserMadeChanges = false;
                 }
@@ -327,24 +346,6 @@ namespace HoweFramework.Editor
                     UpdateFileNameLabel("创建失败");
                 }
             }
-        }
-
-        /// <summary>
-        /// 确保新图有根节点
-        /// </summary>
-        /// <param name="graph">新创建的行为树图</param>
-        private void EnsureNewGraphHasRootNode(BehaviorGraph graph)
-        {
-            if (graph == null)
-                return;
-
-            // 创建根节点
-            var rootTemplate = new RootNodeTemplate();
-            var rootNode = rootTemplate.CreateNode();
-            rootNode.GraphPosition = new Vector2(0, 0); // 根节点位于中心
-            
-            graph.AddNode(rootNode);
-            graph.RootNodeId = rootNode.Id;
         }
 
         /// <summary>
@@ -359,7 +360,9 @@ namespace HoweFramework.Editor
 
             var path = EditorUtility.OpenFilePanel("打开行为树", BehaviorEditorSettings.DefaultDirectory, "asset");
             if (string.IsNullOrEmpty(path))
+            {
                 return;
+            }
 
             // 转换为相对路径
             if (path.StartsWith(Application.dataPath))
@@ -370,12 +373,17 @@ namespace HoweFramework.Editor
             var graph = AssetDatabase.LoadAssetAtPath<BehaviorGraph>(path);
             if (graph != null)
             {
-                SetCurrentGraph(graph);
+                // 设置当前原始图和当前工作副本。
+                m_CurrentOriginalGraph = graph;
+                m_CurrentWorkingGraph = CreateWorkingCopy(graph);
+
+                m_GraphView.SetGraph(m_CurrentWorkingGraph);
+
                 UpdateFileNameLabel(graph.name);
-                
+
                 // 更新目录设置
                 BehaviorEditorSettings.UpdateDirectory(path);
-                
+
                 // 重置用户操作标记（打开文件时重置）
                 m_HasUserMadeChanges = false;
             }
@@ -390,12 +398,14 @@ namespace HoweFramework.Editor
         /// </summary>
         private void SaveGraph()
         {
-            if (m_CurrentGraph == null)
+            if (m_CurrentWorkingGraph == null)
+            {
                 return;
+            }
 
             m_GraphView?.SaveGraphState();
 
-            var path = AssetDatabase.GetAssetPath(m_CurrentGraph);
+            var path = m_CurrentOriginalGraph != null ? AssetDatabase.GetAssetPath(m_CurrentOriginalGraph) : null;
             if (string.IsNullOrEmpty(path))
             {
                 SaveAsGraph();
@@ -403,14 +413,13 @@ namespace HoweFramework.Editor
             }
 
             // 应用工作副本的更改到原始图
-            m_GraphView?.ApplyChangesToOriginal();
+            ApplyChangesToOriginal();
 
-            EditorUtility.SetDirty(m_CurrentGraph);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            UpdateFileNameLabel(m_CurrentGraph.name);
-            
+            UpdateFileNameLabel(m_CurrentWorkingGraph.name);
+
             // 保存后重置标记（已保存，无需再提示）
             m_HasUserMadeChanges = false;
         }
@@ -420,12 +429,14 @@ namespace HoweFramework.Editor
         /// </summary>
         private void SaveAsGraph()
         {
-            if (m_CurrentGraph == null)
+            if (m_CurrentWorkingGraph == null)
+            {
                 return;
+            }
 
             m_GraphView?.SaveGraphState();
 
-            var path = EditorUtility.SaveFilePanel("保存行为树", BehaviorEditorSettings.DefaultDirectory, m_CurrentGraph.GraphName ?? BehaviorEditorSettings.DefaultFileName, "asset");
+            var path = EditorUtility.SaveFilePanel("保存行为树", BehaviorEditorSettings.DefaultDirectory, m_CurrentWorkingGraph.GraphName ?? BehaviorEditorSettings.DefaultFileName, "asset");
             if (string.IsNullOrEmpty(path))
                 return;
 
@@ -435,28 +446,35 @@ namespace HoweFramework.Editor
                 path = "Assets" + path.Substring(Application.dataPath.Length);
             }
 
-            // 应用工作副本的更改到原始图
-            m_GraphView?.ApplyChangesToOriginal();
+            // 使用文件名作为图名称。
+            m_GraphView.Graph.GraphName = Path.GetFileNameWithoutExtension(path);
 
             // 如果是新图或者路径改变了，创建新资产
-            var existingPath = AssetDatabase.GetAssetPath(m_CurrentGraph);
+            var existingPath = m_CurrentOriginalGraph != null ? AssetDatabase.GetAssetPath(m_CurrentOriginalGraph) : null;
             if (string.IsNullOrEmpty(existingPath) || existingPath != path)
             {
-                AssetDatabase.CreateAsset(m_CurrentGraph, path);
+                AssetDatabase.CreateAsset(m_CurrentWorkingGraph, path);
+
+                // 更新索引的原始图。
+                m_CurrentOriginalGraph = m_CurrentWorkingGraph;
+                m_CurrentWorkingGraph = CreateWorkingCopy(m_CurrentOriginalGraph);
+
+                m_GraphView.SetGraph(m_CurrentWorkingGraph);
             }
             else
             {
-                EditorUtility.SetDirty(m_CurrentGraph);
+                // 应用工作副本的更改到原始图
+                ApplyChangesToOriginal();
             }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            UpdateFileNameLabel(m_CurrentGraph.name);
-            
+            UpdateFileNameLabel(m_CurrentWorkingGraph.name);
+
             // 更新目录设置
             BehaviorEditorSettings.UpdateDirectory(path);
-            
+
             // 保存后重置标记（已保存，无需再提示）
             m_HasUserMadeChanges = false;
         }
@@ -470,7 +488,7 @@ namespace HoweFramework.Editor
                 return;
 
             var result = m_GraphView.ValidateGraph();
-            
+
             if (result.IsValid)
             {
                 EditorUtility.DisplayDialog("验证结果", "行为树验证通过！", "确定");
@@ -482,7 +500,7 @@ namespace HoweFramework.Editor
                 {
                     message += $"• {error}\n";
                 }
-                
+
                 if (result.Warnings.Count > 0)
                 {
                     message += "\n警告：\n";
@@ -491,31 +509,8 @@ namespace HoweFramework.Editor
                         message += $"• {warning}\n";
                     }
                 }
-                
-                EditorUtility.DisplayDialog("验证结果", message, "确定");
-            }
-        }
 
-        /// <summary>
-        /// 设置当前图
-        /// </summary>
-        /// <param name="graph">图</param>
-        private void SetCurrentGraph(BehaviorGraph graph)
-        {
-            m_CurrentGraph = graph;
-            if (m_GraphView != null)
-            {
-                try
-                {
-                    m_GraphView.SetGraph(graph);
-                    
-                    // 更新撤销重做按钮状态
-                    UpdateUndoRedoButtonTooltips();
-                }
-                catch (System.Exception e)
-                {
-                    Debug.LogError($"设置图数据失败: {e.Message}\n{e.StackTrace}");
-                }
+                EditorUtility.DisplayDialog("验证结果", message, "确定");
             }
         }
 
@@ -537,18 +532,18 @@ namespace HoweFramework.Editor
         /// <returns>是否保存</returns>
         private bool ShouldSaveChanges()
         {
-            if (m_CurrentGraph == null)
+            if (m_GraphView?.Graph == null)
                 return false;
 
             // 如果用户未进行过实际操作，不需要提示保存
             if (!m_HasUserMadeChanges)
                 return false;
 
-            if (EditorUtility.IsDirty(m_CurrentGraph))
+            if (EditorUtility.IsDirty(m_GraphView.Graph))
             {
                 var result = EditorUtility.DisplayDialogComplex(
                     "保存更改",
-                    $"行为树 '{m_CurrentGraph.GraphName}' 已修改，是否保存更改？",
+                    $"行为树 '{m_GraphView.Graph.GraphName}' 已修改，是否保存更改？",
                     "保存", "不保存", "取消"
                 );
 
@@ -587,7 +582,7 @@ namespace HoweFramework.Editor
         {
             // 用户进行了操作，标记已做更改
             m_HasUserMadeChanges = true;
-            
+
             UpdateUndoRedoButtonTooltips();
         }
 
@@ -606,35 +601,13 @@ namespace HoweFramework.Editor
                     commandManager.OnCommandUndone -= OnCommandManagerEvent;
                     commandManager.OnCommandRedone -= OnCommandManagerEvent;
                 }
-                
+
                 // 只保存视图状态，不保存到资产文件
                 if (m_GraphView.Graph != null)
                 {
                     m_GraphView.Graph.GraphOffset = m_GraphView.viewTransform.position;
                     m_GraphView.Graph.GraphScale = m_GraphView.viewTransform.scale;
                 }
-            }
-        }
-
-        /// <summary>
-        /// 选择变化时
-        /// </summary>
-        private void OnSelectionChange()
-        {
-            // 如果选中了行为树资产，可以自动加载
-            var selected = Selection.activeObject as BehaviorGraph;
-            if (selected != null && selected != m_CurrentGraph)
-            {
-                if (ShouldSaveChanges())
-                {
-                    SaveGraph();
-                }
-
-                SetCurrentGraph(selected);
-                UpdateFileNameLabel(selected.name);
-                
-                // 重置用户操作标记（切换文件时重置）
-                m_HasUserMadeChanges = false;
             }
         }
 
@@ -698,5 +671,155 @@ namespace HoweFramework.Editor
                 m_RedoButton.SetEnabled(false);
             }
         }
+
+        /// <summary>
+        /// 导出运行时配置为二进制.bytes文件
+        /// </summary>
+        private void ExportRuntimeConfig()
+        {
+            if (m_GraphView?.Graph == null)
+            {
+                EditorUtility.DisplayDialog("错误", "未加载任何行为树，无法导出。", "确定");
+                return;
+            }
+            try
+            {
+                // 生成运行时配置
+                var runtimeConfig = m_GraphView.Graph.ToRuntimeConfig();
+                if (runtimeConfig == null)
+                {
+                    EditorUtility.DisplayDialog("错误", "生成运行时配置失败。", "确定");
+                    return;
+                }
+
+                // 选择保存路径
+                string defaultName = m_GraphView.Graph.GraphName;
+                if (string.IsNullOrEmpty(defaultName))
+                {
+                    defaultName = "BehaviorTree";
+                }
+
+                string path = EditorUtility.SaveFilePanel(
+                    "导出行为树运行时配置",
+                    BehaviorEditorSettings.DefaultRuntimeConfigDirectory,
+                    defaultName,
+                    "bytes");
+
+                if (string.IsNullOrEmpty(path))
+                {
+                    return;
+                }
+
+                // 序列化为二进制
+                using var writer = DefaultBufferWriter.Create();
+                runtimeConfig.Serialize(writer);
+
+                // 获取有效字节
+                byte[] data = writer.WrittenBuffer.ToArray();
+
+                // 写入文件
+                File.WriteAllBytes(path, data);
+                Debug.Log($"行为树运行时配置已导出到：\n{path}");
+
+                // 更新默认目录。
+                BehaviorEditorSettings.UpdateRuntimeConfigDirectory(path);
+
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"导出运行时配置失败：{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 创建工作副本
+        /// </summary>
+        /// <param name="original">原始图</param>
+        /// <returns>工作副本</returns>
+        private BehaviorGraph CreateWorkingCopy(BehaviorGraph original)
+        {
+            var workingCopy = ScriptableObject.CreateInstance<BehaviorGraph>();
+
+            // 复制基本属性
+            workingCopy.GraphId = original.GraphId;
+            workingCopy.GraphName = original.GraphName;
+            workingCopy.Description = original.Description;
+            workingCopy.GraphOffset = original.GraphOffset;
+            workingCopy.GraphScale = original.GraphScale;
+            workingCopy.RootNodeId = original.RootNodeId;
+
+            // 深度复制节点，保持ID一致
+            foreach (var originalNode in original.Nodes)
+            {
+                var workingNode = new BehaviorNode(originalNode.Id, originalNode.Name, originalNode.TypeName)
+                {
+                    NodeType = originalNode.NodeType,
+                    SupportChildren = originalNode.SupportChildren,
+                    MaxChildrenCount = originalNode.MaxChildrenCount,
+                    GraphPosition = originalNode.GraphPosition,
+                    ParentId = originalNode.ParentId
+                };
+
+                // 复制属性
+                foreach (var property in originalNode.Properties)
+                {
+                    workingNode.Properties.Add(property.Clone());
+                }
+
+                // 复制子节点ID列表
+                workingNode.ChildrenIds.AddRange(originalNode.ChildrenIds);
+
+                workingCopy.AddNode(workingNode);
+            }
+
+            return workingCopy;
+        }
+
+        /// <summary>
+        /// 应用更改到原始图
+        /// </summary>
+        public void ApplyChangesToOriginal()
+        {
+            if (m_CurrentOriginalGraph == null || m_CurrentWorkingGraph == null)
+                return;
+
+            // 清空原始图的节点
+            m_CurrentOriginalGraph.Clear();
+
+            // 复制工作副本的数据到原始图
+            m_CurrentOriginalGraph.GraphName = m_CurrentWorkingGraph.GraphName;
+            m_CurrentOriginalGraph.Description = m_CurrentWorkingGraph.Description;
+            m_CurrentOriginalGraph.GraphOffset = m_CurrentWorkingGraph.GraphOffset;
+            m_CurrentOriginalGraph.GraphScale = m_CurrentWorkingGraph.GraphScale;
+            m_CurrentOriginalGraph.RootNodeId = m_CurrentWorkingGraph.RootNodeId;
+
+            // 复制所有节点（ID保持一致）
+            foreach (var node in m_CurrentWorkingGraph.Nodes)
+            {
+                var originalNode = new BehaviorNode(node.Id, node.Name, node.TypeName)
+                {
+                    NodeType = node.NodeType,
+                    SupportChildren = node.SupportChildren,
+                    MaxChildrenCount = node.MaxChildrenCount,
+                    GraphPosition = node.GraphPosition,
+                    ParentId = node.ParentId
+                };
+
+                // 复制属性
+                foreach (var property in node.Properties)
+                {
+                    originalNode.Properties.Add(property.Clone());
+                }
+
+                // 复制子节点ID列表
+                originalNode.ChildrenIds.AddRange(node.ChildrenIds);
+
+                m_CurrentOriginalGraph.AddNode(originalNode);
+            }
+
+            EditorUtility.SetDirty(m_CurrentOriginalGraph);
+        }
     }
-} 
+}

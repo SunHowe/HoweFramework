@@ -392,7 +392,7 @@ namespace HoweFramework.Editor
             
             switch (property.ValueType)
             {
-                case BehaviorNodePropertyValueType.Bool:
+                case BehaviorPropertyType.Bool:
                     var toggle = new Toggle { value = property.BoolValue };
                     toggle.RegisterValueChangedCallback(evt => 
                     {
@@ -402,7 +402,7 @@ namespace HoweFramework.Editor
                     field = toggle;
                     break;
 
-                case BehaviorNodePropertyValueType.Int:
+                case BehaviorPropertyType.Int:
                     var intField = new IntegerField { value = property.IntValue };
                     intField.RegisterValueChangedCallback(evt => 
                     {
@@ -412,7 +412,7 @@ namespace HoweFramework.Editor
                     field = intField;
                     break;
 
-                case BehaviorNodePropertyValueType.Long:
+                case BehaviorPropertyType.Long:
                     var longField = new LongField { value = property.LongValue };
                     longField.RegisterValueChangedCallback(evt => 
                     {
@@ -422,7 +422,7 @@ namespace HoweFramework.Editor
                     field = longField;
                     break;
 
-                case BehaviorNodePropertyValueType.Float:
+                case BehaviorPropertyType.Float:
                     var floatField = new FloatField { value = property.FloatValue };
                     floatField.RegisterValueChangedCallback(evt => 
                     {
@@ -432,7 +432,7 @@ namespace HoweFramework.Editor
                     field = floatField;
                     break;
 
-                case BehaviorNodePropertyValueType.Double:
+                case BehaviorPropertyType.Double:
                     var doubleField = new DoubleField { value = property.DoubleValue };
                     doubleField.RegisterValueChangedCallback(evt => 
                     {
@@ -442,7 +442,7 @@ namespace HoweFramework.Editor
                     field = doubleField;
                     break;
 
-                case BehaviorNodePropertyValueType.String:
+                case BehaviorPropertyType.String:
                     var textField = new TextField { value = property.StringValue };
                     textField.RegisterValueChangedCallback(evt => 
                     {

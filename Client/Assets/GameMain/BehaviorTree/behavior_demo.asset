@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc87890f6d042b4499a0648a1754223, type: 3}
+  m_Name: behavior_demo
+  m_EditorClassIdentifier: 
+  m_GraphId: 33d77dc8-d502-4c81-b729-96ede42845b2
+  m_GraphName: behavior_demo
+  m_Description: 
+  m_Nodes:
+  - m_Id: 6ce3a23a-38fd-495b-b1a3-e3ff928275f9
+    m_Name: Root
+    m_TypeName: HoweFramework.BehaviorRoot
+    m_NodeType: 3
+    m_Properties: []
+    m_SupportChildren: 1
+    m_MaxChildrenCount: 1
+    m_ChildrenIds:
+    - 13e85ca3-2a22-4940-80ef-3b6b95875ba7
+    m_ParentId: 
+    m_GraphPosition: {x: 288.4, y: 76.24}
+  - m_Id: 13e85ca3-2a22-4940-80ef-3b6b95875ba7
+    m_Name: Sequence
+    m_TypeName: HoweFramework.BehaviorSequence
+    m_NodeType: 1
+    m_Properties: []
+    m_SupportChildren: 1
+    m_MaxChildrenCount: -1
+    m_ChildrenIds:
+    - b14e47c4-a07c-4555-96ec-45611eaa8e50
+    m_ParentId: 6ce3a23a-38fd-495b-b1a3-e3ff928275f9
+    m_GraphPosition: {x: 408, y: 212}
+  - m_Id: b14e47c4-a07c-4555-96ec-45611eaa8e50
+    m_Name: Failure
+    m_TypeName: HoweFramework.BehaviorFailure
+    m_NodeType: 0
+    m_Properties: []
+    m_SupportChildren: 0
+    m_MaxChildrenCount: -1
+    m_ChildrenIds: []
+    m_ParentId: 13e85ca3-2a22-4940-80ef-3b6b95875ba7
+    m_GraphPosition: {x: 615, y: 292}
+  m_RootNodeId: 6ce3a23a-38fd-495b-b1a3-e3ff928275f9
+  m_GraphOffset: {x: -113, y: 33}
+  m_GraphScale: {x: 1, y: 1, z: 1}

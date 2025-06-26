@@ -60,7 +60,11 @@ namespace HoweFramework
         {
             RootNodeId = reader.ReadString();
             reader.ReadObjectList(Nodes);
+            UpdateNodeMap();
+        }
 
+        public void UpdateNodeMap()
+        {
             NodeMap.Clear();
             foreach (var node in Nodes)
             {
