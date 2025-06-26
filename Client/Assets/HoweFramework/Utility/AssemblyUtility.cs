@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace HoweFramework
@@ -8,6 +9,66 @@ namespace HoweFramework
     /// </summary>
     public static class AssemblyUtility
     {
+        /// <summary>
+        /// 运行时类型字典。
+        /// </summary>
+        private static readonly Dictionary<string, Type> s_RuntimeTypeDict = new();
+
+        /// <summary>
+        /// 运行时程序集列表。
+        /// </summary>
+        private static readonly List<Assembly> s_RuntimeAssemblyList = new();
+
+        /// <summary>
+        /// 清空工具记录的数据。
+        /// </summary>
+        public static void Clear()
+        {
+            s_RuntimeTypeDict.Clear();
+            s_RuntimeAssemblyList.Clear();
+        }
+
+        /// <summary>
+        /// 注册运行时程序集。
+        /// </summary>
+        /// <param name="assembly">程序集。</param>
+        public static void RegisterRuntimeAssembly(Assembly assembly)
+        {
+            if (s_RuntimeAssemblyList.Contains(assembly))
+            {
+                return;
+            }
+
+            s_RuntimeAssemblyList.Add(assembly);
+        }
+
+        /// <summary>
+        /// 获取运行时类型。
+        /// </summary>
+        /// <param name="typeName">类型名。</param>
+        /// <returns>运行时类型。</returns>
+        public static Type GetRuntimeType(string typeName)
+        {
+            if (s_RuntimeTypeDict.TryGetValue(typeName, out var type))
+            {
+                return type;
+            }
+
+            foreach (var assembly in s_RuntimeAssemblyList)
+            {
+                type = assembly.GetType(typeName);
+                if (type == null)
+                {
+                    continue;
+                }
+
+                s_RuntimeTypeDict.Add(typeName, type);
+                return type;
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// 获取自定义属性.
         /// </summary>

@@ -368,6 +368,31 @@ namespace HoweFramework
         /// </summary>
         public const int BehaviorTreeSelectorNoSuccess = 905;
 
+        /// <summary>
+        /// 行为节点创建失败。
+        /// </summary>
+        public const int BehaviorNodeCreateFailed = 906;
+
+        /// <summary>
+        /// 行为节点ID重复。
+        /// </summary>
+        public const int BehaviorNodeDuplicateId = 907;
+
+        /// <summary>
+        /// 行为节点未找到。
+        /// </summary>
+        public const int BehaviorNodeNotFound = 908;
+
+        /// <summary>
+        /// 行为节点配置未找到。
+        /// </summary>
+        public const int BehaviorNodeConfigNotFound = 909;
+
+        /// <summary>
+        /// 行为节点无效。
+        /// </summary>
+        public const int BehaviorNodeInvalid = 910;
+
         #endregion
 
         #region [SwipeCard 10001-10099]

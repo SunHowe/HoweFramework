@@ -14,8 +14,8 @@ namespace HoweFramework.Editor
         public override List<BehaviorNodePropertyTemplate> DefaultProperties =>
             new List<BehaviorNodePropertyTemplate>
             {
-                new BehaviorNodePropertyTemplate(1, "RepeatCount", BehaviorNodePropertyValueType.Int, 1),
-                new BehaviorNodePropertyTemplate(2, "IgnoreFailure", BehaviorNodePropertyValueType.Bool, false)
+                new BehaviorNodePropertyTemplate("RepeatCount", BehaviorPropertyType.Int, 1),
+                new BehaviorNodePropertyTemplate("IgnoreFailure", BehaviorPropertyType.Bool, false)
             };
     }
 } 

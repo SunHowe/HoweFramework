@@ -8,9 +8,9 @@ namespace HoweFramework
     public sealed class BehaviorRepeat : BehaviorDecorNodeBase
     {
         /// <summary>
-        /// 次数限制。
+        /// 重复次数。
         /// </summary>
-        public int TimesLimit { get; set; }
+        public int RepeatCount { get; set; }
 
         /// <summary>
         /// 已运行次数。
@@ -34,7 +34,7 @@ namespace HoweFramework
                 return m_PreviousResult;
             }
 
-            while (m_Times < TimesLimit)
+            while (m_Times < RepeatCount)
             {
                 var result = ExecuteChild();
                 if (result == ErrorCode.BehaviorRunningState)
@@ -72,7 +72,7 @@ namespace HoweFramework
         {
             m_Times = 0;
             m_PreviousResult = ErrorCode.Success;
-            TimesLimit = 0;
+            RepeatCount = 0;
             base.Clear();
         }
 
@@ -89,7 +89,7 @@ namespace HoweFramework
             }
 
             var behaviorRepeat = ReferencePool.Acquire<BehaviorRepeat>();
-            behaviorRepeat.TimesLimit = timesLimit;
+            behaviorRepeat.RepeatCount = timesLimit;
             return behaviorRepeat;
         }
     }

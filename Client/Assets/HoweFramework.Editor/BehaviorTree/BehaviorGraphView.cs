@@ -19,11 +19,6 @@ namespace HoweFramework.Editor
         public BehaviorGraph Graph { get; private set; }
 
         /// <summary>
-        /// 原始行为树图数据
-        /// </summary>
-        public BehaviorGraph OriginalGraph { get; private set; }
-
-        /// <summary>
         /// 节点搜索窗口
         /// </summary>
         private BehaviorNodeSearchWindow m_SearchWindow;
@@ -85,8 +80,6 @@ namespace HoweFramework.Editor
                 Insert(0, grid);
                 grid.StretchToParentSize();
 
-
-
                 // 设置节点创建回调
                 nodeCreationRequest = OnNodeCreationRequest;
 
@@ -96,80 +89,33 @@ namespace HoweFramework.Editor
                 // 注册键盘事件
                 RegisterCallback<KeyDownEvent>(OnKeyDown);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-                UnityEngine.Debug.LogError($"初始化BehaviorGraphView失败: {e.Message}\n{e.StackTrace}");
+                Debug.LogError($"初始化BehaviorGraphView失败: {e.Message}\n{e.StackTrace}");
             }
         }
 
         /// <summary>
         /// 设置行为树图数据
         /// </summary>
-        /// <param name="graph">行为树图数据</param>
-        public void SetGraph(BehaviorGraph graph)
+        /// <param name="workingGraph">工作副本</param>
+        public void SetGraph(BehaviorGraph workingGraph)
         {
-            OriginalGraph = graph;
-            // 创建工作副本，避免直接修改原始数据
-            if (graph != null)
-            {
-                Graph = CreateWorkingCopy(graph);
-                // 确保工作副本有根节点
-                EnsureRootNode(Graph);
-            }
-            else
-            {
-                Graph = null;
-            }
+            Graph = workingGraph;
+
+            EnsureRootNode(Graph);
             PopulateView();
+
+            if (Graph == null)
+            {
+                return;
+            }
+
             // 节点与模板同步校验（迁移到节点视图）
             foreach (var nodeView in m_NodeViews.Values)
             {
                 nodeView.SyncWithTemplate(m_TemplateManager);
             }
-        }
-
-        /// <summary>
-        /// 创建工作副本
-        /// </summary>
-        /// <param name="original">原始图</param>
-        /// <returns>工作副本</returns>
-        private BehaviorGraph CreateWorkingCopy(BehaviorGraph original)
-        {
-            var workingCopy = ScriptableObject.CreateInstance<BehaviorGraph>();
-            
-            // 复制基本属性
-            workingCopy.GraphId = original.GraphId;
-            workingCopy.GraphName = original.GraphName;
-            workingCopy.Description = original.Description;
-            workingCopy.GraphOffset = original.GraphOffset;
-            workingCopy.GraphScale = original.GraphScale;
-            workingCopy.RootNodeId = original.RootNodeId;
-
-            // 深度复制节点，保持ID一致
-            foreach (var originalNode in original.Nodes)
-            {
-                var workingNode = new BehaviorNode(originalNode.Id, originalNode.Name, originalNode.TypeName)
-                {
-                    NodeType = originalNode.NodeType,
-                    SupportChildren = originalNode.SupportChildren,
-                    MaxChildrenCount = originalNode.MaxChildrenCount,
-                    GraphPosition = originalNode.GraphPosition,
-                    ParentId = originalNode.ParentId
-                };
-
-                // 复制属性
-                foreach (var property in originalNode.Properties)
-                {
-                    workingNode.Properties.Add(property.Clone());
-                }
-
-                // 复制子节点ID列表
-                workingNode.ChildrenIds.AddRange(originalNode.ChildrenIds);
-
-                workingCopy.AddNode(workingNode);
-            }
-
-            return workingCopy;
         }
 
         /// <summary>
@@ -675,57 +621,6 @@ namespace HoweFramework.Editor
 
             Graph.GraphOffset = viewTransform.position;
             Graph.GraphScale = viewTransform.scale;
-
-            // 应用更改到原始图
-            ApplyChangesToOriginal();
-        }
-
-        /// <summary>
-        /// 应用更改到原始图
-        /// </summary>
-        public void ApplyChangesToOriginal()
-        {
-            if (OriginalGraph == null || Graph == null)
-                return;
-
-            // 清空原始图的节点
-            OriginalGraph.Clear();
-
-            // 复制工作副本的数据到原始图
-            OriginalGraph.GraphName = Graph.GraphName;
-            OriginalGraph.Description = Graph.Description;
-            OriginalGraph.GraphOffset = Graph.GraphOffset;
-            OriginalGraph.GraphScale = Graph.GraphScale;
-            OriginalGraph.RootNodeId = Graph.RootNodeId;
-
-            // 复制所有节点（ID保持一致）
-            foreach (var node in Graph.Nodes)
-            {
-                var originalNode = new BehaviorNode(node.Id, node.Name, node.TypeName)
-                {
-                    NodeType = node.NodeType,
-                    SupportChildren = node.SupportChildren,
-                    MaxChildrenCount = node.MaxChildrenCount,
-                    GraphPosition = node.GraphPosition,
-                    ParentId = node.ParentId
-                };
-
-                // 复制属性
-                foreach (var property in node.Properties)
-                {
-                    originalNode.Properties.Add(property.Clone());
-                }
-
-                // 复制子节点ID列表
-                originalNode.ChildrenIds.AddRange(node.ChildrenIds);
-
-                OriginalGraph.AddNode(originalNode);
-            }
-
-            // 确保原始图有正确的根节点引用
-            EnsureRootNode(OriginalGraph);
-
-            EditorUtility.SetDirty(OriginalGraph);
         }
 
         /// <summary>

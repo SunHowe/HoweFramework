@@ -19,6 +19,11 @@ namespace HoweFramework.Editor
         /// 默认文件名的EditorPrefs键
         /// </summary>
         private const string KEY_DEFAULT_FILE_NAME = "BehaviorEditor.DefaultFileName";
+
+        /// <summary>
+        /// 默认运行时配置目录的EditorPrefs键
+        /// </summary>
+        private const string KEY_DEFAULT_RUNTIME_CONFIG_DIRECTORY = "BehaviorEditor.DefaultRuntimeConfigDirectory";
         
         #endregion
         
@@ -38,6 +43,11 @@ namespace HoweFramework.Editor
         /// 默认的行为树名称
         /// </summary>
         public const string DEFAULT_GRAPH_NAME = "New Behavior Tree";
+
+        /// <summary>
+        /// 默认运行时配置目录
+        /// </summary>
+        private const string DEFAULT_RUNTIME_CONFIG_DIRECTORY = "Assets/GameMain/BehaviorTree";
         
         #endregion
         
@@ -60,6 +70,15 @@ namespace HoweFramework.Editor
             get => EditorPrefs.GetString(KEY_DEFAULT_FILE_NAME, DEFAULT_FILE_NAME);
             set => EditorPrefs.SetString(KEY_DEFAULT_FILE_NAME, value);
         }
+
+        /// <summary>
+        /// 默认运行时配置目录
+        /// </summary>
+        public static string DefaultRuntimeConfigDirectory
+        {
+            get => EditorPrefs.GetString(KEY_DEFAULT_RUNTIME_CONFIG_DIRECTORY, DEFAULT_RUNTIME_CONFIG_DIRECTORY);
+            set => EditorPrefs.SetString(KEY_DEFAULT_RUNTIME_CONFIG_DIRECTORY, value);
+        }
         
         #endregion
         
@@ -78,6 +97,22 @@ namespace HoweFramework.Editor
             if (!string.IsNullOrEmpty(directory))
             {
                 DefaultDirectory = directory;
+            }
+        }
+
+        /// <summary>
+        /// 更新运行时配置目录（根据用户最后选择的路径）
+        /// </summary>
+        /// <param name="filePath">文件路径</param>
+        public static void UpdateRuntimeConfigDirectory(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                return;
+                
+            var directory = System.IO.Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrEmpty(directory))
+            {
+                DefaultRuntimeConfigDirectory = directory;
             }
         }
         

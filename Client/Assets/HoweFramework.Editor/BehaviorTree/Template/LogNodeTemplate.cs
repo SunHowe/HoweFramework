@@ -14,8 +14,8 @@ namespace HoweFramework.Editor
         public override List<BehaviorNodePropertyTemplate> DefaultProperties =>
             new List<BehaviorNodePropertyTemplate>
             {
-                new BehaviorNodePropertyTemplate(1, "Message", BehaviorNodePropertyValueType.String, "Hello World"),
-                new BehaviorNodePropertyTemplate(2, "LogLevel", BehaviorNodePropertyValueType.Int, 0)
+                new BehaviorNodePropertyTemplate("Message", BehaviorPropertyType.String, "Hello World"),
+                new BehaviorNodePropertyTemplate("LogLevel", BehaviorPropertyType.Int, 0)
             };
     }
 } 

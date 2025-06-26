@@ -34,6 +34,9 @@ namespace GameMain
 
         private async UniTask InitAsync()
         {
+            // 注册逻辑程序集。
+            AssemblyUtility.RegisterRuntimeAssembly(GetType().Assembly);
+
 #if UNITY_EDITOR
             await ResModule.Instance.InitYooAssetEditorSimulateMode();
 #else

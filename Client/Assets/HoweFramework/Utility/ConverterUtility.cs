@@ -681,6 +681,37 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 获取字符串的 UTF-8 编码字节数。
+        /// </summary>
+        /// <param name="value">字符串。</param>
+        /// <returns>UTF-8 编码字节数。</returns>
+        public static int GetByteCount(string value)
+        {
+            return GetByteCount(value, Encoding.UTF8);
+        }
+
+        /// <summary>
+        /// 获取字符串的指定编码字节数。
+        /// </summary>
+        /// <param name="value">字符串。</param>
+        /// <param name="encoding">编码。</param>
+        /// <returns>指定编码字节数。</returns>
+        public static int GetByteCount(string value, Encoding encoding)
+        {
+            if (value == null)
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidParam, "Value is invalid.");
+            }
+
+            if (encoding == null)
+            {
+                throw new ErrorCodeException(ErrorCode.InvalidParam, "Encoding is invalid.");
+            }
+
+            return encoding.GetByteCount(value);
+        }
+
+        /// <summary>
         /// 以字节数组的形式获取 UTF-8 编码的字符串。
         /// </summary>
         /// <param name="value">要转换的字符串。</param>

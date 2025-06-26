@@ -392,7 +392,7 @@ namespace HoweFramework.Editor
             
             switch (property.ValueType)
             {
-                case BehaviorNodePropertyValueType.Bool:
+                case BehaviorPropertyType.Bool:
                     var toggle = new Toggle { value = property.BoolValue };
                     toggle.RegisterValueChangedCallback(evt => 
                     {
@@ -402,7 +402,7 @@ namespace HoweFramework.Editor
                     field = toggle;
                     break;
 
-                case BehaviorNodePropertyValueType.Int:
+                case BehaviorPropertyType.Int:
                     var intField = new IntegerField { value = property.IntValue };
                     intField.RegisterValueChangedCallback(evt => 
                     {
@@ -412,7 +412,7 @@ namespace HoweFramework.Editor
                     field = intField;
                     break;
 
-                case BehaviorNodePropertyValueType.Long:
+                case BehaviorPropertyType.Long:
                     var longField = new LongField { value = property.LongValue };
                     longField.RegisterValueChangedCallback(evt => 
                     {
@@ -422,7 +422,7 @@ namespace HoweFramework.Editor
                     field = longField;
                     break;
 
-                case BehaviorNodePropertyValueType.Float:
+                case BehaviorPropertyType.Float:
                     var floatField = new FloatField { value = property.FloatValue };
                     floatField.RegisterValueChangedCallback(evt => 
                     {
@@ -432,7 +432,7 @@ namespace HoweFramework.Editor
                     field = floatField;
                     break;
 
-                case BehaviorNodePropertyValueType.Double:
+                case BehaviorPropertyType.Double:
                     var doubleField = new DoubleField { value = property.DoubleValue };
                     doubleField.RegisterValueChangedCallback(evt => 
                     {
@@ -442,7 +442,7 @@ namespace HoweFramework.Editor
                     field = doubleField;
                     break;
 
-                case BehaviorNodePropertyValueType.String:
+                case BehaviorPropertyType.String:
                     var textField = new TextField { value = property.StringValue };
                     textField.RegisterValueChangedCallback(evt => 
                     {
@@ -709,12 +709,12 @@ namespace HoweFramework.Editor
 
             var templateProps = template.DefaultProperties;
             var nodeProps = DataNode.Properties;
-            var templatePropDict = templateProps.ToDictionary(p => p.Id);
-            var nodePropDict = nodeProps.ToDictionary(p => p.Id);
+            var templatePropDict = templateProps.ToDictionary(p => p.PropertyName);
+            var nodePropDict = nodeProps.ToDictionary(p => p.Name);
             // 属性名/类型变更
             foreach (var prop in nodeProps.ToList())
             {
-                if (templatePropDict.TryGetValue(prop.Id, out var tplProp))
+                if (templatePropDict.TryGetValue(prop.Name, out var tplProp))
                 {
                     if (prop.Name != tplProp.PropertyName || prop.ValueType != tplProp.ValueType)
                     {
@@ -730,15 +730,15 @@ namespace HoweFramework.Editor
             // 新增属性
             foreach (var tplProp in templateProps)
             {
-                if (!nodePropDict.ContainsKey(tplProp.Id))
+                if (!nodePropDict.ContainsKey(tplProp.PropertyName))
                 {
-                    DataNode.Properties.Add(new BehaviorNodeProperty(tplProp.Id, tplProp.PropertyName, tplProp.ValueType, tplProp.DefaultValue));
+                    DataNode.Properties.Add(new BehaviorNodeProperty(tplProp.PropertyName, tplProp.ValueType, tplProp.DefaultValue));
                     Debug.Log($"节点[{DataNode.Name}]自动补充新属性[{tplProp.PropertyName}]，使用默认值");
                 }
             }
 
             // 被删除的属性
-            var toRemove = nodeProps.Where(p => !templatePropDict.ContainsKey(p.Id)).ToList();
+            var toRemove = nodeProps.Where(p => !templatePropDict.ContainsKey(p.Name)).ToList();
             foreach (var delProp in toRemove)
             {
                 DataNode.Properties.Remove(delProp);

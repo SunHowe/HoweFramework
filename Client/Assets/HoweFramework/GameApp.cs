@@ -49,6 +49,7 @@ namespace HoweFramework
             AddModule<GameObjectPoolModule>(); // 游戏对象池模块。
             AddModule<DataTableModule>(); // 配置表模块。
             AddModule<LocalizationModule>(); // 本地化模块。
+            AddModule<BehaviorModule>(); // 行为树模块。
             AddModule<SystemModule>(); // 系统模块。
             AddModule<UIModule>(); // UI模块。
             AddModule<ProcedureModule>(); // 流程模块。

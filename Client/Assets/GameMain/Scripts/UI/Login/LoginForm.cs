@@ -40,6 +40,11 @@ namespace GameMain.UI.Login
             });
 
             Log.Info($"GetText(demo_text_1): {LocalizationModule.Instance.GetText("demo_text_1")}");
+
+            BehaviorModule.Instance.GlobalBehaviorLoader.LoadBehaviorTree("Assets/GameMain/BehaviorTree/behavior_demo.bytes")
+                .ContinueWith(node => {
+                    node.ExecuteEveryFrame().Forget();
+                });
         }
 
         /// <summary>
