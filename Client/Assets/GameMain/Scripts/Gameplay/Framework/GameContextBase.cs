@@ -53,7 +53,6 @@ namespace GameMain
 
         private readonly Dictionary<int, IGameManager> m_GameManagerDict = new();
         private readonly List<IGameManager> m_GameManagerList = new();
-        private SimpleEvent<GameStatus> m_GameStatusChangeEvent;
 
         private IEventDispatcher m_EventDispatcher;
         private IGameObjectPool m_GameObjectPool;
@@ -90,7 +89,6 @@ namespace GameMain
             }
 
             GameStatus = GameStatus.Initialize;
-            m_GameStatusChangeEvent = SimpleEvent<GameStatus>.Create();
 
             OnAwake();
 
@@ -157,7 +155,9 @@ namespace GameMain
             }
 
             GameStatus = GameStatus.Running;
-            m_GameStatusChangeEvent.Dispatch(GameStatus);
+
+            EventDispatcher.Dispatch(this, GameStartEventArgs.Create());
+            EventDispatcher.Dispatch(this, GameStatusChangeEventArgs.Create(GameStatus));
         }
 
         public void PauseGame()
@@ -168,7 +168,7 @@ namespace GameMain
             }
 
             GameStatus = GameStatus.Pause;
-            m_GameStatusChangeEvent.Dispatch(GameStatus);
+            EventDispatcher.Dispatch(this, GameStatusChangeEventArgs.Create(GameStatus));
         }
 
         public void ResumeGame()
@@ -179,7 +179,7 @@ namespace GameMain
             }
 
             GameStatus = GameStatus.Running;
-            m_GameStatusChangeEvent.Dispatch(GameStatus);
+            EventDispatcher.Dispatch(this, GameStatusChangeEventArgs.Create(GameStatus));
         }
 
         public void StopGame()
@@ -190,22 +190,13 @@ namespace GameMain
             }
 
             GameStatus = GameStatus.Stopped;
-            m_GameStatusChangeEvent.Dispatch(GameStatus);
+            EventDispatcher.Dispatch(this, GameStopEventArgs.Create());
+            EventDispatcher.Dispatch(this, GameStatusChangeEventArgs.Create(GameStatus));
         }
 
         public IGameManager GetManager(int managerType)
         {
             return m_GameManagerDict.GetValueOrDefault(managerType);
-        }
-
-        public void SubscribeGameStatusChange(SimpleEventHandler<GameStatus> handler)
-        {
-            m_GameStatusChangeEvent.Subscribe(handler);
-        }
-
-        public void UnsubscribeGameStatusChange(SimpleEventHandler<GameStatus> handler)
-        {
-            m_GameStatusChangeEvent.Unsubscribe(handler);
         }
 
         /// <summary>
