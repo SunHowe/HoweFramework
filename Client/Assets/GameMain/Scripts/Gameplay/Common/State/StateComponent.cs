@@ -74,6 +74,23 @@ namespace GameMain
         }
 
         /// <summary>
+        /// 移除指定状态的所有引用。
+        /// </summary>
+        /// <param name="state">状态。</param>
+        public void RemoveState(int state)
+        {
+            if (!m_StateDict.TryGetValue(state, out var set))
+            {
+                return;
+            }
+
+            m_StateDict.Remove(state);
+            set.Dispose();
+
+            DispatchStateEvent(state, false);
+        }
+
+        /// <summary>
         /// 订阅状态事件。
         /// </summary>
         /// <param name="state">状态。</param>
