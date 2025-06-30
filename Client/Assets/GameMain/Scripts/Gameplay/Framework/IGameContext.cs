@@ -11,17 +11,17 @@ namespace GameMain
         /// <summary>
         /// 事件调度器。
         /// </summary>
-        IEventDispatcher EventDispatcher { get; }
+        IEventDispatcher EventDispatcher { get; set; }
 
         /// <summary>
         /// 游戏对象池。
         /// </summary>
-        IGameObjectPool GameObjectPool { get; }
+        IGameObjectPool GameObjectPool { get; set; }
 
         /// <summary>
         /// 资源加载器。
         /// </summary>
-        IResLoader ResLoader { get; }
+        IResLoader ResLoader { get; set; }
 
         /// <summary>
         /// 游戏运行状态.
