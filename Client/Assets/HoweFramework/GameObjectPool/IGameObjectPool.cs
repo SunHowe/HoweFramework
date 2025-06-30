@@ -11,6 +11,13 @@ namespace HoweFramework
     public interface IGameObjectPool : IDisposable
     {
         /// <summary>
+        /// 实例化游戏对象。(只允许在有缓存的情况下使用，若缓存数量为0则返回null)
+        /// </summary>
+        /// <param name="assetKey">资源Key。</param>
+        /// <returns>实例化后的游戏对象。</returns>
+        GameObject Instantiate(string assetKey);
+
+        /// <summary>
         /// 异步实例化游戏对象。
         /// </summary>
         /// <param name="assetKey">资源Key。</param>
