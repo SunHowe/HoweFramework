@@ -11,13 +11,10 @@ namespace GameMain
         /// <summary>
         /// 转换实体。
         /// </summary>
-        /// <param name="context">游戏上下文。</param>
+        /// <param name="entity">游戏实体。</param>
         /// <returns>转换后的实体。</returns>
-        public IGameEntity Convert(IGameContext context)
+        public void Convert(IGameEntity entity)
         {
-            var entityManager = context.GetManager<IGameEntityManager>();
-            var entity = entityManager.CreateEntity();
-
             using var componentConverterBuffer = ReusableList<IGameComponentConverter>.Create();
             GetComponents(componentConverterBuffer);
             componentConverterBuffer.Sort(SortBySortingOrder);
@@ -26,8 +23,6 @@ namespace GameMain
             {
                 componentConverter.Convert(entity);
             }
-
-            return entity;
         }
 
         /// <summary>
