@@ -161,7 +161,11 @@ namespace GameMain
         private readonly UpdateContext m_LateFixedUpdateContext = new();
         private float m_NextFixedUpdateTime;
 
-        public GameUpdateManager(int frameRate = 20)
+        public GameUpdateManager() : this(20)
+        {
+        }
+
+        public GameUpdateManager(int frameRate)
         {
             GameFrameRate = frameRate;
         }
