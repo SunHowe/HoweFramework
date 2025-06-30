@@ -33,6 +33,7 @@ namespace HoweFramework
 
             Instance = this;
 
+            AddModule<IOCModule>(); // IOC 模块。
             AddModule<BaseModule>()  // 基础模块。
                 .UseUnityJsonHelper()
                 .UseDefaultTextTemplateHelper();
@@ -45,6 +46,7 @@ namespace HoweFramework
             AddModule<SafeAreaModule>(); // 安全区域模块。
             AddModule<ResModule>().UseYooAsset(); // 资源模块。
             AddModule<SceneModule>(); // 场景模块。
+            AddModule<CameraModule>(); // 相机模块。
             AddModule<SoundModule>().UseAudioClipSound(); // 声音模块。
             AddModule<GameObjectPoolModule>(); // 游戏对象池模块。
             AddModule<DataTableModule>(); // 配置表模块。

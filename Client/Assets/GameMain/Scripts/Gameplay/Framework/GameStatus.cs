@@ -11,6 +11,11 @@ namespace GameMain
         None,
 
         /// <summary>
+        /// 初始化。
+        /// </summary>
+        Initialize,
+
+        /// <summary>
         /// 运行中。
         /// </summary>
         Running,

@@ -96,6 +96,24 @@ namespace HoweFramework
             return gameObjects.Count;
         }
 
+        public GameObject Instantiate(string assetKey)
+        {
+            if (m_GameObjectDict.TryGetValue(assetKey, out var gameObjects))
+            {
+                while (gameObjects.Count > 0)
+                {
+                    var gameObject = gameObjects.Dequeue();
+                    if (gameObject != null)
+                    {
+                        gameObject.SetParent(null);
+                        return gameObject;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public async UniTask<GameObject> InstantiateAsync(string assetKey, CancellationToken token = default)
         {
             GameObject gameObject;

@@ -6,7 +6,7 @@ namespace GameMain
     /// <summary>
     /// 随机数管理器。
     /// </summary>
-    public sealed class RandomManager : GameManagerBase, IRandomManager
+    public sealed class GameRandomManager : GameManagerBase, IGameRandomManager
     {
         private Random m_Random;
 

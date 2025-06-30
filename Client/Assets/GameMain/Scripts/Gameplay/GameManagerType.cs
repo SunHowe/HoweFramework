@@ -9,5 +9,6 @@ namespace GameMain
         Entity = 2,
         View = 3,
         Random = 4,
+        Scene = 5,
     }
 }

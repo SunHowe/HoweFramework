@@ -31,6 +31,11 @@ namespace HoweFramework
         public static T Instance { get; private set; }
 
         /// <summary>
+        /// 是否注册到 IOC 容器。
+        /// </summary>
+        protected virtual bool RegisterIOC => true;
+
+        /// <summary>
         /// 初始化模块。
         /// </summary>
         internal sealed override void Init()
@@ -42,6 +47,11 @@ namespace HoweFramework
 
             Instance = (T)this;
             OnInit();
+            
+            if (RegisterIOC)
+            {
+                IOCModule.Instance.Register(Instance);
+            }
         }
 
         /// <summary>
@@ -52,6 +62,11 @@ namespace HoweFramework
             if (Instance != this)
             {
                 throw new ErrorCodeException(ErrorCode.FrameworkException, $"{typeof(T)} 模块未初始化。");
+            }
+
+            if (RegisterIOC)
+            {
+                IOCModule.Instance.UnRegister(Instance);
             }
 
             OnDestroy();
