@@ -6,9 +6,9 @@ namespace GameMain
     public enum GameManagerType
     {
         Update = 1,
-        Entity = 2,
-        View = 3,
-        Random = 4,
-        Scene = 5,
+        Random = 2,
+        Scene = 3,
+        View = 4,
+        Entity = 5,
     }
 }
