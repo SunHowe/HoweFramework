@@ -6,7 +6,7 @@ namespace GameMain
     /// 随机数管理器接口。
     /// </summary>
     [GameManager(GameManagerType.Random)]
-    public interface IRandomManager : IGameManager, IRandom
+    public interface IGameRandomManager : IGameManager, IRandom
     {
         /// <summary>
         /// 设置随机数种子。
