@@ -71,5 +71,32 @@ namespace HoweFramework
         {
             return component.gameObject.GetComponentInSelfOrParent<T>(includeInactive);
         }
+
+        /// <summary>
+        /// 销毁游戏对象。
+        /// </summary>
+        /// <param name="gameObject">游戏对象。</param>
+        public static void Destroy(this GameObject gameObject)
+        {
+            if (gameObject == null)
+            {
+                return;
+            }
+
+            using var customDestroyBuffer = ReusableList<ICustomDestroy>.Create();
+            gameObject.GetComponents(customDestroyBuffer);
+            
+            if (customDestroyBuffer.Count == 0)
+            {
+                Object.Destroy(gameObject);
+                return;
+            }
+            else if (customDestroyBuffer.Count > 1)
+            {
+                Debug.LogWarningFormat("GameObject '{0}' has multiple ICustomDestroy components.", gameObject.name);
+            }
+
+            customDestroyBuffer[0].CustomDestroy();
+        }
     }
 }
