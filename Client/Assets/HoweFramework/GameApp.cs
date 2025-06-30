@@ -33,6 +33,7 @@ namespace HoweFramework
 
             Instance = this;
 
+            AddModule<IOCModule>(); // IOC 模块。
             AddModule<BaseModule>()  // 基础模块。
                 .UseUnityJsonHelper()
                 .UseDefaultTextTemplateHelper();
