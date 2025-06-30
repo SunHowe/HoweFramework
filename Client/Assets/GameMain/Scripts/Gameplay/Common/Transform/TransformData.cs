@@ -42,6 +42,38 @@ namespace GameMain
                 Scale = transform.lossyScale;
             }
         }
+
+        /// <summary>
+        /// 应用到Transform。
+        /// </summary>
+        /// <param name="transform">Transform。</param>
+        /// <param name="isLocal">是否是本地坐标。</param>
+        public void Apply(Transform transform, bool isLocal = false)
+        {
+            if (isLocal)
+            {
+                transform.localPosition = Position;
+                transform.localEulerAngles = EulerAngles;
+                transform.localScale = Scale;
+            }
+            else
+            {
+                transform.position = Position;
+                transform.eulerAngles = EulerAngles;
+                transform.localScale = Scale;
+            }
+        }
+
+        /// <summary>
+        /// 应用到Transform组件。
+        /// </summary>
+        /// <param name="component">Transform组件。</param>
+        public void Apply(TransformComponent component)
+        {
+            component.Position = Position;
+            component.EulerAngles = EulerAngles;
+            component.Scale = Scale;
+        }
     }
 
     /// <summary>
@@ -68,6 +100,25 @@ namespace GameMain
         public static TransformData GetTransformData(this TransformComponent component)
         {
             return new TransformData(component);
+        }
+
+        /// <summary>
+        /// 应用到Transform。
+        /// </summary>
+        /// <param name="transform">Transform。</param>
+        /// <param name="isLocal">是否是本地坐标。</param>
+        public static void Apply(this Transform transform, TransformData data, bool isLocal = false)
+        {
+            data.Apply(transform, isLocal);
+        }
+
+        /// <summary>
+        /// 应用到Transform组件。
+        /// </summary>
+        /// <param name="component">Transform组件。</param>
+        public static void Apply(this TransformComponent component, TransformData data)
+        {
+            data.Apply(component);
         }
     }
 }
