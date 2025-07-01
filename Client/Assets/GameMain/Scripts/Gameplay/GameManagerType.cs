@@ -9,6 +9,7 @@ namespace GameMain
         Random = 2,
         Scene = 3,
         View = 4,
-        Entity = 5,
+        Timer = 5,
+        Entity = 100,
     }
 }
