@@ -58,5 +58,16 @@ namespace HoweFramework
                 UIObjectFactory.SetPackageItemExtension(binding.ComponentURL, binding.Creator);
             }
         }
+
+        /// <summary>
+        /// 获取列表项索引。
+        /// </summary>
+        /// <param name="list">列表。</param>
+        /// <param name="item">列表项。</param>
+        /// <returns>列表项索引。</returns>
+        public static int GetItemIndex(this GList list, GObject item)
+        {
+            return list.ChildIndexToItemIndex(list.GetChildIndex(item));
+        }
     }
 }
