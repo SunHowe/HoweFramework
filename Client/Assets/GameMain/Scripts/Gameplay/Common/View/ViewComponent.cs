@@ -179,6 +179,15 @@ namespace GameMain
         private ViewComponentLoadedDelegate m_OnViewLoaded;
         private ViewComponentUnloadedDelegate m_OnViewUnloaded;
 
+        /// <summary>
+        /// 设置GameObject.
+        /// </summary>
+        /// <param name="gameObject">GameObject。</param>
+        public void SetGameObject(GameObject gameObject)
+        {
+            m_ViewObject.SetGameObject(gameObject);
+        }
+
         protected override void OnAwake()
         {
             m_ViewObject = Context.GetManager<IGameViewManager>().SpawnViewObject();

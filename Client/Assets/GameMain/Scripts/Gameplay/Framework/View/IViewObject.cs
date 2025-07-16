@@ -72,6 +72,12 @@ namespace GameMain
         void LoadGameObject(string resKey);
 
         /// <summary>
+        /// 设置GameObject.
+        /// </summary>
+        /// <param name="gameObject">GameObject。</param>
+        void SetGameObject(GameObject gameObject);
+
+        /// <summary>
         /// 卸载GameObject.
         /// </summary>
         void UnloadGameObject();

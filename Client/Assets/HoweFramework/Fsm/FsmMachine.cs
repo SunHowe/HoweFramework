@@ -13,6 +13,11 @@ namespace HoweFramework
         public int CurrentState { get; private set; }
 
         /// <summary>
+        /// 状态机黑板实例。
+        /// </summary>
+        public IBlackboard Blackboard { get; } = new Blackboard();
+
+        /// <summary>
         /// 状态集合。
         /// </summary>
         private readonly HashSet<int> m_StateSet = new();
@@ -134,6 +139,7 @@ namespace HoweFramework
             m_StateExitHandlerDict.Clear();
             m_StateSet.Clear();
             CurrentState = 0;
+            Blackboard.Clear();
         }
 
         /// <summary>

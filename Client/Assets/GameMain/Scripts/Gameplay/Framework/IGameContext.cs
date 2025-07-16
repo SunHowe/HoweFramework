@@ -57,15 +57,5 @@ namespace GameMain
         /// 获取游戏管理器实例.
         /// </summary>
         IGameManager GetManager(int managerType);
-
-        /// <summary>
-        /// 订阅游戏状态变更事件.
-        /// </summary>
-        void SubscribeGameStatusChange(SimpleEventHandler<GameStatus> handler);
-
-        /// <summary>
-        /// 取消订阅游戏状态变更事件.
-        /// </summary>
-        void UnsubscribeGameStatusChange(SimpleEventHandler<GameStatus> handler);
     }
 }

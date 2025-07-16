@@ -137,7 +137,11 @@ namespace HoweFramework
             }
 
             gameObject = Object.Instantiate(prefab);
-            gameObject.GetOrAddComponent<PooledGameObject>().AssetKey = assetKey;
+
+            var pooledGameObject = gameObject.GetOrAddComponent<PooledGameObject>();
+            pooledGameObject.AssetKey = assetKey;
+            pooledGameObject.GameObjectPool = this;
+
             return gameObject;
         }
 
@@ -179,7 +183,10 @@ namespace HoweFramework
                 --count;
 
                 var gameObject = Object.Instantiate(prefab);
-                gameObject.GetOrAddComponent<PooledGameObject>().AssetKey = assetKey;
+                var pooledGameObject = gameObject.GetOrAddComponent<PooledGameObject>();
+                pooledGameObject.AssetKey = assetKey;
+                pooledGameObject.GameObjectPool = this;
+
                 gameObject.transform.SetParent(m_Root);
                 gameObjects.Enqueue(gameObject);
             }
@@ -192,21 +199,31 @@ namespace HoweFramework
                 return;
             }
             
-            var component = gameObject.GetComponent<PooledGameObject>();
-            if (component == null || string.IsNullOrEmpty(component.AssetKey))
+            var pooledGameObject = gameObject.GetComponent<PooledGameObject>();
+            if (pooledGameObject == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, $"Invalid game object '{gameObject.name}'.");
+                Object.Destroy(gameObject);
+                Log.Error($"Invalid pooled game object '{gameObject.name}'.");
+                return;
             }
 
-            if (!m_GameObjectDict.TryGetValue(component.AssetKey, out var gameObjects))
+            if (string.IsNullOrEmpty(pooledGameObject.AssetKey) || pooledGameObject.GameObjectPool != this)
+            {
+                Object.Destroy(gameObject);
+                Log.Error($"Invalid pooled game object '{gameObject.name}'.");
+                return;
+            }
+
+            if (!m_GameObjectDict.TryGetValue(pooledGameObject.AssetKey, out var gameObjects))
             {
                 gameObjects = ReusableQueue<GameObject>.Create();
-                m_GameObjectDict.Add(component.AssetKey, gameObjects);
+                m_GameObjectDict.Add(pooledGameObject.AssetKey, gameObjects);
             }
-            else if (m_CacheCountLimitDict.TryGetValue(component.AssetKey, out var limit) && gameObjects.Count >= limit)
+            else if (m_CacheCountLimitDict.TryGetValue(pooledGameObject.AssetKey, out var limit) && gameObjects.Count >= limit)
             {
                 // 超过缓存数量限制，销毁对象。
                 Object.Destroy(gameObject);
+                Log.Debug($"Pooled game object '{gameObject.name}' is over cache count limit.");
                 return;
             }
 
@@ -226,9 +243,22 @@ namespace HoweFramework
             }
         }
 
-        private sealed class PooledGameObject : MonoBehaviour
+        private sealed class PooledGameObject : MonoBehaviour, ICustomDestroy
         {
             public string AssetKey { get; set; }
+            public IGameObjectPool GameObjectPool { get; set; }
+
+            public void CustomDestroy()
+            {
+                if (GameObjectPool != null)
+                {
+                    GameObjectPool.Release(gameObject);
+                }
+                else
+                {
+                    Object.Destroy(gameObject);
+                }
+            }
         }
     }
 }

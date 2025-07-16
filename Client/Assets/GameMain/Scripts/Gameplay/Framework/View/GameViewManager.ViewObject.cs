@@ -185,6 +185,12 @@ namespace GameMain
                 if (resKey == ResKey)
                 {
                     // 资源键值相同，不重复加载。
+                    if (string.IsNullOrEmpty(resKey))
+                    {
+                        // 要防止直接设置GameObject后，再调用LoadGameObject传入空字符串，导致旧对象未卸载的问题。
+                        UnloadGameObject();
+                    }
+                    
                     return;
                 }
 
@@ -204,7 +210,7 @@ namespace GameMain
                     if (gameObject != null)
                     {
                         // 归还实例。
-                        m_GameViewManager.Context.GameObjectPool.Release(gameObject);
+                        gameObject.Destroy();
                     }
                     return;
                 }
@@ -239,11 +245,42 @@ namespace GameMain
             }
 
             /// <summary>
+            /// 设置GameObject.
+            /// </summary>
+            /// <param name="gameObject">GameObject。</param>
+            public void SetGameObject(GameObject gameObject)
+            {
+                // 卸载旧的视图对象。
+                UnloadGameObject();
+
+                if (gameObject == null)
+                {
+                    return;
+                }
+
+                IsLoaded = true;
+                GameObject = gameObject;
+                Transform = gameObject.transform;
+                if (m_ParentTransform != null)
+                {
+                    Transform.SetParent(m_ParentTransform);
+                }
+
+                Transform.localPosition = m_LocalPosition;
+                Transform.localEulerAngles = m_LocalEulerAngles;
+                Transform.localScale = m_LocalScale;
+
+                gameObject.SetActive(m_IsVisible);
+
+                m_OnLoaded?.Invoke(this);
+            }
+
+            /// <summary>
             /// 卸载资源对象.
             /// </summary>
             public void UnloadGameObject()
             {
-                if (string.IsNullOrEmpty(ResKey))
+                if (!IsLoaded && string.IsNullOrEmpty(ResKey))
                 {
                     return;
                 }
@@ -256,7 +293,7 @@ namespace GameMain
 
                     GameObject = null;
                     Transform = null;
-                    m_GameViewManager.Context.GameObjectPool.Release(GameObject);
+                    GameObject.Destroy();
                 }
                 else if (m_CancellationTokenSource != null)
                 {

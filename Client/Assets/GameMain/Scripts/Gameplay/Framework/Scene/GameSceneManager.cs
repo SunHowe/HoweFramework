@@ -9,6 +9,22 @@ namespace GameMain
     public sealed class GameSceneManager : GameManagerBase, IGameSceneManager
     {
         /// <summary>
+        /// 默认场景根节点名称。
+        /// </summary>
+        public const string DefaultSceneRootName = "SceneRoot";
+
+        /// <summary>
+        /// 默认视图对象根节点名称。
+        /// </summary>
+        public const string DefaultViewRootName = "ViewRoot";
+
+        /// <inheritdoc/>
+        public Transform SceneRoot { get; private set; }
+
+        /// <inheritdoc/>
+        public Transform ViewRoot { get; private set; }
+
+        /// <summary>
         /// 场景对象收集器。
         /// </summary>
         private ObjectCollector m_ObjectCollector;
@@ -18,13 +34,19 @@ namespace GameMain
         /// </summary>
         private readonly string m_SceneRootName;
 
-        public GameSceneManager() : this("SceneRoot")
+        /// <summary>
+        /// 视图对象根节点名称。
+        /// </summary>
+        private readonly string m_ViewRootName;
+
+        public GameSceneManager() : this(DefaultSceneRootName, DefaultViewRootName)
         {
         }
 
-        public GameSceneManager(string sceneRootName)
+        public GameSceneManager(string sceneRootName, string viewRootName)
         {
             m_SceneRootName = sceneRootName;
+            m_ViewRootName = viewRootName;
         }
 
         /// <inheritdoc/>
@@ -43,6 +65,9 @@ namespace GameMain
         {
             var sceneRoot = GameObject.Find(m_SceneRootName);
             m_ObjectCollector = sceneRoot.GetComponent<ObjectCollector>();
+
+            SceneRoot = sceneRoot.transform;
+            ViewRoot = GetSceneObject<Transform>(m_ViewRootName);
         }
 
         protected override void OnDispose()

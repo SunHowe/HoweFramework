@@ -89,6 +89,26 @@ namespace HoweFramework
         {
             BinaryInsert(list, item, Comparer<T>.Default);
         }
+
+        /// <summary>
+        /// 尝试获取列表中的元素。
+        /// </summary>
+        /// <typeparam name="T">列表元素类型。</typeparam>
+        /// <param name="list">列表。</param>
+        /// <param name="index">索引。</param>
+        /// <param name="item">元素。</param>
+        /// <returns>是否成功。</returns>
+        public static bool TryGet<T>(this List<T> list, int index, out T item)
+        {
+            if (index < 0 || index >= list.Count)
+            {
+                item = default;
+                return false;
+            }
+
+            item = list[index];
+            return true;
+        }
     }
 }
 
