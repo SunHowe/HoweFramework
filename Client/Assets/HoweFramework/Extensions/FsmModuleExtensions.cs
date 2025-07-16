@@ -10,7 +10,7 @@ namespace HoweFramework
         /// </summary>
         /// <typeparam name="TState">状态类型。</typeparam>
         /// <param name="fsm">有限状态机。</param>
-        public static void AddState<TState>(this IFsmMachine fsm) where TState : FsmState, new()
+        public static void AddState<TState>(this IFsmMachine fsm) where TState : FsmStateBase, new()
         {
             var state = new TState();
             state.Initialize(fsm);
@@ -21,7 +21,7 @@ namespace HoweFramework
         /// </summary>
         /// <param name="fsm">有限状态机。</param>
         /// <param name="state">状态。</param>
-        public static void AddState(this IFsmMachine fsm, FsmState state)
+        public static void AddState(this IFsmMachine fsm, FsmStateBase state)
         {
             state.Initialize(fsm);
         }
