@@ -18,6 +18,11 @@ namespace HoweFramework
         int CurrentState { get; }
 
         /// <summary>
+        /// 状态机黑板实例。
+        /// </summary>
+        IBlackboard Blackboard { get; }
+
+        /// <summary>
         /// 切换状态。
         /// </summary>
         /// <param name="stateId">状态id。</param>
