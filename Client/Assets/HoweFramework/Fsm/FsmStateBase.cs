@@ -3,7 +3,7 @@ namespace HoweFramework
     /// <summary>
     /// 有限状态机状态基类。
     /// </summary>
-    public abstract class FsmState
+    public abstract class FsmStateBase
     {
         /// <summary>
         /// 有限状态机。
