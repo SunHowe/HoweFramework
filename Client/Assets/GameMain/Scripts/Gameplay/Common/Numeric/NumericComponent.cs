@@ -35,13 +35,9 @@ namespace GameMain
         private readonly Dictionary<int, SimpleEvent<long>> m_NumericChangeEventDict = new();
 
         /// <summary>
-        /// 获取数值。
+        /// 获取最终值。
         /// </summary>
-        public long this[int id]
-        {
-            get => Get(id);
-            set => Set(id, value);
-        }
+        public long this[int id] => GetFinal(id);
 
         /// <summary>
         /// 获取属性子类型。
@@ -65,13 +61,21 @@ namespace GameMain
         }
 
         /// <summary>
+        /// 获取最终值。
+        /// </summary>
+        public long GetFinal(int id)
+        {
+            return Get(GetNumericId(id, NumericSubType.Final));
+        }
+
+        /// <summary>
         /// 获取属性值。
         /// </summary>
         public long Get(int id)
         {
             return m_NumericDict.TryGetValue(id, out var value) ? value : 0;
         }
-
+        
         /// <summary>
         /// 设置属性值。
         /// </summary>
@@ -84,14 +88,14 @@ namespace GameMain
             }
 
             m_NumericDict[id] = value;
-            
+
             var finalId = GetNumericId(id, NumericSubType.Final);
             var basicValue = Get(GetNumericId(id, NumericSubType.Basic));
             var basicPercent = Get(GetNumericId(id, NumericSubType.BasicPercent));
             var basicConstAdd = Get(GetNumericId(id, NumericSubType.BasicConstAdd));
             var finalPercent = Get(GetNumericId(id, NumericSubType.FinalPercent));
             var finalConstAdd = Get(GetNumericId(id, NumericSubType.FinalConstAdd));
-            
+
             var finalValue = (basicValue * (100 + basicPercent) / 100 + basicConstAdd) * (100 + finalPercent) / 100 + finalConstAdd;
             m_NumericDict[finalId] = finalValue;
 
