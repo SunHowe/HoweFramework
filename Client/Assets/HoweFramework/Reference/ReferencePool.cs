@@ -11,7 +11,7 @@ namespace HoweFramework
         /// <summary>
         /// 引用缓存字典。
         /// </summary>
-        private static readonly Dictionary<Type, ReferenceCache> m_ReferenceCacheDict = new();
+        private static readonly Dictionary<Type, IReferenceCache> m_ReferenceCacheDict = new();
 
         /// <summary>
         /// 获取引用。
@@ -20,9 +20,7 @@ namespace HoweFramework
         /// <returns>引用。</returns>
         public static T Acquire<T>() where T : class, IReference, new()
         {
-            var cache = GetCache(typeof(T), true);
-            var instance = cache.Count > 0 ? (T)cache.Dequeue() : new T();
-            return instance;
+            return (T)Acquire(typeof(T));
         }
 
         /// <summary>
@@ -30,7 +28,7 @@ namespace HoweFramework
         /// </summary>
         /// <param name="type">引用类型。</param>
         /// <returns>引用。</returns>
-        public static object Acquire(Type type)
+        public static IReference Acquire(Type type)
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (!type.IsClass || !typeof(IReference).IsAssignableFrom(type))
@@ -39,9 +37,7 @@ namespace HoweFramework
             }
 #endif
 
-            var cache = GetCache(type, true);
-            var instance = cache.Count > 0 ? cache.Dequeue() : Activator.CreateInstance(type);
-            return instance;
+            return GetCache(type, true).Dequeue();
         }
 
         /// <summary>
@@ -83,7 +79,7 @@ namespace HoweFramework
         /// <param name="type">引用类型。</param>
         /// <param name="createIfNotExists">如果缓存不存在，是否创建。</param>
         /// <returns>引用缓存。</returns>
-        private static ReferenceCache GetCache(Type type, bool createIfNotExists = true)
+        private static IReferenceCache GetCache(Type type, bool createIfNotExists = true)
         {
             if (m_ReferenceCacheDict.TryGetValue(type, out var cache))
             {
@@ -95,7 +91,15 @@ namespace HoweFramework
                 return null;
             }
 
-            cache = new ReferenceCache();
+            if (typeof(IReferenceWithId).IsAssignableFrom(type))
+            {
+                cache = new ReferenceWithIdCache(type);
+            }
+            else
+            {
+                cache = new ReferenceCache(type);
+            }
+
             m_ReferenceCacheDict[type] = cache;
 
             return cache;

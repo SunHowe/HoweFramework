@@ -53,30 +53,7 @@ namespace HoweFramework
         /// <param name="comparison">比较器。</param>
         public static void BinaryInsert<T>(this List<T> list, T item, Comparison<T> comparison)
         {
-            if (list.Count == 0)
-            {
-                list.Add(item);
-            }
-
-            int left = 0;
-            int right = list.Count - 1;
-
-            while (left <= right)
-            {
-                int mid = (left + right) / 2;
-                int compareResult = comparison(item, list[mid]);
-
-                if (compareResult < 0)
-                {
-                    right = mid - 1;
-                }
-                else
-                {
-                    left = mid + 1;
-                }
-            }
-
-            list.Insert(left, item);
+            BinaryInsert(list, item, Comparer<T>.Create(comparison));
         }
 
         /// <summary>
@@ -88,6 +65,66 @@ namespace HoweFramework
         public static void BinaryInsert<T>(this List<T> list, T item) where T : IComparable<T>
         {
             BinaryInsert(list, item, Comparer<T>.Default);
+        }
+
+        /// <summary>
+        /// 二分查找。
+        /// </summary>
+        /// <typeparam name="T">列表元素类型。</typeparam>
+        /// <param name="list">列表。</param>
+        /// <param name="item">要查找的元素。</param>
+        /// <param name="comparer">比较器。</param>
+        /// <returns>元素索引。若找不到则返回-1。</returns>
+        public static int BinarySearch<T>(this List<T> list, T item, IComparer<T> comparer)
+        {
+            int left = 0;
+            int right = list.Count - 1;
+
+            while (left <= right)
+            {
+                int mid = (left + right) / 2;
+                int compareResult = comparer.Compare(item, list[mid]);
+
+                if (compareResult == 0)
+                {
+                    return mid;
+                }
+                else if (compareResult < 0)
+                {
+                    right = mid - 1;
+                }
+                else
+                {
+                    left = mid + 1;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// 二分查找。
+        /// </summary>
+        /// <typeparam name="T">列表元素类型。</typeparam>
+        /// <param name="list">列表。</param>
+        /// <param name="item">要查找的元素。</param>
+        /// <returns>元素索引。若找不到则返回-1。</returns>
+        public static int BinarySearch<T>(this List<T> list, T item) where T : IComparable<T>
+        {
+            return BinarySearch(list, item, Comparer<T>.Default);
+        }
+
+        /// <summary>
+        /// 二分查找。
+        /// </summary>
+        /// <typeparam name="T">列表元素类型。</typeparam>
+        /// <param name="list">列表。</param>
+        /// <param name="item">要查找的元素。</param>
+        /// <param name="comparison">比较器。</param>
+        /// <returns>元素索引。若找不到则返回-1。</returns>
+        public static int BinarySearch<T>(this List<T> list, T item, Comparison<T> comparison)
+        {
+            return BinarySearch(list, item, Comparer<T>.Create(comparison));
         }
 
         /// <summary>

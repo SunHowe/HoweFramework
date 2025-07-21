@@ -4,9 +4,9 @@ using System.Collections.Generic;
 namespace HoweFramework
 {
     /// <summary>
-    /// 引用缓存。
+    /// 带实例id的引用缓存。
     /// </summary>
-    internal class ReferenceCache : IReferenceCache
+    internal class ReferenceWithIdCache : IReferenceCache
     {
         /// <summary>
         /// 缓存的引用数量。
@@ -16,7 +16,7 @@ namespace HoweFramework
         /// <summary>
         /// 引用队列。
         /// </summary>
-        private readonly Queue<IReference> m_ReferenceQueue = new();
+        private readonly Queue<IReferenceWithId> m_ReferenceQueue = new();
 
         /// <summary>
         /// 引用类型。
@@ -24,10 +24,15 @@ namespace HoweFramework
         private readonly Type m_ReferenceType;
 
         /// <summary>
+        /// 自增长实例id。
+        /// </summary>
+        private int m_InstanceId = 0;
+
+        /// <summary>
         /// 构造函数。
         /// </summary>
         /// <param name="referenceType">引用类型。</param>
-        public ReferenceCache(Type referenceType)
+        public ReferenceWithIdCache(Type referenceType)
         {
             m_ReferenceType = referenceType;
         }
@@ -35,19 +40,22 @@ namespace HoweFramework
         /// <summary>
         /// 出队。
         /// </summary>
-        /// <returns>引用。</returns>
         public IReference Dequeue()
         {
-            return m_ReferenceQueue.Count > 0 ? m_ReferenceQueue.Dequeue() : (IReference)Activator.CreateInstance(m_ReferenceType);
+            var instance = m_ReferenceQueue.Count > 0 ? m_ReferenceQueue.Dequeue() : (IReferenceWithId)Activator.CreateInstance(m_ReferenceType);
+            instance.InstanceId = ++m_InstanceId;
+            return instance;
         }
 
         /// <summary>
         /// 入队。
         /// </summary>
-        /// <param name="reference">引用。</param>
         public void Enqueue(IReference reference)
         {
-            m_ReferenceQueue.Enqueue(reference);
+            var instance = (IReferenceWithId)reference;
+            instance.InstanceId = 0;
+
+            m_ReferenceQueue.Enqueue(instance);
         }
 
         /// <summary>
