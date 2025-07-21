@@ -112,6 +112,17 @@ namespace GameMain
         }
 
         /// <summary>
+        /// 修改属性值。
+        /// </summary>
+        /// <param name="id">属性id。</param>
+        /// <param name="value">属性值。</param>
+        /// <param name="dispatchEvent">是否派发事件。</param>
+        public void Modify(int id, long value, bool dispatchEvent = true)
+        {
+            Set(id, Get(id) + value, dispatchEvent);
+        }
+
+        /// <summary>
         /// 订阅数值变更事件。
         /// </summary>
         /// <param name="id">属性id。</param>
