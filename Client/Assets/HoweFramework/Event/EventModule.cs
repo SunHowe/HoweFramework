@@ -78,6 +78,15 @@ namespace HoweFramework
             return new ThreadSafeEventDispatcher();
         }
 
+        /// <summary>
+        /// 创建优先级事件调度器。不需要使用时需要调用Dispose释放。
+        /// </summary>
+        /// <returns>优先级事件调度器。</returns>
+        public IPriorityEventDispatcher CreatePriorityEventDispatcher()
+        {
+            return new PriorityEventDispatcher();
+        }
+
         protected override void OnInit()
         {
             m_ThreadSafeEventDispatcher = CreateThreadSafeEventDispatcher();
