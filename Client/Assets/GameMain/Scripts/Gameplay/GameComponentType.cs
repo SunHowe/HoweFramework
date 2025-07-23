@@ -32,6 +32,11 @@ namespace GameMain
         /// </summary>
         State = 5,
 
+        /// <summary>
+        /// 资源组件。
+        /// </summary>
+        Resource = 6,
+
         #endregion
     }
 }
