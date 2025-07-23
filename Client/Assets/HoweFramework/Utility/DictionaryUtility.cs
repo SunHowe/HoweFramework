@@ -11,7 +11,7 @@ namespace HoweFramework
         /// <typeparam name="TValue">值类型。</typeparam>
         /// <param name="dict">当前字典。</param>
         /// <param name="other">要添加的另一个字典。</param>
-        public static void AddRange<TKey, TValue>(this Dictionary<TKey, TValue> dict, Dictionary<TKey, TValue> other)
+        public static void AddRange<TKey, TValue>(this Dictionary<TKey, TValue> dict, IReadOnlyDictionary<TKey, TValue> other)
         {
             foreach (var item in other)
             {
