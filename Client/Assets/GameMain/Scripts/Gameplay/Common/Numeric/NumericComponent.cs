@@ -7,7 +7,7 @@ namespace GameMain
     /// 数值组件。
     /// </summary>
     [GameComponent(GameComponentType.Numeric)]
-    public sealed class NumericComponent : GameComponentBase
+    public sealed class NumericComponent : GameComponentBase, INumeric
     {
         /// <summary>
         /// 数值子类型位数。
