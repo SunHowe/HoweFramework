@@ -7,7 +7,7 @@ namespace GameMain
     /// 数值组件。
     /// </summary>
     [GameComponent(GameComponentType.Numeric)]
-    public sealed class NumericComponent : GameComponentBase
+    public sealed class NumericComponent : GameComponentBase, INumeric
     {
         /// <summary>
         /// 数值子类型位数。
@@ -75,7 +75,7 @@ namespace GameMain
         {
             return m_NumericDict.TryGetValue(id, out var value) ? value : 0;
         }
-        
+
         /// <summary>
         /// 设置属性值。
         /// </summary>
@@ -160,6 +160,25 @@ namespace GameMain
         }
 
         /// <summary>
+        /// 创建数值快照。
+        /// </summary>
+        /// <returns>数值快照。</returns>
+        public INumericSnapshot TakeSnapshot()
+        {
+            return NumericSnapshot.Create(this);
+        }
+
+        /// <summary>
+        /// 恢复数值快照。
+        /// </summary>
+        /// <param name="snapshot">数值快照。</param>
+        public void RestoreSnapshot(INumericSnapshot snapshot)
+        {
+            m_NumericDict.Clear();
+            m_NumericDict.AddRange(snapshot.NumericDict);
+        }
+
+        /// <summary>
         /// 派发数值变更事件。
         /// </summary>
         /// <param name="id">属性id。</param>
@@ -187,6 +206,60 @@ namespace GameMain
 
             m_NumericChangeEventDict.Clear();
             m_NumericDict.Clear();
+        }
+
+        /// <summary>
+        /// 数值快照。
+        /// </summary>
+        private sealed class NumericSnapshot : INumericSnapshot, IReference
+        {
+            /// <summary>
+            /// 数值字典。
+            /// </summary>
+            public IReadOnlyDictionary<int, long> NumericDict => m_NumericDict;
+
+            /// <summary>
+            /// 数值字典。
+            /// </summary>
+            private readonly Dictionary<int, long> m_NumericDict = new();
+
+            /// <summary>
+            /// 获取最终值。
+            /// </summary>
+            public long GetFinal(int id)
+            {
+                return Get(GetNumericId(id, NumericSubType.Final));
+            }
+
+            /// <summary>
+            /// 获取属性值。
+            /// </summary>
+            public long Get(int id)
+            {
+                return m_NumericDict.TryGetValue(id, out var value) ? value : 0;
+            }
+
+            public void Clear()
+            {
+                m_NumericDict.Clear();
+            }
+
+            public void Dispose()
+            {
+                ReferencePool.Release(this);
+            }
+
+            /// <summary>
+            /// 创建数值快照。
+            /// </summary>
+            /// <param name="numericDict">数值字典。</param>
+            /// <returns>数值快照。</returns>
+            public static NumericSnapshot Create(NumericComponent numericComponent)
+            {
+                var snapshot = ReferencePool.Acquire<NumericSnapshot>();
+                snapshot.m_NumericDict.AddRange(numericComponent.m_NumericDict);
+                return snapshot;
+            }
         }
     }
 }
