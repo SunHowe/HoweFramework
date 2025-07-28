@@ -146,6 +146,21 @@ namespace HoweFramework
             item = list[index];
             return true;
         }
+
+        /// <summary>
+        /// 释放列表中的元素。
+        /// </summary>
+        /// <typeparam name="T">列表元素类型。</typeparam>
+        /// <param name="list">列表。</param>
+        public static void DisposeItems<T>(this List<T> list) where T : IDisposable
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                list[i].Dispose();
+            }
+
+            list.Clear();
+        }
     }
 }
 

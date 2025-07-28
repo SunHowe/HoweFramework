@@ -57,6 +57,65 @@ namespace GameMain
         }
 
         /// <summary>
+        /// 消耗资源。
+        /// </summary>
+        /// <param name="id">资源id。</param>
+        /// <param name="value">消耗值。</param>
+        /// <returns>是否消耗成功。</returns>
+        public bool Cost(int id, long value)
+        {
+            var resourceInfo = GetOrCreateResourceInfo(id);
+            if (resourceInfo.Value < value)
+            {
+                return false;
+            }
+
+            resourceInfo.Value -= value;
+            return true;
+        }
+
+        /// <summary>
+        /// 消耗资源。
+        /// </summary>
+        /// <param name="resourceDict">资源字典。</param>
+        /// <returns>是否消耗成功。</returns>
+        public bool Cost(Dictionary<int, long> resourceDict)
+        {
+            using var commandList = ReusableList<ResourceInfoModifyCommand>.Create();
+            var anyFailed = false;
+
+            foreach (var resource in resourceDict)
+            {
+                var resourceInfo = GetOrCreateResourceInfo(resource.Key);
+                if (resourceInfo.Value < resource.Value)
+                {
+                    anyFailed = true;
+                    break;
+                }
+
+                commandList.Add(ResourceInfoModifyCommand.Create(resourceInfo, -resource.Value));
+            }
+
+            if (!anyFailed)
+            {
+                foreach (var command in commandList)
+                {
+                    command.Execute();
+                    command.Dispose();
+                }
+            }
+            else
+            {
+                foreach (var command in commandList)
+                {
+                    command.Dispose();
+                }
+            }
+
+            return !anyFailed;
+        }
+
+        /// <summary>
         /// 恢复到最大值。仅当最大值大于等于0时有效。
         /// </summary>
         /// <param name="id">资源id。</param>
@@ -215,6 +274,39 @@ namespace GameMain
             }
 
             m_ResourceDict.Clear();
+        }
+
+        /// <summary>
+        /// 资源值修改命令。
+        /// </summary>
+        private sealed class ResourceInfoModifyCommand : IDisposable, IReference
+        {
+            public ResourceInfo ResourceInfo { get; set; }
+            public long ModifyValue { get; set; }
+
+            public void Dispose()
+            {
+                ReferencePool.Release(this);
+            }
+
+            public void Clear()
+            {
+                ResourceInfo = null;
+                ModifyValue = 0;
+            }
+
+            public void Execute()
+            {
+                ResourceInfo.Value += ModifyValue;
+            }
+
+            public static ResourceInfoModifyCommand Create(ResourceInfo resourceInfo, long modifyValue)
+            {
+                var command = ReferencePool.Acquire<ResourceInfoModifyCommand>();
+                command.ResourceInfo = resourceInfo;
+                command.ModifyValue = modifyValue;
+                return command;
+            }
         }
 
         private sealed class ResourceInfo : IDisposable, IReference
