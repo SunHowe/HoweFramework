@@ -8,14 +8,32 @@ namespace HoweFramework
     /// </summary>
     public sealed class ReusableQueue<T> : Queue<T>, IReference, IDisposable
     {
+        /// <summary>
+        /// 在自己Dispose时是否释放队列中的元素。
+        /// </summary>
+        public bool DisposeItems { get; set; }
+
         public void Dispose()
         {
+            if (DisposeItems)
+            {
+                while (Count > 0)
+                {
+                    if (Dequeue() is IDisposable disposable)
+                    {
+                        disposable.Dispose();
+                    }
+                }
+            }
+
             ReferencePool.Release(this);
         }
 
-        public static ReusableQueue<T> Create()
+        public static ReusableQueue<T> Create(bool disposeItems = false)
         {
-            return ReferencePool.Acquire<ReusableQueue<T>>();
+            var queue = ReferencePool.Acquire<ReusableQueue<T>>();
+            queue.DisposeItems = disposeItems;
+            return queue;
         }
     }
 }

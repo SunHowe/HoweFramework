@@ -35,6 +35,11 @@ namespace GameMain
         private readonly Dictionary<int, SimpleEvent<long>> m_NumericChangeEventDict = new();
 
         /// <summary>
+        /// 数值字典。
+        /// </summary>
+        public IReadOnlyDictionary<int, long> NumericDict => m_NumericDict;
+
+        /// <summary>
         /// 获取最终值。
         /// </summary>
         public long this[int id] => GetFinal(id);
@@ -163,7 +168,7 @@ namespace GameMain
         /// 创建数值快照。
         /// </summary>
         /// <returns>数值快照。</returns>
-        public INumericSnapshot TakeSnapshot()
+        public INumeric TakeSnapshot()
         {
             return NumericSnapshot.Create(this);
         }
@@ -172,7 +177,7 @@ namespace GameMain
         /// 恢复数值快照。
         /// </summary>
         /// <param name="snapshot">数值快照。</param>
-        public void RestoreSnapshot(INumericSnapshot snapshot)
+        public void RestoreSnapshot(INumeric snapshot)
         {
             m_NumericDict.Clear();
             m_NumericDict.AddRange(snapshot.NumericDict);
@@ -193,6 +198,14 @@ namespace GameMain
             numericChangeEvent.Dispatch(value);
         }
 
+        /// <summary>
+        /// 克隆数值。
+        /// </summary>
+        public INumeric Clone()
+        {
+            return TakeSnapshot();
+        }
+
         protected override void OnAwake()
         {
         }
@@ -211,7 +224,7 @@ namespace GameMain
         /// <summary>
         /// 数值快照。
         /// </summary>
-        private sealed class NumericSnapshot : INumericSnapshot, IReference
+        private sealed class NumericSnapshot : INumeric, IReference
         {
             /// <summary>
             /// 数值字典。
@@ -258,6 +271,17 @@ namespace GameMain
             {
                 var snapshot = ReferencePool.Acquire<NumericSnapshot>();
                 snapshot.m_NumericDict.AddRange(numericComponent.m_NumericDict);
+                return snapshot;
+            }
+
+            /// <summary>
+            /// 克隆数值快照。
+            /// </summary>
+            /// <returns>克隆后的数值快照。</returns>
+            public INumeric Clone()
+            {
+                var snapshot = ReferencePool.Acquire<NumericSnapshot>();
+                snapshot.m_NumericDict.AddRange(m_NumericDict);
                 return snapshot;
             }
         }
