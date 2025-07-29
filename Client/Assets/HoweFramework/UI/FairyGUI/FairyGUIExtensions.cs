@@ -26,6 +26,16 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 设置是否开启预加载包模式。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="preloadPackageMode">是否开启预加载包模式。</param>
+        public static void SetPreloadPackageMode(this UIModule module, bool preloadPackageMode)
+        {
+            s_FairyGUIFormHelper.SetPreloadPackageMode(preloadPackageMode);
+        }
+
+        /// <summary>
         /// 加载FairyGUI包列表。
         /// </summary>
         /// <param name="module">UI模块。</param>
