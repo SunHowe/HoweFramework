@@ -2,7 +2,6 @@
 <packageDescription id="eb0bof9p">
   <resources>
     <component id="hf010" name="LoginForm.xml" path="/" exported="true"/>
-    <movieclip id="i9sb1" name="MovieClip1.jta" path="/" smoothing="false"/>
     <component id="i9sbe" name="Button.xml" path="/"/>
     <component id="vq0qf" name="LoginAccountForm.xml" path="/" exported="true"/>
     <component id="vq0qg" name="TextButton.xml" path="/"/>
