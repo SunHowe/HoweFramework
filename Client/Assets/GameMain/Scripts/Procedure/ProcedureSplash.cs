@@ -35,6 +35,18 @@ namespace GameMain
 
         private async UniTask InitAsync()
         {
+            var enablePreloadPackageMode = GameConfig.Instance.EnablePreloadPackageMode;
+            var dataTableLoadMode = GameConfig.Instance.DataTableLoadMode;
+            
+#if UNITY_WEBGL
+            // WEBGL强制指定使用异步加载配置表模式。
+            dataTableLoadMode = DataTableLoadMode.AsyncLoad;
+            // WEBGL强制开启预加载包模式。
+            enablePreloadPackageMode = true;
+#endif
+            // 设置配置表加载模式。
+            DataTableModule.Instance.LoadMode = dataTableLoadMode;
+
             // 注册逻辑程序集。
             AssemblyUtility.RegisterRuntimeAssembly(GetType().Assembly);
 
@@ -45,14 +57,7 @@ namespace GameMain
             // NetworkModule.Instance.CreateDefaultNetworkChannel(NetworkConst.GatewayChannelName, ServiceType.Tcp, new OrleansNetworkChannelHelper());
 
             await UIModule.Instance.UseFairyGUI(new FairyGUISettings());
-            
-#if UNITY_WEBGL
-            // WEBGL强制指定使用异步加载配置表模式。
-            DataTableModule.Instance.LoadMode = DataTableLoadMode.AsyncLoad;
-            // WEBGL强制开启预加载包模式。
-            UIModule.Instance.SetPreloadPackageMode(true);
-#endif
-
+            UIModule.Instance.SetPreloadPackageMode(enablePreloadPackageMode);
             await UIModule.Instance.LoadFairyGUIPackagesAsync(UIConst.UIPackageMappingAssetPath);
             UIModule.Instance.AddFairyGUIFormBindings(UIFormBindings.Bindings);
             UIModule.Instance.AddFairyGUIComponentBindings(UIComponentBindings.Bindings);
@@ -71,14 +76,27 @@ namespace GameMain
         private UniTask InitYooAssetAsync()
         {
 #if UNITY_EDITOR
-            if (PlayerPrefs.GetInt("SimulateAssetBundle", 0) == 0)
+            if (GameConfig.Instance.EnableEditorSimulateMode)
             {
                 return ResModule.Instance.InitYooAssetEditorSimulateMode();
             }
 #endif
+            var mainCDNUrl = GameConfig.Instance.CDNUrl;
+            var fallbackCDNUrl = GameConfig.Instance.CDNFallbackUrl;
+
+            if (string.IsNullOrEmpty(fallbackCDNUrl))
+            {
+                fallbackCDNUrl = mainCDNUrl;
+            }
+
+            if (GameConfig.Instance.EnableCDNVersionPath)
+            {
+                mainCDNUrl = $"{mainCDNUrl}/{Application.version}";
+                fallbackCDNUrl = $"{fallbackCDNUrl}/{Application.version}";
+            }
 
 #if UNITY_WEBGL
-            return ResModule.Instance.InitYooAssetWebGLMode("http://localhost:8080/CDN", "http://localhost:8080/CDN");
+            return ResModule.Instance.InitYooAssetWebGLMode(mainCDNUrl, fallbackCDNUrl);
 #else
             return ResModule.Instance.InitYooAssetOfflineMode();
 #endif
