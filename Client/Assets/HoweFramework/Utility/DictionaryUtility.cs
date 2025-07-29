@@ -18,5 +18,22 @@ namespace HoweFramework
                 dict[item.Key] = item.Value;
             }
         }
+
+        /// <summary>
+        /// 克隆字典。
+        /// </summary>
+        /// <typeparam name="TKey">键类型。</typeparam>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="dict">要克隆的字典。</param>
+        /// <returns>克隆后的字典。</returns>
+        public static ReusableDictionary<TKey, TValue> Clone<TKey, TValue>(this Dictionary<TKey, TValue> dict)
+        {
+            var newDict = ReusableDictionary<TKey, TValue>.Create();
+            foreach (var item in dict)
+            {
+                newDict[item.Key] = item.Value;
+            }
+            return newDict;
+        }
     }
 }

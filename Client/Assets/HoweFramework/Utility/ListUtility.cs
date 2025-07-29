@@ -161,6 +161,19 @@ namespace HoweFramework
 
             list.Clear();
         }
+
+        /// <summary>
+        /// 克隆列表。
+        /// </summary>
+        /// <typeparam name="T">列表元素类型。</typeparam>
+        /// <param name="list">要克隆的列表。</param>
+        /// <returns>克隆后的列表。</returns>
+        public static ReusableList<T> Clone<T>(this List<T> list)
+        {
+            var newList = ReusableList<T>.Create();
+            newList.AddRange(list);
+            return newList;
+        }
     }
 }
 
