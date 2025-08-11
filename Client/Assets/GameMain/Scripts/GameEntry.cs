@@ -5,10 +5,15 @@ namespace GameMain
 {
     public class GameEntry : MonoBehaviour
     {
+        [SerializeField]
+        private GameConfig m_GameConfig;
+
         private GameApp m_GameApp;
 
         private void Awake()
         {
+            GameConfig.Instance = m_GameConfig;
+
             m_GameApp = new GameApp();
             m_GameApp.OnGameAppDestroyed += OnGameAppDestroyed;
         }

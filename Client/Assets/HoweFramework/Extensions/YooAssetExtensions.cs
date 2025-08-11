@@ -51,6 +51,20 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 使用WebGL模式初始化YooAsset资源管线.
+        /// </summary>
+        public static UniTask InitYooAssetWebGLMode(this ResModule module, string hostServer, string fallbackHostServer)
+        {
+            var remoteServices = new YooAssetRemoteServices(hostServer, fallbackHostServer);
+    
+            var initParameters = new WebPlayModeParameters();
+            initParameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices);
+            initParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters();
+
+            return s_YooAssetResLoader.InitResourcePackageAsync(initParameters);
+        }
+
+        /// <summary>
         /// 使用离线模式初始化YooAsset资源管线.
         /// </summary>
         public static UniTask InitYooAssetOfflineMode(this ResModule module)

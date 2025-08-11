@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using HoweFramework;
+using UnityEngine;
 
 namespace GameMain
 {
@@ -169,6 +170,210 @@ namespace GameMain
         public static T GetManager<T>(this IGameComponent component) where T : IGameManager
         {
             return component.Context.GetManager<T>();
+        }
+
+        /// <summary>
+        /// 获取游戏实体。
+        /// </summary>
+        /// <param name="gameObject">游戏对象。</param>
+        /// <returns>游戏实体。</returns>
+        public static IGameEntity GetGameEntity(this GameObject gameObject)
+        {
+            var blackboard = gameObject.GetComponentInSelfOrParent<BlackboardComponent>();
+            if (blackboard == null)
+            {
+                return null;
+            }
+
+            return blackboard.GetValue<IGameEntity>("GameEntity");
+        }
+
+        /// <summary>
+        /// 获取游戏实体。
+        /// </summary>
+        /// <param name="hit">射线检测结果。</param>
+        /// <returns>游戏实体。</returns>
+        private static IGameEntity GetGameEntity(in RaycastHit hit)
+        {
+            var gameObject = hit.collider.gameObject;
+            if (gameObject == null)
+            {
+                return null;
+            }
+
+            return gameObject.GetGameEntity();
+        }
+
+        /// <summary>
+        /// 获取游戏实体。
+        /// </summary>
+        /// <param name="hits">射线检测结果。</param>
+        /// <param name="entities">检测到的游戏实体。</param>
+        /// <returns>检测到的游戏实体数量。</returns>
+        private static int GetGameEntities(in ReadOnlySpan<RaycastHit> hits, List<IGameEntity> entities)
+        {
+            entities.Clear();
+            foreach (var hit in hits)
+            {
+                var entity = GetGameEntity(hit);
+                if (entity == null)
+                {
+                    continue;
+                }
+
+                entities.Add(entity);
+            }
+
+            return entities.Count;
+        }
+
+        /// <summary>
+        /// 射线检测游戏实体。
+        /// </summary>
+        /// <param name="ray">射线。</param>
+        /// <returns>检测到的游戏实体。</returns>
+        public static IGameEntity RaycastGameEntity(in Ray ray)
+        {
+            if (!Physics.Raycast(ray, out var hit))
+            {
+                return null;
+            }
+
+            return GetGameEntity(hit);
+        }
+
+        /// <summary>
+        /// 射线检测游戏实体。
+        /// </summary>
+        /// <param name="ray">射线。</param>
+        /// <param name="maxDistance">最大距离。</param>
+        /// <returns>检测到的游戏实体。</returns>
+        public static IGameEntity RaycastGameEntity(in Ray ray, float maxDistance)
+        {
+            if (!Physics.Raycast(ray, out var hit, maxDistance))
+            {
+                return null;
+            }
+
+            return GetGameEntity(hit);
+        }
+
+        /// <summary>
+        /// 射线检测游戏实体。
+        /// </summary>
+        /// <param name="ray">射线。</param>
+        /// <param name="layerMask">层掩码。</param>
+        /// <returns>检测到的游戏实体。</returns>
+        public static IGameEntity RaycastGameEntity(in Ray ray, int layerMask)
+        {
+            if (!Physics.Raycast(ray, out var hit, layerMask))
+            {
+                return null;
+            }
+
+            return GetGameEntity(hit);
+        }
+
+        /// <summary>
+        /// 射线检测游戏实体。
+        /// </summary>
+        /// <param name="ray">射线。</param>
+        /// <param name="layerMask">层掩码。</param>
+        /// <param name="maxDistance">最大距离。</param>
+        /// <returns>检测到的游戏实体。</returns>
+        public static IGameEntity RaycastGameEntity(in Ray ray, int layerMask, float maxDistance)
+        {
+            if (!Physics.Raycast(ray, out var hit, maxDistance, layerMask))
+            {
+                return null;
+            }
+
+            return GetGameEntity(hit);
+        }
+
+        /// <summary>
+        /// 射线检测游戏实体。
+        /// </summary>
+        /// <param name="ray">射线。</param>
+        /// <param name="layerMask">层掩码。</param>
+        /// <param name="maxDistance">最大距离。</param>
+        /// <param name="queryTriggerInteraction">触发器交互。</param>
+        /// <returns>检测到的游戏实体。</returns>
+        public static IGameEntity RaycastGameEntity(in Ray ray, int layerMask, float maxDistance, QueryTriggerInteraction queryTriggerInteraction)
+        {
+            if (!Physics.Raycast(ray, out var hit, maxDistance, layerMask, queryTriggerInteraction))
+            {
+                return null;
+            }
+
+            return GetGameEntity(hit);
+        }
+
+        /// <summary>
+        /// 射线检测游戏实体。
+        /// </summary>
+        /// <param name="ray">射线。</param>
+        /// <param name="entities">检测到的游戏实体。</param>
+        /// <returns>检测到的游戏实体数量。</returns>
+        public static int RaycastGameEntities(in Ray ray, List<IGameEntity> entities)
+        {
+            var hits = PhysicsUtility.Raycast(ray);
+            return GetGameEntities(hits, entities);
+        }
+
+        /// <summary>
+        /// 射线检测游戏实体。
+        /// </summary>
+        /// <param name="ray">射线。</param>
+        /// <param name="entities">检测到的游戏实体。</param>
+        /// <param name="maxDistance">最大距离。</param>
+        /// <returns>检测到的游戏实体数量。</returns>
+        public static int RaycastGameEntities(in Ray ray, List<IGameEntity> entities, float maxDistance)
+        {
+            var hits = PhysicsUtility.Raycast(ray, maxDistance);
+            return GetGameEntities(hits, entities);
+        }
+
+        /// <summary>
+        /// 射线检测游戏实体。
+        /// </summary>
+        /// <param name="ray">射线。</param>
+        /// <param name="entities">检测到的游戏实体。</param>
+        /// <param name="layerMask">层掩码。</param>
+        /// <returns>检测到的游戏实体数量。</returns>
+        public static int RaycastGameEntities(in Ray ray, List<IGameEntity> entities, int layerMask)
+        {
+            var hits = PhysicsUtility.Raycast(ray, layerMask);
+            return GetGameEntities(hits, entities);
+        }
+
+        /// <summary>
+        /// 射线检测游戏实体。
+        /// </summary>
+        /// <param name="ray">射线。</param>
+        /// <param name="entities">检测到的游戏实体。</param>
+        /// <param name="layerMask">层掩码。</param>
+        /// <param name="maxDistance">最大距离。</param>
+        /// <returns>检测到的游戏实体数量。</returns>
+        public static int RaycastGameEntities(in Ray ray, List<IGameEntity> entities, int layerMask, float maxDistance)
+        {
+            var hits = PhysicsUtility.Raycast(ray, layerMask, maxDistance);
+            return GetGameEntities(hits, entities);
+        }
+
+        /// <summary>
+        /// 射线检测游戏实体。
+        /// </summary>
+        /// <param name="ray">射线。</param>
+        /// <param name="entities">检测到的游戏实体。</param>
+        /// <param name="layerMask">层掩码。</param>
+        /// <param name="maxDistance">最大距离。</param>
+        /// <param name="queryTriggerInteraction">触发器交互。</param>
+        /// <returns>检测到的游戏实体数量。</returns>
+        public static int RaycastGameEntities(in Ray ray, List<IGameEntity> entities, int layerMask, float maxDistance, QueryTriggerInteraction queryTriggerInteraction)
+        {
+            var hits = PhysicsUtility.Raycast(ray, layerMask, maxDistance, queryTriggerInteraction);
+            return GetGameEntities(hits, entities);
         }
     }
 }

@@ -148,6 +148,10 @@ namespace HoweFramework
 
         public byte[] LoadBinary(string assetKey)
         {
+#if UNITY_WEBGL
+            throw new ErrorCodeException(ErrorCode.InvalidOperationException, "WebGL平台不支持同步加载");
+#endif
+
             // 目前使用TextAsset来加载二进制数据。
             var operation = m_ResourcePackage.LoadAssetSync(assetKey, typeof(TextAsset));
             var asset = operation.AssetObject;
@@ -162,7 +166,7 @@ namespace HoweFramework
             {
                 bytes = textAsset.bytes;
             }
-            
+
             operation.Release();
             return bytes;
         }
@@ -212,7 +216,7 @@ namespace HoweFramework
             {
                 if (operation.Status == EOperationStatus.Succeed)
                 {
-                throw new ErrorCodeException(ErrorCode.ResSceneAlreadyLoaded);
+                    throw new ErrorCodeException(ErrorCode.ResSceneAlreadyLoaded);
                 }
 
                 throw new ErrorCodeException(ErrorCode.ResSceneLoading);
@@ -254,8 +258,8 @@ namespace HoweFramework
             {
                 throw new ErrorCodeException(ErrorCode.ResSceneLoading);
             }
-            
-            m_SceneHandlerDict.Remove(sceneAssetName);   
+
+            m_SceneHandlerDict.Remove(sceneAssetName);
 
             var unloadOperation = operation.UnloadAsync();
             m_UnloadSceneOperationDict[sceneAssetName] = unloadOperation;

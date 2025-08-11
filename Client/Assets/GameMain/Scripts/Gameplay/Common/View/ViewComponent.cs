@@ -110,6 +110,18 @@ namespace GameMain
         public Transform Transform => m_ViewObject.Transform;
 
         /// <summary>
+        /// 获取视图对象黑板，仅当视图对象加载完成时有效。
+        /// </summary>
+        public IBlackboard Blackboard
+        {
+            get
+            {
+                EnableBlackboard(true);
+                return m_ViewBlackboard;
+            }
+        }
+
+        /// <summary>
         /// 位置(基于本地坐标系).
         /// </summary>
         public Vector3 Position
@@ -174,8 +186,10 @@ namespace GameMain
 
         private string m_ResKey;
         private bool m_IsVisible = false;
+        private bool m_EnableBlackboard = false;
 
         private IViewObject m_ViewObject;
+        private IBlackboard m_ViewBlackboard;
         private ViewComponentLoadedDelegate m_OnViewLoaded;
         private ViewComponentUnloadedDelegate m_OnViewUnloaded;
 
@@ -186,6 +200,24 @@ namespace GameMain
         public void SetGameObject(GameObject gameObject)
         {
             m_ViewObject.SetGameObject(gameObject);
+        }
+
+        /// <summary>
+        /// 设置是否启用黑板。
+        /// </summary>
+        /// <param name="enable">是否启用。</param>
+        public void EnableBlackboard(bool enable)
+        {
+            m_EnableBlackboard = enable;
+            if (enable)
+            {
+                SetupBlackboard();
+            }
+            else
+            {
+                m_ViewBlackboard?.Clear();
+                m_ViewBlackboard = null;
+            }
         }
 
         protected override void OnAwake()
@@ -207,16 +239,44 @@ namespace GameMain
             m_IsVisible = false;
             m_OnViewLoaded = null;
             m_OnViewUnloaded = null;
+            m_EnableBlackboard = false;
         }
 
         private void OnViewObjectLoaded(IViewObject viewObject)
         {
+            SetupBlackboard();
             m_OnViewLoaded?.Invoke(this);
         }
 
         private void OnViewObjectUnloaded(IViewObject viewObject)
         {
+            m_ViewBlackboard?.Clear();
+            m_ViewBlackboard = null;
+
             m_OnViewUnloaded?.Invoke(this);
+        }
+
+        private void SetupBlackboard()
+        {
+            if (!m_EnableBlackboard)
+            {
+                return;
+            }
+
+            if (m_ViewBlackboard != null)
+            {
+                // already setup.
+                return;
+            }
+
+            if (!m_ViewObject.IsLoaded)
+            {
+                return;
+            }
+
+            m_ViewBlackboard = m_ViewObject.GameObject.GetOrAddComponent<BlackboardComponent>();
+            m_ViewBlackboard.Clear();
+            m_ViewBlackboard.SetObject("GameEntity", Entity);
         }
     }
 }

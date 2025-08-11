@@ -16,7 +16,7 @@ namespace HoweFramework
         /// <summary>
         /// 引用队列。
         /// </summary>
-        private readonly Queue<IReference> m_ReferenceQueue = new();
+        private readonly Stack<IReference> m_ReferenceQueue = new();
 
         /// <summary>
         /// 引用类型。
@@ -38,7 +38,7 @@ namespace HoweFramework
         /// <returns>引用。</returns>
         public IReference Dequeue()
         {
-            return m_ReferenceQueue.Count > 0 ? m_ReferenceQueue.Dequeue() : (IReference)Activator.CreateInstance(m_ReferenceType);
+            return m_ReferenceQueue.Count > 0 ? m_ReferenceQueue.Pop() : (IReference)Activator.CreateInstance(m_ReferenceType);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace HoweFramework
         /// <param name="reference">引用。</param>
         public void Enqueue(IReference reference)
         {
-            m_ReferenceQueue.Enqueue(reference);
+            m_ReferenceQueue.Push(reference);
         }
 
         /// <summary>
