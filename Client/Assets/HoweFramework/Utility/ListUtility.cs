@@ -148,6 +148,23 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 尝试获取列表中的元素。
+        /// </summary>
+        /// <typeparam name="T">列表元素类型。</typeparam>
+        /// <param name="list">列表。</param>
+        /// <param name="index">索引。</param>
+        /// <returns>元素。若找不到则返回默认值。</returns>
+        public static T GetOrDefault<T>(this List<T> list, int index)
+        {
+            if (index < 0 || index >= list.Count)
+            {
+                return default;
+            }
+
+            return list[index];
+        }
+
+        /// <summary>
         /// 释放列表中的元素。
         /// </summary>
         /// <typeparam name="T">列表元素类型。</typeparam>
