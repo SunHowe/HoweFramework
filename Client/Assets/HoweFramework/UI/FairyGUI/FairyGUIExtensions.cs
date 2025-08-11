@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using FairyGUI;
+using UnityEngine;
 
 namespace HoweFramework
 {
@@ -78,6 +79,26 @@ namespace HoweFramework
         public static int GetItemIndex(this GList list, GObject item)
         {
             return list.ChildIndexToItemIndex(list.GetChildIndex(item));
+        }
+
+        /// <summary>
+        /// 将UI位置转换为屏幕位置。
+        /// </summary>
+        /// <param name="pos">UI位置。</param>
+        /// <returns>屏幕位置。</returns>
+        public static Vector2 UIPositionToScreenPosition(this Vector2 pos)
+        {
+            return new Vector2(pos.x, Screen.height - pos.y);
+        }
+
+        /// <summary>
+        /// 获取屏幕位置。
+        /// </summary>
+        /// <param name="context">事件上下文。</param>
+        /// <returns>屏幕位置。</returns>
+        public static Vector2 GetScreenPosition(this EventContext context)
+        {
+            return context.inputEvent?.position.UIPositionToScreenPosition() ?? Vector2.zero;
         }
     }
 }
