@@ -79,6 +79,12 @@ namespace HoweFramework
         /// 清空。
         /// </summary>
         void Clear();
+
+        /// <summary>
+        /// 复制到另一个黑板。
+        /// </summary>
+        /// <param name="blackboard">目标黑板。</param>
+        void CopyTo(IBlackboard blackboard);
     }
 
     /// <summary>
@@ -167,6 +173,14 @@ namespace HoweFramework
 
             value = default;
             return false;
+        }
+
+        public void CopyTo(IBlackboard blackboard)
+        {
+            foreach (var item in m_ValueDict)
+            {
+                blackboard.SetValue(item.Key, item.Value);
+            }
         }
 
         /// <summary>
