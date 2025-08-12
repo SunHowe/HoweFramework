@@ -403,7 +403,7 @@ namespace GameMain
             {
                 UnbindNumeric();
 
-                m_NumericId = NumericComponent.GetNumericId(m_NumericId, NumericSubType.Final);
+                m_NumericId = NumericComponent.GetNumericId(numericId, NumericSubType.Final);
                 m_NumericComponent = numericComponent;
 
                 if (numericComponent != null && numericId != 0)
