@@ -403,12 +403,12 @@ namespace GameMain
             {
                 UnbindNumeric();
 
-                m_NumericId = NumericComponent.GetNumericId(numericId, NumericSubType.Final);
+                m_NumericId = numericId;
                 m_NumericComponent = numericComponent;
 
                 if (numericComponent != null && numericId != 0)
                 {
-                    numericComponent.Subscribe(m_NumericId, OnNumericChange, true);
+                    numericComponent.Subscribe(m_NumericId, NumericSubType.Final, OnNumericChange, true);
                 }
             }
 
@@ -420,7 +420,7 @@ namespace GameMain
                 NumericComponent numericComponent = m_NumericComponent;
                 if (numericComponent != null && m_NumericId != 0)
                 {
-                    numericComponent.Unsubscribe(m_NumericId, OnNumericChange);
+                    numericComponent.Unsubscribe(m_NumericId, NumericSubType.Final, OnNumericChange);
                 }
 
                 m_NumericId = 0;

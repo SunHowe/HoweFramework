@@ -10,21 +10,6 @@ namespace GameMain
     public sealed class NumericComponent : GameComponentBase, INumeric
     {
         /// <summary>
-        /// 数值子类型位数。
-        /// </summary>
-        public const int NUMERIC_SUB_TYPE_BITS = 4;
-
-        /// <summary>
-        /// 数值子类型掩码。
-        /// </summary>
-        public const int NUMERIC_SUB_TYPE_MASK = (1 << NUMERIC_SUB_TYPE_BITS) - 1;
-
-        /// <summary>
-        /// 数值id掩码。
-        /// </summary>
-        public const int NUMERIC_ID_MASK = ~NUMERIC_SUB_TYPE_MASK;
-
-        /// <summary>
         /// 数值字典。
         /// </summary>
         private readonly Dictionary<int, long> m_NumericDict = new();
@@ -42,67 +27,64 @@ namespace GameMain
         /// <summary>
         /// 获取最终值。
         /// </summary>
-        public long this[int id] => GetFinal(id);
-
-        /// <summary>
-        /// 获取属性子类型。
-        /// </summary>
-        /// <param name="id">属性id。</param>
-        /// <returns>属性子类型。</returns>
-        public static NumericSubType GetSubType(int id)
+        public long this[int id]
         {
-            return (NumericSubType)(id & NUMERIC_SUB_TYPE_MASK);
-        }
-
-        /// <summary>
-        /// 获取属性id。
-        /// </summary>
-        /// <param name="id">属性id。</param>
-        /// <param name="numericSubType">属性子类型。</param>
-        /// <returns>属性id。</returns>
-        public static int GetNumericId(int id, NumericSubType numericSubType)
-        {
-            return id & NUMERIC_ID_MASK | (int)numericSubType;
-        }
-
-        /// <summary>
-        /// 获取最终值。
-        /// </summary>
-        public long GetFinal(int id)
-        {
-            return Get(GetNumericId(id, NumericSubType.Final));
+            get => Get(id, NumericSubType.Final);
+            set => Set(id, NumericSubType.Final, value, true);
         }
 
         /// <summary>
         /// 获取属性值。
         /// </summary>
-        public long Get(int id)
+        public long Get(int id, NumericSubType subType = NumericSubType.Final)
         {
-            return m_NumericDict.TryGetValue(id, out var value) ? value : 0;
+            return GetByKey(NumericHelper.EncodeNumericKey(id, subType));
+        }
+
+        /// <summary>
+        /// 获取属性值。
+        /// </summary>
+        /// <param name="key">属性键值。</param>
+        /// <returns>属性值。</returns>
+        public long GetByKey(int key)
+        {
+            return m_NumericDict.TryGetValue(key, out var value) ? value : 0;
         }
 
         /// <summary>
         /// 设置属性值。
         /// </summary>
-        public void Set(int id, long value, bool dispatchEvent = true)
+        public void Set(int id, NumericSubType subType, long value, bool dispatchEvent = true)
         {
-            var subType = GetSubType(id);
+            
+        }
+
+        /// <summary>
+        /// 设置属性值。
+        /// </summary>
+        /// <param name="key">属性键值。</param>
+        /// <param name="value">属性值。</param>
+        /// <param name="dispatchEvent">是否派发事件。</param>
+        public void SetByKey(int key, long value, bool dispatchEvent = true)
+        {
+            var (id, subType) = NumericHelper.DecodeNumericKey(key);
             if (subType == NumericSubType.Final)
             {
                 throw new ErrorCodeException(ErrorCode.InvalidOperationException, "不允许直接设置最终值。");
             }
 
-            m_NumericDict[id] = value;
+            var finalKey = NumericHelper.EncodeNumericKey(id, NumericSubType.Final);
 
-            var finalId = GetNumericId(id, NumericSubType.Final);
-            var basicValue = Get(GetNumericId(id, NumericSubType.Basic));
-            var basicPercent = Get(GetNumericId(id, NumericSubType.BasicPercent));
-            var basicConstAdd = Get(GetNumericId(id, NumericSubType.BasicConstAdd));
-            var finalPercent = Get(GetNumericId(id, NumericSubType.FinalPercent));
-            var finalConstAdd = Get(GetNumericId(id, NumericSubType.FinalConstAdd));
+            m_NumericDict[key] = value;
+
+            var basicValue = Get(id, NumericSubType.Basic);
+            var basicPercent = Get(id, NumericSubType.BasicPercent);
+            var basicConstAdd = Get(id, NumericSubType.BasicConstAdd);
+            var finalPercent = Get(id, NumericSubType.FinalPercent);
+            var finalConstAdd = Get(id, NumericSubType.FinalConstAdd);
 
             var finalValue = (basicValue * (100 + basicPercent) / 100 + basicConstAdd) * (100 + finalPercent) / 100 + finalConstAdd;
-            m_NumericDict[finalId] = finalValue;
+            m_NumericDict[finalKey] = finalValue;
 
             if (!dispatchEvent)
             {
@@ -110,42 +92,66 @@ namespace GameMain
             }
 
             // 派发子属性变更事件。
-            DispatchNumericChangeEvent(id, value);
+            DispatchNumericChangeEvent(key, value);
 
             // 派发最终值变更事件。
-            DispatchNumericChangeEvent(finalId, finalValue);
+            DispatchNumericChangeEvent(finalKey, finalValue);
         }
 
         /// <summary>
         /// 修改属性值。
         /// </summary>
         /// <param name="id">属性id。</param>
+        /// <param name="subType">属性子类型。</param>
         /// <param name="value">属性值。</param>
         /// <param name="dispatchEvent">是否派发事件。</param>
-        public void Modify(int id, long value, bool dispatchEvent = true)
+        public void Modify(int id, NumericSubType subType, long value, bool dispatchEvent = true)
         {
-            Set(id, Get(id) + value, dispatchEvent);
+            ModifyByKey(NumericHelper.EncodeNumericKey(id, subType), value, dispatchEvent);
+        }
+
+        /// <summary>
+        /// 修改属性值。
+        /// </summary>
+        /// <param name="key">属性键值。</param>
+        /// <param name="value">属性值。</param>
+        /// <param name="dispatchEvent">是否派发事件。</param>
+        public void ModifyByKey(int key, long value, bool dispatchEvent = true)
+        {
+            SetByKey(key, GetByKey(key) + value, dispatchEvent);
         }
 
         /// <summary>
         /// 订阅数值变更事件。
         /// </summary>
         /// <param name="id">属性id。</param>
+        /// <param name="subType">属性子类型。</param>
         /// <param name="handler">数值变更事件。</param>
         /// <param name="notifyImmediately">是否立即通知。</param>
-        public void Subscribe(int id, SimpleEventHandler<long> handler, bool notifyImmediately = false)
+        public void Subscribe(int id, NumericSubType subType, SimpleEventHandler<long> handler, bool notifyImmediately = false)
         {
-            if (!m_NumericChangeEventDict.TryGetValue(id, out var numericChangeEvent))
+            SubscribeByKey(NumericHelper.EncodeNumericKey(id, subType), handler, notifyImmediately);
+        }
+
+        /// <summary>
+        /// 订阅数值变更事件。
+        /// </summary>
+        /// <param name="key">属性键值。</param>
+        /// <param name="handler">数值变更事件。</param>
+        /// <param name="notifyImmediately">是否立即通知。</param>
+        public void SubscribeByKey(int key, SimpleEventHandler<long> handler, bool notifyImmediately = false)
+        {
+            if (!m_NumericChangeEventDict.TryGetValue(key, out var numericChangeEvent))
             {
                 numericChangeEvent = SimpleEvent<long>.Create();
-                m_NumericChangeEventDict[id] = numericChangeEvent;
+                m_NumericChangeEventDict[key] = numericChangeEvent;
             }
 
             numericChangeEvent.Subscribe(handler);
 
             if (notifyImmediately)
             {
-                handler(Get(id));
+                handler(GetByKey(key));
             }
         }
 
@@ -153,10 +159,21 @@ namespace GameMain
         /// 取消订阅数值变更事件。
         /// </summary>
         /// <param name="id">属性id。</param>
+        /// <param name="subType">属性子类型。</param>
         /// <param name="handler">数值变更事件。</param>
-        public void Unsubscribe(int id, SimpleEventHandler<long> handler)
+        public void Unsubscribe(int id, NumericSubType subType, SimpleEventHandler<long> handler)
         {
-            if (!m_NumericChangeEventDict.TryGetValue(id, out var numericChangeEvent))
+            UnsubscribeByKey(NumericHelper.EncodeNumericKey(id, subType), handler);
+        }
+
+        /// <summary>
+        /// 取消订阅数值变更事件。
+        /// </summary>
+        /// <param name="key">属性键值。</param>
+        /// <param name="handler">数值变更事件。</param>
+        public void UnsubscribeByKey(int key, SimpleEventHandler<long> handler)
+        {
+            if (!m_NumericChangeEventDict.TryGetValue(key, out var numericChangeEvent))
             {
                 return;
             }
@@ -186,11 +203,11 @@ namespace GameMain
         /// <summary>
         /// 派发数值变更事件。
         /// </summary>
-        /// <param name="id">属性id。</param>
+        /// <param name="key">属性键值。</param>
         /// <param name="value">属性值。</param>
-        private void DispatchNumericChangeEvent(int id, long value)
+        private void DispatchNumericChangeEvent(int key, long value)
         {
-            if (!m_NumericChangeEventDict.TryGetValue(id, out var numericChangeEvent))
+            if (!m_NumericChangeEventDict.TryGetValue(key, out var numericChangeEvent))
             {
                 return;
             }
@@ -237,19 +254,21 @@ namespace GameMain
             private readonly Dictionary<int, long> m_NumericDict = new();
 
             /// <summary>
-            /// 获取最终值。
+            /// 获取属性值。
             /// </summary>
-            public long GetFinal(int id)
+            public long Get(int id, NumericSubType subType = NumericSubType.Final)
             {
-                return Get(GetNumericId(id, NumericSubType.Final));
+                return GetByKey(NumericHelper.EncodeNumericKey(id, subType));
             }
 
             /// <summary>
             /// 获取属性值。
             /// </summary>
-            public long Get(int id)
+            /// <param name="key">属性键值。</param>
+            /// <returns>属性值。</returns>
+            public long GetByKey(int key)
             {
-                return m_NumericDict.TryGetValue(id, out var value) ? value : 0;
+                return m_NumericDict.TryGetValue(key, out var value) ? value : 0;
             }
 
             public void Clear()
