@@ -8,6 +8,16 @@ namespace HoweFramework
     public sealed class FsmMachine : IFsmMachine, IReference
     {
         /// <summary>
+        /// 状态进入事件。
+        /// </summary>
+        public event FsmStateChangeHandler OnStateEnter;
+
+        /// <summary>
+        /// 状态退出事件。
+        /// </summary>
+        public event FsmStateChangeHandler OnStateExit;
+
+        /// <summary>
         /// 当前状态。
         /// </summary>
         public int CurrentState { get; private set; }
@@ -60,6 +70,8 @@ namespace HoweFramework
                 throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"状态 {stateId} 不存在");
             }
 
+            OnStateExit?.Invoke(CurrentState);
+
             if (m_StateExitHandlerDict.TryGetValue(CurrentState, out var exitHandler))
             {
                 exitHandler.Invoke();
@@ -71,6 +83,8 @@ namespace HoweFramework
             {
                 enterHandler.Invoke();
             }
+
+            OnStateEnter?.Invoke(CurrentState);
         }
 
         /// <summary>
