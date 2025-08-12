@@ -70,21 +70,27 @@ namespace HoweFramework
                 throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"状态 {stateId} 不存在");
             }
 
-            OnStateExit?.Invoke(CurrentState);
-
-            if (m_StateExitHandlerDict.TryGetValue(CurrentState, out var exitHandler))
+            if (CurrentState != 0)
             {
-                exitHandler.Invoke();
+                OnStateExit?.Invoke(CurrentState);
+
+                if (m_StateExitHandlerDict.TryGetValue(CurrentState, out var exitHandler))
+                {
+                    exitHandler.Invoke();
+                }
             }
 
             CurrentState = stateId;
-            
-            if (m_StateEnterHandlerDict.TryGetValue(CurrentState, out var enterHandler))
-            {
-                enterHandler.Invoke();
-            }
 
-            OnStateEnter?.Invoke(CurrentState);
+            if (CurrentState != 0)
+            {
+                if (m_StateEnterHandlerDict.TryGetValue(CurrentState, out var enterHandler))
+                {
+                    enterHandler.Invoke();
+                }
+                
+                OnStateEnter?.Invoke(CurrentState);
+            }
         }
 
         /// <summary>
@@ -130,7 +136,7 @@ namespace HoweFramework
             {
                 throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"状态 {stateId} 不存在");
             }
-            
+
             if (m_StateExitHandlerDict.ContainsKey(stateId))
             {
                 throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"状态退出处理函数 {stateId} 已存在");
