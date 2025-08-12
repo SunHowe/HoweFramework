@@ -54,9 +54,13 @@ namespace GameMain
         /// <summary>
         /// 设置属性值。
         /// </summary>
+        /// <param name="id">属性id。</param>
+        /// <param name="subType">属性子类型。</param>
+        /// <param name="value">属性值。</param>
+        /// <param name="dispatchEvent">是否派发事件。</param>
         public void Set(int id, NumericSubType subType, long value, bool dispatchEvent = true)
         {
-            
+            SetByKey(NumericHelper.EncodeNumericKey(id, subType), value, dispatchEvent);
         }
 
         /// <summary>
