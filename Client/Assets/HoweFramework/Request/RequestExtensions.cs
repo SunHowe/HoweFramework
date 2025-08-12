@@ -66,5 +66,22 @@ namespace HoweFramework
                 return response;
             }
         }
+
+        /// <summary>
+        /// 将应答包转换为通用响应包。
+        /// </summary>
+        /// <typeparam name="T">业务透传数据类型。</typeparam>
+        /// <param name="task">异步请求任务。</param>
+        /// <returns>错误码和业务透传数据。</returns>
+        public static async UniTask<(int, T)> AsCommonResponse<T>(this UniTask<IResponse> task)
+        {
+            using var response = await task.As<CommonResponse<T>>();
+            if (response.ErrorCode != 0)
+            {
+                return (response.ErrorCode, default);
+            }
+
+            return (response.ErrorCode, response.UserData);
+        }
     }
 }
