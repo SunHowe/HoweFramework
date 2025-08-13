@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace HoweFramework
@@ -34,6 +35,22 @@ namespace HoweFramework
                 newDict[item.Key] = item.Value;
             }
             return newDict;
+        }
+
+        /// <summary>
+        /// 释放字典中的元素。
+        /// </summary>
+        /// <typeparam name="TKey">键类型。</typeparam>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="dict">字典。</param>
+        public static void DisposeItems<TKey, TValue>(this Dictionary<TKey, TValue> dict) where TValue : IDisposable
+        {
+            foreach (var item in dict)
+            {
+                item.Value.Dispose();
+            }
+
+            dict.Clear();
         }
     }
 }
