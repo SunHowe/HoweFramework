@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace HoweFramework
@@ -34,6 +35,39 @@ namespace HoweFramework
                 newDict[item.Key] = item.Value;
             }
             return newDict;
+        }
+
+        /// <summary>
+        /// 克隆字典元素。
+        /// </summary>
+        /// <typeparam name="TKey">键类型。</typeparam>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="dict">要克隆的字典。</param>
+        /// <returns>克隆后的字典。</returns>
+        public static ReusableDictionary<TKey, TValue> CloneItems<TKey, TValue>(this Dictionary<TKey, TValue> dict) where TValue : ICloneable
+        {
+            var newDict = ReusableDictionary<TKey, TValue>.Create(true);
+            foreach (var item in dict)
+            {
+                newDict[item.Key] = (TValue)item.Value.Clone();
+            }
+            return newDict;
+        }
+
+        /// <summary>
+        /// 释放字典中的元素。
+        /// </summary>
+        /// <typeparam name="TKey">键类型。</typeparam>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="dict">字典。</param>
+        public static void DisposeItems<TKey, TValue>(this Dictionary<TKey, TValue> dict) where TValue : IDisposable
+        {
+            foreach (var item in dict)
+            {
+                item.Value.Dispose();
+            }
+
+            dict.Clear();
         }
     }
 }

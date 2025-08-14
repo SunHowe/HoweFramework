@@ -8,10 +8,26 @@ namespace HoweFramework
     public delegate void FsmStateHandler();
 
     /// <summary>
+    /// 状态切换事件委托。
+    /// </summary>
+    /// <param name="stateId">状态id。</param>
+    public delegate void FsmStateChangeHandler(int stateId);
+
+    /// <summary>
     /// 有限状态机。
     /// </summary>
     public interface IFsmMachine : IDisposable
     {
+        /// <summary>
+        /// 状态进入事件。
+        /// </summary>
+        event FsmStateChangeHandler OnStateEnter;
+
+        /// <summary>
+        /// 状态退出事件。
+        /// </summary>
+        event FsmStateChangeHandler OnStateExit;
+
         /// <summary>
         /// 当前状态。
         /// </summary>

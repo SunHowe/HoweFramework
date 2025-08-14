@@ -26,7 +26,7 @@ namespace GameMain
 
             foreach (var numeric in numericDict)
             {
-                component.Set(numeric.Key, numeric.Value);
+                component.Set(numeric.Key, NumericSubType.Basic, numeric.Value);
             }
         }
     }
