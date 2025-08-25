@@ -78,14 +78,12 @@ namespace GameMain
 
             if (ResLoader == null)
             {
-                m_ResLoaderManaged = true;
-                m_ResLoader = ResModule.Instance.CreateResLoader();
+                UseManagedResLoader();
             }
 
             if (GameObjectPool == null)
             {
-                m_GameObjectPoolManaged = true;
-                m_GameObjectPool = GameObjectPoolModule.Instance.CreateGameObjectPool(m_ResLoader);
+                UseManagedGameObjectPool();
             }
 
             GameStatus = GameStatus.Initialize;
@@ -220,6 +218,39 @@ namespace GameMain
             var manager = new T();
             AddManager(manager);
             return manager;
+        }
+
+        /// <summary>
+        /// 使用受上下文管控的资源加载器。
+        /// </summary>
+        public void UseManagedResLoader()
+        {
+            if (m_ResLoaderManaged)
+            {
+                return;
+            }
+
+            m_ResLoaderManaged = true;
+            m_ResLoader = ResModule.Instance.CreateResLoader();
+        }
+
+        /// <summary>
+        /// 使用受上下文管控的游戏对象池。
+        /// </summary>
+        public void UseManagedGameObjectPool()
+        {
+            if (m_GameObjectPoolManaged)
+            {
+                return;
+            }
+
+            if (m_ResLoader == null)
+            {
+                UseManagedResLoader();
+            }
+
+            m_GameObjectPoolManaged = true;
+            m_GameObjectPool = GameObjectPoolModule.Instance.CreateGameObjectPool(m_ResLoader);
         }
 
         protected abstract void OnAwake();
