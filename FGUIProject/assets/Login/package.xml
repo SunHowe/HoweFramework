@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packageDescription id="1dr0fcks">
+  <resources>
+    <component id="j6340" name="LoginForm.xml" path="/" exported="true"/>
+    <component id="j6341" name="CommonButton.xml" path="/"/>
+  </resources>
+  <publish name=""/>
+</packageDescription>

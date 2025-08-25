@@ -29,5 +29,15 @@ namespace GameMain
         /// 登录流程。
         /// </summary>
         Login,
+
+        /// <summary>
+        /// 加载游戏流程。
+        /// </summary>
+        Loading,
+
+        /// <summary>
+        /// 游戏流程。
+        /// </summary>
+        Game,
     }
 }

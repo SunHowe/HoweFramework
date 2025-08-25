@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packageDescription id="3vxqn7cj">
+  <resources>
+    <component id="nby30" name="LoadingForm.xml" path="/" exported="true"/>
+    <component id="nby31" name="ProgressBar.xml" path="/"/>
+  </resources>
+  <publish name=""/>
+</packageDescription>

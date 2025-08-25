@@ -16,6 +16,11 @@ namespace GameMain.UI
         Main,
 
         /// <summary>
+        /// Loading界面专用分组。
+        /// </summary>
+        Loading,
+
+        /// <summary>
         /// 屏幕特效分组。
         /// </summary>
         ScreenEffect,

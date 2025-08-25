@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="50,10" extention="ProgressBar">
+  <displayList>
+    <graph id="n0_nby3" name="n0" xy="0,0" size="50,10" type="rect" lineColor="#ffa0a0a0" fillColor="#fff0f0f0">
+      <relation target="" sidePair="width-width,height-height"/>
+    </graph>
+    <graph id="n1_nby3" name="bar" xy="1,1" size="48,8" type="rect" lineSize="0" fillColor="#ff3399ff">
+      <relation target="" sidePair="height-height,middle-middle,left-left"/>
+    </graph>
+  </displayList>
+  <ProgressBar/>
+</component>

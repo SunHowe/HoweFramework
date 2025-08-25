@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1280,720">
+  <displayList>
+    <component id="n0_xuoz" name="btnNewGame" src="j6341" fileName="CommonButton.xml" xy="500,330">
+      <relation target="" sidePair="center-center,middle-middle"/>
+      <Button title="开始游戏"/>
+    </component>
+  </displayList>
+</component>
