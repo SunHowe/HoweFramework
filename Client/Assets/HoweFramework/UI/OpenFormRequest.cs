@@ -30,6 +30,7 @@ namespace HoweFramework
         public CancellationToken CancellationToken { get; private set; }
 
         private AutoResetUniTaskCompletionSource<IResponse> m_Tcs;
+        private AutoResetUniTaskCompletionSource<int> m_TcsFormOpen;
 
         protected override UniTask<IResponse> OnExecute(CancellationToken token)
         {
@@ -52,8 +53,11 @@ namespace HoweFramework
                 return;
             }
 
+            var errorCode = response.ErrorCode;
+
             OnSetResponse?.Invoke(this);
             m_Tcs.TrySetResult(response);
+            m_TcsFormOpen?.TrySetResult(errorCode);
         }
 
         /// <summary>
@@ -63,6 +67,21 @@ namespace HoweFramework
         public void SetResponse(int errorCode)
         {
             SetResponse(CommonResponse.Create(errorCode));
+        }
+
+        /// <summary>
+        /// 界面打开成功回调。
+        /// </summary>
+        public void OnFormOpenSuccess()
+        {
+            if (m_TcsFormOpen == null)
+            {
+                return;
+            }
+
+            var tcs = m_TcsFormOpen;
+            m_TcsFormOpen = null;
+            tcs.TrySetResult(0);
         }
 
         /// <summary>
@@ -84,6 +103,17 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 设置界面打开任务完成源。
+        /// </summary>
+        /// <param name="tcs">界面打开任务完成源。</param>
+        /// <returns>打开界面请求。</returns>
+        public OpenFormRequest SetFormOpenTcs(AutoResetUniTaskCompletionSource<int> tcs)
+        {
+            m_TcsFormOpen = tcs;
+            return this;
+        }
+
+        /// <summary>
         /// 清理。
         /// </summary>
         public override void Clear()
@@ -92,6 +122,7 @@ namespace HoweFramework
             FormId = 0;
             CancellationToken = default;
             m_Tcs = null;
+            m_TcsFormOpen = null;
             OnSetResponse = null;
 
             if (UserData is IReference reference)

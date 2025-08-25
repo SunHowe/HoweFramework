@@ -213,8 +213,12 @@ namespace HoweFramework
                     IsOpen = true;
                     m_UIFormHelper.SetUIFormInstanceIsOpen(FormInstance, FormGroup.GroupInstance, true);
 
+                    var requestRef = request.AsRef();
+
                     m_FormLogic.OnOpen();
                     m_FormLogic.OnUpdate(); // 打开时也触发更新回调。
+
+                    requestRef.Reference?.OnFormOpenSuccess();
                 }
             }
 
@@ -272,10 +276,14 @@ namespace HoweFramework
                 return;
             }
 
+            var requestRef = Request.AsRef();
+
             // 触发逻辑打开回调。
             m_UIFormHelper.SetUIFormInstanceSortingOrder(FormInstance, m_SortingOrder);
             m_UIFormHelper.SetUIFormInstanceIsOpen(FormInstance, FormGroup.GroupInstance, true);
             m_FormLogic.OnOpen();
+
+            requestRef.Reference?.OnFormOpenSuccess();
 
             if (!IsVisible)
             {
