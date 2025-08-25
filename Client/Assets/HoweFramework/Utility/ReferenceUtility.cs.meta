@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Client/Assets/GameMain/Scripts/Procedure/ProcedureLobby.cs.meta
+guid: efbd9f3723df0484c870972d79692c88
+========
+guid: 293549ed3c3f6484ba2bcd558ea24cf1
+>>>>>>>> master:Client/Assets/HoweFramework/Utility/ReferenceUtility.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

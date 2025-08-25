@@ -37,6 +37,50 @@ namespace HoweFramework
                 .SetFormId(uiFormId)
                 .Execute(token);
         }
+        
+        /// <summary>
+        /// 打开界面(这界面打开完成时立即返回）。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="uiFormId">界面Id。</param>
+        /// <param name="userData">业务透传数据。</param>
+        /// <param name="token">取消令牌。</param>
+        /// <returns>打开界面错误码。</returns>
+        public static UniTask<int> OpenUIFormOnlyCareAboutFormOpen(this UIModule module, int uiFormId, object userData, CancellationToken token = default)
+        {
+            var tcs = AutoResetUniTaskCompletionSource<int>.Create();
+            var task = tcs.Task;
+
+            ReferencePool.Acquire<OpenFormRequest>()
+                .SetFormId(uiFormId)
+                .SetUserData(userData)
+                .SetFormOpenTcs(tcs)
+                .Execute(token)
+                .Forget();
+
+            return task;
+        }
+        
+        /// <summary>
+        /// 打开界面(这界面打开完成时立即返回）。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="uiFormId">界面Id。</param>
+        /// <param name="token">取消令牌。</param>
+        /// <returns>打开界面错误码。</returns>
+        public static UniTask<int> OpenUIFormOnlyCareAboutFormOpen(this UIModule module, int uiFormId, CancellationToken token = default)
+        {
+            var tcs = AutoResetUniTaskCompletionSource<int>.Create();
+            var task = tcs.Task;
+
+            ReferencePool.Acquire<OpenFormRequest>()
+                .SetFormId(uiFormId)
+                .SetFormOpenTcs(tcs)
+                .Execute(token)
+                .Forget();
+
+            return task;
+        }
 
         /// <summary>
         /// 关闭界面。

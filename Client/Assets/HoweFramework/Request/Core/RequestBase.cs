@@ -7,8 +7,13 @@ namespace HoweFramework
     /// <summary>
     /// 异步请求基类。
     /// </summary>
-    public abstract class RequestBase : IRequest, IReference
+    public abstract class RequestBase : IRequest, IReference, IReferenceWithId
     {
+        /// <summary>
+        /// 实例唯一标识。由框架自动分配。
+        /// </summary>
+        public int InstanceId { get; set; }
+        
         /// <summary>
         /// 释放。
         /// </summary>

@@ -35,6 +35,31 @@ namespace GameMain.UI
         }
 
         /// <summary>
+        /// 打开界面(这界面打开完成时立即返回）。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="uiFormId">界面Id。</param>
+        /// <param name="userData">业务透传数据。</param>
+        /// <param name="token">取消令牌。</param>
+        /// <returns>打开界面错误码。</returns>
+        public static UniTask<int> OpenUIFormOnlyCareAboutFormOpen(this UIModule module, UIFormId uiFormId, object userData, CancellationToken token = default)
+        {
+            return module.OpenUIFormOnlyCareAboutFormOpen((int)uiFormId, userData, token);
+        }
+
+        /// <summary>
+        /// 打开界面(这界面打开完成时立即返回）。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="uiFormId">界面Id。</param>
+        /// <param name="token">取消令牌。</param>
+        /// <returns>打开界面错误码。</returns>
+        public static UniTask<int> OpenUIFormOnlyCareAboutFormOpen(this UIModule module, UIFormId uiFormId, CancellationToken token = default)
+        {
+            return module.OpenUIFormOnlyCareAboutFormOpen((int)uiFormId, token);
+        }
+
+        /// <summary>
         /// 关闭界面。
         /// </summary>
         /// <param name="module">UI模块。</param>
