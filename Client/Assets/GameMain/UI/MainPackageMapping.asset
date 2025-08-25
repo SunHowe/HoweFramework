@@ -12,9 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e13d2388a6942f58d08722df396a5ac, type: 3}
   m_Name: MainPackageMapping
   m_EditorClassIdentifier: 
-  PackageIds:
-  - eb0bof9p
-  - 9qowxkzs
-  PackageNames:
-  - Login
-  - OtherPackage
+  PackageIds: []
+  PackageNames: []

@@ -13,7 +13,5 @@ namespace GameMain.UI
     /// </summary>
     public enum UIFormId
     {
-        LoginAccountForm = 1,
-        LoginForm = 2,
     }
 }
