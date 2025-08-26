@@ -55,7 +55,7 @@ namespace GameMain
             m_ViewObjectDict.Clear();
             m_IdIncrease = 0;
 
-            if (m_ViewRootManaged)
+            if (m_ViewRootManaged && ViewRoot != null)
             {
                 Object.Destroy(ViewRoot.gameObject);
                 m_ViewRootManaged = false;
