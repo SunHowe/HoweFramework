@@ -38,5 +38,8 @@ namespace GameMain
         Resource = 6,
 
         #endregion
+
+        Snake = 1000,
+        SnakeNode,
     }
 }

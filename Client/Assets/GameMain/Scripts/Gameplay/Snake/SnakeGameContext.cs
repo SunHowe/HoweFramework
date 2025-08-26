@@ -21,6 +21,10 @@ namespace GameMain
 
         protected override void OnAwake()
         {
+            AddManager<GameUpdateManager>();
+            AddManager<GameViewManager>();
+            AddManager<GameEntityManager>();
+            AddManager<SnakeGameManager>();
         }
 
         protected override void OnDispose()

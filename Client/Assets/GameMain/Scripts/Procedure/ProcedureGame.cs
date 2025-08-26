@@ -20,6 +20,9 @@ namespace GameMain
 
             m_GameUpdateManager = m_GameContext.GetManager<IGameUpdateManager>();
 
+            // 输入控制器。
+            AddController<SnakeGameInputController>();
+
             // 单机游戏在Awake后可以立即StartGame。
             m_GameContext.StartGame();
         }
