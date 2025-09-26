@@ -143,18 +143,24 @@ namespace HoweFramework
 
             foreach (var memberInfo in memberInfos)
             {
-                var value = Get(memberInfo.DeclaringType);
-                if (value == null)
-                {
-                    continue;
-                }
-
                 if (memberInfo is FieldInfo fieldInfo)
                 {
+                    var value = Get(fieldInfo.FieldType);
+                    if (value == null)
+                    {
+                        continue;
+                    }
+                    
                     fieldInfo.SetValue(instance, value);
                 }
                 else if (memberInfo is PropertyInfo propertyInfo)
                 {
+                    var value = Get(propertyInfo.PropertyType);
+                    if (value == null)
+                    {
+                        continue;
+                    }
+                    
                     propertyInfo.SetValue(instance, value);
                 }
             }
