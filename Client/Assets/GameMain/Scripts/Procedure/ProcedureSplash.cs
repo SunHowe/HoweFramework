@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using GameMain.UI;
+using Geek.Server.Proto;
 using HoweFramework;
 using UnityEngine;
 
@@ -49,6 +50,9 @@ namespace GameMain
 
             // 注册逻辑程序集。
             AssemblyUtility.RegisterRuntimeAssembly(GetType().Assembly);
+
+            // 注册协议绑定。
+            PolymorphicRegister.Register();
 
             await InitYooAssetAsync();
             await ResModule.Instance.RequestUpdatePackageManifest();
