@@ -1,9 +1,11 @@
-﻿namespace HoweFramework
+﻿using System;
+
+namespace HoweFramework
 {
     /// <summary>
     /// 网络消息包头接口。
     /// </summary>
-    public interface IPacketHeader
+    public interface IPacketHeader : IDisposable
     {
         /// <summary>
         /// 获取网络消息包长度。

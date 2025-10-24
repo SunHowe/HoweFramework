@@ -84,6 +84,7 @@ namespace HoweFramework
 
                 m_Stream.Position = 0L;
                 m_Stream.SetLength(targetLength);
+                m_PacketHeader?.Dispose();
                 m_PacketHeader = packetHeader;
             }
         }
