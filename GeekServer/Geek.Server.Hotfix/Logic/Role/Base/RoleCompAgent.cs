@@ -72,7 +72,7 @@ namespace Server.Logic.Logic.Role.Base
         {
             var res = new ResLogin()
             {
-                Code = 0,
+                ErrorCode = 0,
                 UserInfo = new UserInfo()
                 {
                     CreateTime = State.CreateTime.Ticks,

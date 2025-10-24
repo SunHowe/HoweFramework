@@ -12,7 +12,9 @@ namespace GameMain
         /// <summary>
         /// 用户唯一ID。
         /// </summary>
-        public Bindable<Guid> UserId { get; } = new Bindable<Guid>(Guid.Empty);
+        public Bindable<long> UserId { get; } = new Bindable<long>(0);
+
+        public Bindable<LoginStateType> LoginState { get; } = new Bindable<LoginStateType>(LoginStateType.NoLogin);
 
         /// <summary>
         /// 登录。
@@ -22,7 +24,13 @@ namespace GameMain
         /// <returns>登录结果。</returns>
         public UniTask<int> Login(string account, string password)
         {
-            UserId.Value = Guid.NewGuid();
+            if (LoginState.Value != LoginStateType.NoLogin)
+            {
+                return UniTask.FromResult(ErrorCode.InvalidOperationException);
+            }
+
+            UserId.Value = 100000;
+            LoginState.Value = LoginStateType.OnGame;
             return UniTask.FromResult(0);
         }
 

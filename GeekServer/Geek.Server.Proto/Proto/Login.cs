@@ -79,12 +79,8 @@ namespace Geek.Server.Proto
     /// 请求登录
     /// </summary>
     [MessagePackObject(true)]
-    public class ResLogin : Message
+    public class ResLogin : ResponseMessage
     {
-        /// <summary>
-        /// 登陆结果，0成功，其他时候为错误码
-        /// </summary>
-        public int Code { get; set; }
         public UserInfo UserInfo { get; set; }
     }
 
@@ -111,22 +107,6 @@ namespace Geek.Server.Proto
         /// 当前时间
         /// </summary>
         public long TimeTick { get; set; }
-    }
-
-    /// <summary>
-    /// 客户端每次请求都会回复错误码
-    /// </summary>
-    [MessagePackObject(true)]
-    public class ResErrorCode : Message
-    {
-        /// <summary>
-        /// 0:表示无错误
-        /// </summary>
-        public long ErrCode { get; set; }
-        /// <summary>
-        /// 错误描述（不为0时有效）
-        /// </summary>
-        public string Desc { get; set; }
     }
 
     [MessagePackObject(true)]

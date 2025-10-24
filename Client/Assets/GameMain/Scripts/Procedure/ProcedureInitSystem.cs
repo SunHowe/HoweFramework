@@ -11,7 +11,7 @@ namespace GameMain
 
         protected override void OnEnter()
         {
-            SystemModule.Instance.RegisterSystem<ILoginSystem, OfflineLoginSystem>();
+            SystemModule.Instance.RegisterSystem<ILoginSystem, GeekServerLoginSystem>();
         }
 
         protected override void OnLeave()

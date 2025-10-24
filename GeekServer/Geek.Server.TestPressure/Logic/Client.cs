@@ -118,10 +118,9 @@ namespace Geek.Server.TestPressure.Logic
         {
             Log.Info($"收到消息:{msg.MsgId} {MsgFactory.GetType(msg.MsgId)}"); 
 
-            if (msg.MsgId == ResErrorCode.MsgID)
+            if (msg is ResponseMessage resp)
             {
-                ResErrorCode errMsg = (ResErrorCode)msg;
-                switch (errMsg.ErrCode)
+                switch (resp.ErrorCode)
                 {
                     case (int)ServerErrorCode.Success:
                         //do some thing
@@ -133,9 +132,9 @@ namespace Geek.Server.TestPressure.Logic
                     default:
                         break;
                 }
-                msgWaiter.EndWait(errMsg.UniId, errMsg.ErrCode == (int)ServerErrorCode.Success);
-                if (!string.IsNullOrEmpty(errMsg.Desc))
-                    Log.Info("服务器提示:" + errMsg.Desc);
+                msgWaiter.EndWait(resp.UniId, resp.ErrorCode == (int)ServerErrorCode.Success);
+                if (!string.IsNullOrEmpty(resp.Desc))
+                    Log.Info("服务器提示:" + resp.Desc);
             }
             else
             {

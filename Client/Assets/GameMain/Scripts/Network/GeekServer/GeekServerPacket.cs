@@ -5,7 +5,7 @@ namespace GameMain
     /// <summary>
     /// 对接GeekServer的服务器消息包。
     /// </summary>
-    public sealed class GeekServerPacket : Packet
+    public class GeekServerPacket : Packet
     {
         public override int Id => Message.MsgId;
 
@@ -21,17 +21,9 @@ namespace GameMain
             Message = null;
         }
 
-        /// <summary>
-        /// 创建消息包。
-        /// </summary>
-        /// <param name="message">实际的协议包实例。</param>
-        /// <returns>创建的消息包。</returns>
-        /// <returns></returns>
-        public static GeekServerPacket Create(Message message)
+        public override string ToString()
         {
-            var packet = ReferencePool.Acquire<GeekServerPacket>();
-            packet.Message = message;
-            return packet;
+            return Message != null ? JsonUtility.ToJson(Message) : string.Empty;
         }
     }
 }

@@ -47,7 +47,7 @@ namespace MessagePack.Resolvers
 
         static GeneratedResolverGetFormatterHelper()
         {
-            lookup = new global::System.Collections.Generic.Dictionary<global::System.Type, int>(21)
+            lookup = new global::System.Collections.Generic.Dictionary<global::System.Type, int>(20)
             {
                 { typeof(global::System.Collections.Generic.Dictionary<int, long>), 0 },
                 { typeof(global::Geek.Server.Proto.TestEnum), 1 },
@@ -63,13 +63,12 @@ namespace MessagePack.Resolvers
                 { typeof(global::Geek.Server.Proto.ReqUseItem), 11 },
                 { typeof(global::Geek.Server.Proto.ResBagInfo), 12 },
                 { typeof(global::Geek.Server.Proto.ResComposePet), 13 },
-                { typeof(global::Geek.Server.Proto.ResErrorCode), 14 },
-                { typeof(global::Geek.Server.Proto.ResItemChange), 15 },
-                { typeof(global::Geek.Server.Proto.ResLevelUp), 16 },
-                { typeof(global::Geek.Server.Proto.ResLogin), 17 },
-                { typeof(global::Geek.Server.Proto.ResPrompt), 18 },
-                { typeof(global::Geek.Server.Proto.TestStruct), 19 },
-                { typeof(global::Geek.Server.Proto.UserInfo), 20 },
+                { typeof(global::Geek.Server.Proto.ResItemChange), 14 },
+                { typeof(global::Geek.Server.Proto.ResLevelUp), 15 },
+                { typeof(global::Geek.Server.Proto.ResLogin), 16 },
+                { typeof(global::Geek.Server.Proto.ResPrompt), 17 },
+                { typeof(global::Geek.Server.Proto.TestStruct), 18 },
+                { typeof(global::Geek.Server.Proto.UserInfo), 19 },
             };
         }
 
@@ -97,13 +96,12 @@ namespace MessagePack.Resolvers
                 case 11: return new MessagePack.Formatters.Geek.Server.Proto.ReqUseItemFormatter();
                 case 12: return new MessagePack.Formatters.Geek.Server.Proto.ResBagInfoFormatter();
                 case 13: return new MessagePack.Formatters.Geek.Server.Proto.ResComposePetFormatter();
-                case 14: return new MessagePack.Formatters.Geek.Server.Proto.ResErrorCodeFormatter();
-                case 15: return new MessagePack.Formatters.Geek.Server.Proto.ResItemChangeFormatter();
-                case 16: return new MessagePack.Formatters.Geek.Server.Proto.ResLevelUpFormatter();
-                case 17: return new MessagePack.Formatters.Geek.Server.Proto.ResLoginFormatter();
-                case 18: return new MessagePack.Formatters.Geek.Server.Proto.ResPromptFormatter();
-                case 19: return new MessagePack.Formatters.Geek.Server.Proto.TestStructFormatter();
-                case 20: return new MessagePack.Formatters.Geek.Server.Proto.UserInfoFormatter();
+                case 14: return new MessagePack.Formatters.Geek.Server.Proto.ResItemChangeFormatter();
+                case 15: return new MessagePack.Formatters.Geek.Server.Proto.ResLevelUpFormatter();
+                case 16: return new MessagePack.Formatters.Geek.Server.Proto.ResLoginFormatter();
+                case 17: return new MessagePack.Formatters.Geek.Server.Proto.ResPromptFormatter();
+                case 18: return new MessagePack.Formatters.Geek.Server.Proto.TestStructFormatter();
+                case 19: return new MessagePack.Formatters.Geek.Server.Proto.UserInfoFormatter();
                 default: return null;
             }
         }

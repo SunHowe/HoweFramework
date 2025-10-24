@@ -52,13 +52,13 @@ namespace GameMain
             AssemblyUtility.RegisterRuntimeAssembly(GetType().Assembly);
 
             // 注册协议绑定。
-            PolymorphicRegister.Register();
+            PolymorphicRegister.Load();
 
             await InitYooAssetAsync();
             await ResModule.Instance.RequestUpdatePackageManifest();
 
             SoundUtility.InitSoundGroup();
-            // NetworkModule.Instance.CreateDefaultNetworkChannel(NetworkConst.GatewayChannelName, ServiceType.Tcp, new OrleansNetworkChannelHelper());
+            NetworkModule.Instance.CreateDefaultNetworkChannel(NetworkConst.GatewayChannelName, ServiceType.Tcp, new GeekServerChannelHelper());
 
             await UIModule.Instance.UseFairyGUI(new FairyGUISettings());
             UIModule.Instance.SetPreloadPackageMode(enablePreloadPackageMode);

@@ -26,7 +26,6 @@ namespace Geek.Server.Proto
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.ResLogin>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.ResLevelUp>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.HearBeat>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.ResErrorCode>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.ResPrompt>();
         }
 	}

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Connections;
 using SharpCompress.Writers;
 using System.Buffers;
 using System.IO.Pipelines;
+using MongoDB.Bson;
 
 namespace Geek.Server.Core.Net.Tcp
 {
@@ -240,6 +241,8 @@ namespace Geek.Server.Core.Net.Tcp
             span.WriteInt(len, ref offset);
             span.WriteInt(msg.MsgId, ref offset);
             span.WriteBytesWithoutLength(bytes, ref offset);
+            
+            LOGGER.Debug($"Send to [{RemoteAddress}]: {msg.ToJson()}");
 
             lock (Writer)
             {

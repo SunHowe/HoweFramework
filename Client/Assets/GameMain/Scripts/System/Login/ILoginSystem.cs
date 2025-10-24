@@ -12,7 +12,12 @@ namespace GameMain
         /// <summary>
         /// 用户唯一ID。
         /// </summary>
-        Bindable<Guid> UserId { get; }
+        Bindable<long> UserId { get; }
+
+        /// <summary>
+        /// 登录状态。
+        /// </summary>
+        Bindable<LoginStateType> LoginState { get; }
 
         /// <summary>
         /// 登录。

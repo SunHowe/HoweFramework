@@ -8,20 +8,19 @@ public static class NetChannelExtensions
 {
     public static void Write(this NetChannel channel, Message msg, int uniId, StateCode code = StateCode.Success, string desc = "")
     {
-        if (msg != null)
+        if (msg == null)
         {
-            msg.UniId = uniId;
-            channel.Write(msg);
+            throw new ArgumentNullException(nameof(msg));
         }
-        if (uniId > 0)
+        
+        msg.UniId = uniId;
+        
+        if (msg is ResponseMessage resp)
         {
-            ResErrorCode res = new ResErrorCode
-            {
-                UniId = uniId,
-                ErrCode = (int)code,
-                Desc = desc
-            };
-            channel.Write(res);
+            resp.ErrorCode = (int)code;
+            resp.Desc = desc;
         }
+
+        channel.Write(msg);
     }
 }

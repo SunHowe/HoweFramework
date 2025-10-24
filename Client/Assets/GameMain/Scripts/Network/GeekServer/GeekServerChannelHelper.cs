@@ -34,7 +34,18 @@ namespace GameMain
             }
 
             customErrorData = null;
-            return GeekServerPacket.Create(msg);
+            if (msg is ResponseMessage responseMessage)
+            {
+                var packet = ReferencePool.Acquire<GeekServerResponsePacket>();
+                packet.Message = responseMessage;
+                return packet;
+            }
+            else
+            {
+                var packet = ReferencePool.Acquire<GeekServerRequestPacket>();
+                packet.Message = msg;
+                return packet;
+            }
         }
 
         /// <summary>
@@ -45,7 +56,7 @@ namespace GameMain
         /// <returns>反序列化后的消息包头。</returns>
         public override IPacketHeader DeserializePacketHeader(Stream source, out object customErrorData)
         {
-            var packetLength = source.ReadInt32();
+            var packetLength = source.ReadInt32() - GeekServerPacketHeader.PacketHeaderLength;
             var msgId = source.ReadInt32();
             customErrorData = null;
             return GeekServerPacketHeader.Create(msgId, packetLength);
@@ -75,24 +86,23 @@ namespace GameMain
             const int headerLength = sizeof(int) + sizeof(long) + sizeof(int) + sizeof(int);
 
             var cachePosition = destination.Position;
-            var cacheBufferPosition = cachePosition + headerLength;
 
-            destination.Position = cacheBufferPosition;
+            destination.Position = cachePosition + headerLength;
             MessagePackSerializer.Serialize(destination, messagePacket.Message);
             var cacheBufferEndPosition = destination.Position;
 
-            var packetLength = (int)(cacheBufferEndPosition - cacheBufferPosition);
+            var packetLength = (int)(cacheBufferEndPosition - cachePosition);
 
             destination.Position = cachePosition;
-
+            
             // packetLength
             destination.WriteInt32(packetLength);
 
             // unixTime
-            destination.WriteInt64(DateTime.UtcNow.Ticks);
+            destination.WriteInt64(DateTime.Now.Ticks);
 
             // magic number
-            var encodeMagicNumber = Magic + ++m_SendCount;
+            var encodeMagicNumber = Magic + messagePacket.Message.UniId;
             encodeMagicNumber ^= Magic << 8;
             encodeMagicNumber ^= packetLength;
             destination.WriteInt32(encodeMagicNumber);

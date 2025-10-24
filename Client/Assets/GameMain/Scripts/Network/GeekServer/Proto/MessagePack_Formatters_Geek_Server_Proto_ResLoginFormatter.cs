@@ -18,10 +18,12 @@ namespace MessagePack.Formatters.Geek.Server.Proto
 {
     public sealed class ResLoginFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::Geek.Server.Proto.ResLogin>
     {
-        // Code
-        private static global::System.ReadOnlySpan<byte> GetSpan_Code() => new byte[1 + 4] { 164, 67, 111, 100, 101 };
         // UserInfo
         private static global::System.ReadOnlySpan<byte> GetSpan_UserInfo() => new byte[1 + 8] { 168, 85, 115, 101, 114, 73, 110, 102, 111 };
+        // ErrorCode
+        private static global::System.ReadOnlySpan<byte> GetSpan_ErrorCode() => new byte[1 + 9] { 169, 69, 114, 114, 111, 114, 67, 111, 100, 101 };
+        // Desc
+        private static global::System.ReadOnlySpan<byte> GetSpan_Desc() => new byte[1 + 4] { 164, 68, 101, 115, 99 };
         // UniId
         private static global::System.ReadOnlySpan<byte> GetSpan_UniId() => new byte[1 + 5] { 165, 85, 110, 105, 73, 100 };
 
@@ -34,11 +36,13 @@ namespace MessagePack.Formatters.Geek.Server.Proto
             }
 
             var formatterResolver = options.Resolver;
-            writer.WriteMapHeader(3);
-            writer.WriteRaw(GetSpan_Code());
-            writer.Write(value.Code);
+            writer.WriteMapHeader(4);
             writer.WriteRaw(GetSpan_UserInfo());
             global::MessagePack.FormatterResolverExtensions.GetFormatterWithVerify<global::Geek.Server.Proto.UserInfo>(formatterResolver).Serialize(ref writer, value.UserInfo, options);
+            writer.WriteRaw(GetSpan_ErrorCode());
+            writer.Write(value.ErrorCode);
+            writer.WriteRaw(GetSpan_Desc());
+            global::MessagePack.FormatterResolverExtensions.GetFormatterWithVerify<string>(formatterResolver).Serialize(ref writer, value.Desc, options);
             writer.WriteRaw(GetSpan_UniId());
             writer.Write(value.UniId);
         }
@@ -64,15 +68,20 @@ namespace MessagePack.Formatters.Geek.Server.Proto
                     FAIL:
                       reader.Skip();
                       continue;
-                    case 4:
-                        if (global::MessagePack.Internal.AutomataKeyGen.GetKey(ref stringKey) != 1701080899UL) { goto FAIL; }
-
-                        ____result.Code = reader.ReadInt32();
-                        continue;
                     case 8:
                         if (global::MessagePack.Internal.AutomataKeyGen.GetKey(ref stringKey) != 8027224647565407061UL) { goto FAIL; }
 
                         ____result.UserInfo = global::MessagePack.FormatterResolverExtensions.GetFormatterWithVerify<global::Geek.Server.Proto.UserInfo>(formatterResolver).Deserialize(ref reader, options);
+                        continue;
+                    case 9:
+                        if (!global::System.MemoryExtensions.SequenceEqual(stringKey, GetSpan_ErrorCode().Slice(1))) { goto FAIL; }
+
+                        ____result.ErrorCode = reader.ReadInt32();
+                        continue;
+                    case 4:
+                        if (global::MessagePack.Internal.AutomataKeyGen.GetKey(ref stringKey) != 1668506948UL) { goto FAIL; }
+
+                        ____result.Desc = global::MessagePack.FormatterResolverExtensions.GetFormatterWithVerify<string>(formatterResolver).Deserialize(ref reader, options);
                         continue;
                     case 5:
                         if (global::MessagePack.Internal.AutomataKeyGen.GetKey(ref stringKey) != 430728375893UL) { goto FAIL; }

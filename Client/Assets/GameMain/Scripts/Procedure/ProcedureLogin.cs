@@ -18,13 +18,14 @@ namespace GameMain
             SceneModule.Instance.LoadSceneAsync(LoginSceneAssetName).Forget();
 
             // 打开登录界面。
-            UIModule.Instance.OpenUIForm(UIFormId.LoginForm).Forget();
+            // UIModule.Instance.OpenUIForm(UIFormId.LoginForm).Forget();
+            LoginSystem.Instance.Login("Demo", "demo").OpenErrorTips().Forget();
         }
 
         protected override void OnLeave()
         {
             // 关闭登录界面。
-            UIModule.Instance.CloseUIForm(UIFormId.LoginForm).Forget();
+            // UIModule.Instance.CloseUIForm(UIFormId.LoginForm).Forget();
 
             // 卸载登录场景。
             SceneModule.Instance.UnloadSceneAsync(LoginSceneAssetName).Forget();

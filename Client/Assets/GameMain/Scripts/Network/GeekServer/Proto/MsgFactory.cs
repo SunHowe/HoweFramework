@@ -10,7 +10,7 @@ namespace Geek.Server.Proto
 
         static MsgFactory()
         {
-            lookup = new System.Collections.Generic.Dictionary<int, Type>(19)
+            lookup = new System.Collections.Generic.Dictionary<int, Type>(18)
             {
 			    { 1435193915, typeof(Geek.Server.Proto.ReqBagInfo) },
 			    { -1872884227, typeof(Geek.Server.Proto.ResBagInfo) },
@@ -29,11 +29,10 @@ namespace Geek.Server.Proto
 			    { 785960738, typeof(Geek.Server.Proto.ResLogin) },
 			    { 1587576546, typeof(Geek.Server.Proto.ResLevelUp) },
 			    { 1575482382, typeof(Geek.Server.Proto.HearBeat) },
-			    { 1179199001, typeof(Geek.Server.Proto.ResErrorCode) },
 			    { 537499886, typeof(Geek.Server.Proto.ResPrompt) },
             };
 			
-            revertLookup = new System.Collections.Generic.Dictionary<Type, int>(19)
+            revertLookup = new System.Collections.Generic.Dictionary<Type, int>(18)
             {
 			    { typeof(Geek.Server.Proto.ReqBagInfo), 1435193915 },
 			    { typeof(Geek.Server.Proto.ResBagInfo), -1872884227 },
@@ -52,7 +51,6 @@ namespace Geek.Server.Proto
 			    { typeof(Geek.Server.Proto.ResLogin), 785960738 },
 			    { typeof(Geek.Server.Proto.ResLevelUp), 1587576546 },
 			    { typeof(Geek.Server.Proto.HearBeat), 1575482382 },
-			    { typeof(Geek.Server.Proto.ResErrorCode), 1179199001 },
 			    { typeof(Geek.Server.Proto.ResPrompt), 537499886 },
             };
         }

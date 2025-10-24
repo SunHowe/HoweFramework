@@ -3,6 +3,6 @@
   "ServerOutPath": "../../GeekServer/Geek.Server.Generate/Proto",
   "ClientOutPath": "../../Client/Assets/GameMain/Scripts/Network/GeekServer/Proto",
   "BaseMessageName": "Message",
-  "NoExportList": ["Message"],
+  "NoExportList": ["Message", "ResponseMessage"],
   "GeneratedFirst": false
 }
