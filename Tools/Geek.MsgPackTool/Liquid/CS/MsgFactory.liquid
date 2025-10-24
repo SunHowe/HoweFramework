@@ -6,6 +6,7 @@ namespace Geek.Server.Proto
 	public class MsgFactory
 	{
 		private static readonly System.Collections.Generic.Dictionary<int, Type> lookup;
+		private static readonly System.Collections.Generic.Dictionary<Type, int> revertLookup;
 
         static MsgFactory()
         {
@@ -13,6 +14,13 @@ namespace Geek.Server.Proto
             {
                 {{~ for msg in msgs ~}}
 			    { {{msg.sid}}, typeof({{msg.typename}}) },
+			    {{~ end ~}}
+            };
+			
+            revertLookup = new System.Collections.Generic.Dictionary<Type, int>({{count}})
+            {
+                {{~ for msg in msgs ~}}
+			    { typeof({{msg.typename}}), {{msg.sid}} },
 			    {{~ end ~}}
             };
         }
@@ -25,5 +33,12 @@ namespace Geek.Server.Proto
 				throw new Exception($"can not find msg type :{msgId}");
 		}
 
+		public static int GetMsgId(Type type)
+		{
+			if (revertLookup.TryGetValue(type, out int msgId))
+				return msgId;
+			else
+				throw new Exception($"can not find msg id :{type.FullName}");
+		}
 	}
 }
