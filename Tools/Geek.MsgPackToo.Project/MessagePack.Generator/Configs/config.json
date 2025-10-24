@@ -1,0 +1,9 @@
+{
+  "ProjectPath": "../Geek.Proto",
+  "ServerOutPath": "../Output",
+  "ClientOutPath": "../Output",
+  "TSOutPath": "../Output",
+  "BaseMessageName": "Message",
+  "NoExportList": [ "Message" ],
+  "GeneratedFirst": false
+}
