@@ -18,6 +18,7 @@ namespace Geek.Server.Proto
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.ReqUseItem>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.ReqSellItem>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.ResItemChange>();
+			PolymorphicTypeMapper.Register<Geek.Server.Proto.CommonResp>();
 			PolymorphicTypeMapper.Register<ClientProto.NetConnectMessage>();
 			PolymorphicTypeMapper.Register<ClientProto.NetDisConnectMessage>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.A>();

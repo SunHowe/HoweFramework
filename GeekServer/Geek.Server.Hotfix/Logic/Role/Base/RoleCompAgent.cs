@@ -18,7 +18,7 @@ namespace Server.Logic.Logic.Role.Base
     public static class RoleCompAgentExt
     {
         private static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
-        public static async Task NotifyClient(this ICompAgent agent, Message msg, int uniId = 0, StateCode code = StateCode.Success)
+        public static async Task NotifyClient(this ICompAgent agent, Message msg, int uniId = 0, ServerErrorCode code = ServerErrorCode.Success)
         {
             var roleComp = await agent.GetCompAgent<RoleCompAgent>();
             if (roleComp != null)
@@ -90,7 +90,7 @@ namespace Server.Logic.Logic.Role.Base
             return Task.CompletedTask;
         }
 
-        public void NotifyClient(Message msg, int uniId = 0, StateCode code = StateCode.Success)
+        public void NotifyClient(Message msg, int uniId = 0, ServerErrorCode code = ServerErrorCode.Success)
         {
             var session = SessionManager.Get(ActorId);
             session?.Channel?.Write(msg, uniId, code);

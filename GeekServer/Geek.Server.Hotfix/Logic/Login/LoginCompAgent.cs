@@ -19,14 +19,14 @@ namespace Server.Logic.Logic.Login
         {
             if (string.IsNullOrEmpty(reqLogin.UserName))
             {
-                channel.Write(null, reqLogin.UniId, StateCode.AccountCannotBeNull);
+                channel.Write(null, reqLogin.UniId, ServerErrorCode.Login_AccountCannotBeNull);
                 return;
             }
 
             if (reqLogin.Platform != "android" && reqLogin.Platform != "ios" && reqLogin.Platform != "unity")
             {
                 //验证平台合法性
-                channel.Write(null, reqLogin.UniId, StateCode.UnknownPlatform);
+                channel.Write(null, reqLogin.UniId, ServerErrorCode.Login_UnknownPlatform);
                 return;
             }
 
@@ -55,7 +55,7 @@ namespace Server.Logic.Logic.Login
             var roleComp = await ActorMgr.GetCompAgent<RoleCompAgent>(roleId);
             //从登录线程-->调用Role线程 所以需要入队
             var resLogin = await roleComp.OnLogin(reqLogin, isNewRole);
-            channel.Write(resLogin, reqLogin.UniId, StateCode.Success);
+            channel.Write(resLogin, reqLogin.UniId, ServerErrorCode.Success);
 
             //加入在线玩家
             var serverComp = await ActorMgr.GetCompAgent<ServerCompAgent>();

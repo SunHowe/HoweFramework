@@ -10,7 +10,7 @@ namespace Geek.Server.Proto
 
         static MsgFactory()
         {
-            lookup = new System.Collections.Generic.Dictionary<int, Type>(18)
+            lookup = new System.Collections.Generic.Dictionary<int, Type>(19)
             {
 			    { 1435193915, typeof(Geek.Server.Proto.ReqBagInfo) },
 			    { -1872884227, typeof(Geek.Server.Proto.ResBagInfo) },
@@ -19,6 +19,7 @@ namespace Geek.Server.Proto
 			    { 1686846581, typeof(Geek.Server.Proto.ReqUseItem) },
 			    { -1395845865, typeof(Geek.Server.Proto.ReqSellItem) },
 			    { 901279609, typeof(Geek.Server.Proto.ResItemChange) },
+			    { -1509970890, typeof(Geek.Server.Proto.CommonResp) },
 			    { 667869091, typeof(ClientProto.NetConnectMessage) },
 			    { 1245418514, typeof(ClientProto.NetDisConnectMessage) },
 			    { 299119425, typeof(Geek.Server.Proto.TestStruct) },
@@ -32,7 +33,7 @@ namespace Geek.Server.Proto
 			    { 537499886, typeof(Geek.Server.Proto.ResPrompt) },
             };
 			
-            revertLookup = new System.Collections.Generic.Dictionary<Type, int>(18)
+            revertLookup = new System.Collections.Generic.Dictionary<Type, int>(19)
             {
 			    { typeof(Geek.Server.Proto.ReqBagInfo), 1435193915 },
 			    { typeof(Geek.Server.Proto.ResBagInfo), -1872884227 },
@@ -41,6 +42,7 @@ namespace Geek.Server.Proto
 			    { typeof(Geek.Server.Proto.ReqUseItem), 1686846581 },
 			    { typeof(Geek.Server.Proto.ReqSellItem), -1395845865 },
 			    { typeof(Geek.Server.Proto.ResItemChange), 901279609 },
+			    { typeof(Geek.Server.Proto.CommonResp), -1509970890 },
 			    { typeof(ClientProto.NetConnectMessage), 667869091 },
 			    { typeof(ClientProto.NetDisConnectMessage), 1245418514 },
 			    { typeof(Geek.Server.Proto.TestStruct), 299119425 },

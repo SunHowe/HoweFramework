@@ -6,7 +6,7 @@ namespace Server.Logic.Common.Handler;
 
 public static class NetChannelExtensions
 {
-    public static void Write(this NetChannel channel, Message msg, int uniId, StateCode code = StateCode.Success, string desc = "")
+    public static void Write(this NetChannel channel, Message msg, int uniId, ServerErrorCode code = ServerErrorCode.Success, string desc = "")
     {
         if (msg == null)
         {
