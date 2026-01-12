@@ -22,6 +22,12 @@ namespace Server.Logic
             {
                 await OnHandleRequest(req, resp);
             }
+            catch (ServerErrorCodeException e)
+            {
+                resp.ErrorCode = (int)e.ErrorCode;
+                resp.Desc = e.Message;
+                LOGGER.Warn($"Request {req.MsgId} Response: {resp.ErrorCode} {resp.Desc}");
+            }
             catch (Exception e)
             {
                 LOGGER.Error($"{GetType().Name} Handle Request Error: {e.Message}");
@@ -63,6 +69,12 @@ namespace Server.Logic
             try
             {
                 await OnHandleRequest(req, resp);
+            }
+            catch (ServerErrorCodeException e)
+            {
+                resp.ErrorCode = (int)e.ErrorCode;
+                resp.Desc = e.Message;
+                LOGGER.Warn($"Request {req.MsgId} Response: {resp.ErrorCode} {resp.Desc}");
             }
             catch (Exception e)
             {
