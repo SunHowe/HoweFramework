@@ -1,6 +1,5 @@
 using Geek.Server.Core.Hotfix.Agent;
 using Geek.Server.Core.Net.BaseHandler;
-using Server.Logic.Common.Handler;
 
 namespace Server.Logic
 {
@@ -16,20 +15,25 @@ namespace Server.Logic
 
         public override sealed async Task ActionAsync()
         {
+            var req = Msg as TReq;
+            var resp = new TResp();
+
             try
             {
-                var req = Msg as TReq;
-                var resp = await OnHandleRequest(req);
-                Channel.Write(resp, req.UniId);
+                await OnHandleRequest(req, resp);
             }
             catch (Exception e)
             {
                 LOGGER.Error($"{GetType().Name} Handle Request Error: {e.Message}");
-                Channel.Write(new TResp(), Msg.UniId, ServerErrorCode.InternalError, e.Message);
+                resp.ErrorCode = (int)ServerErrorCode.InternalError;
+                resp.Desc = e.Message;
             }
+
+            resp.UniId = req.UniId;
+            Channel.Write(resp);
         }
 
-        protected abstract Task<TResp> OnHandleRequest(TReq req);
+        protected abstract Task OnHandleRequest(TReq req, TResp resp);
     }
 
     /// <summary>
@@ -53,20 +57,25 @@ namespace Server.Logic
 
         public override sealed async Task ActionAsync()
         {
+            var req = Msg as TReq;
+            var resp = new TResp();
+
             try
             {
-                var req = Msg as TReq;
-                var resp = await OnHandleRequest(req);
-                Channel.Write(resp, req.UniId);
+                await OnHandleRequest(req, resp);
             }
             catch (Exception e)
             {
                 LOGGER.Error($"{GetType().Name} Handle Request Error: {e.Message}");
-                Channel.Write(new TResp(), Msg.UniId, ServerErrorCode.InternalError, e.Message);
+                resp.ErrorCode = (int)ServerErrorCode.InternalError;
+                resp.Desc = e.Message;
             }
+
+            resp.UniId = req.UniId;
+            Channel.Write(resp);
         }
 
-        protected abstract Task<TResp> OnHandleRequest(TReq req);
+        protected abstract Task OnHandleRequest(TReq req, TResp resp);
     }
 
     /// <summary>
