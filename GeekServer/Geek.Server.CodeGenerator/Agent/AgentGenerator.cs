@@ -83,6 +83,11 @@ namespace Geek.Server.CodeGenerator.Agent
                                     mth.IsVirtual = true;
                                     mth.Modify += "override ";
                                 }
+                                else if (m.Text.Equals("async"))
+                                {
+                                    mth.Isasync = true;
+                                    // 不添加async修饰符。
+                                }
                                 else
                                 {
                                     mth.Modify += m.Text + " ";
@@ -91,8 +96,6 @@ namespace Geek.Server.CodeGenerator.Agent
                                     mth.IsPublic = true;
                                 if (m.Text.Equals("static"))
                                     mth.IsStatic = true;
-                                if (m.Text.Equals("async"))
-                                    mth.Isasync = true;
                             }
 
                             if (mth.IsStatic)
@@ -113,11 +116,7 @@ namespace Geek.Server.CodeGenerator.Agent
                                 else if (attStr.Contains("[Discard]"))
                                 {
                                     mth.Discard = true;
-                                    if (mth.Isasync)
-                                    {
-                                        mth.Modify = mth.Modify.Replace("async ", "");
-                                        mth.Isasync = false;
-                                    }
+                                    mth.Isasync = false;
                                 }
                                 else if (attStr.Contains("TimeOut"))
                                 {
