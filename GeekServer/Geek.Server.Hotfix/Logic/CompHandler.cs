@@ -24,15 +24,13 @@ namespace Server.Logic
             }
             catch (ServerErrorCodeException e)
             {
+                LOGGER.Warn($"Request {req.MsgId} Response: {resp.ErrorCode} {e.Message}");
                 resp.ErrorCode = (int)e.ErrorCode;
-                resp.Desc = e.Message;
-                LOGGER.Warn($"Request {req.MsgId} Response: {resp.ErrorCode} {resp.Desc}");
             }
             catch (Exception e)
             {
                 LOGGER.Error($"{GetType().Name} Handle Request Error: {e.Message}");
                 resp.ErrorCode = (int)ServerErrorCode.InternalError;
-                resp.Desc = e.Message;
             }
 
             resp.UniId = req.UniId;
@@ -72,15 +70,13 @@ namespace Server.Logic
             }
             catch (ServerErrorCodeException e)
             {
+                LOGGER.Warn($"Request {req.MsgId} Response: {resp.ErrorCode} {e.Message}");
                 resp.ErrorCode = (int)e.ErrorCode;
-                resp.Desc = e.Message;
-                LOGGER.Warn($"Request {req.MsgId} Response: {resp.ErrorCode} {resp.Desc}");
             }
             catch (Exception e)
             {
                 LOGGER.Error($"{GetType().Name} Handle Request Error: {e.Message}");
                 resp.ErrorCode = (int)ServerErrorCode.InternalError;
-                resp.Desc = e.Message;
             }
 
             resp.UniId = req.UniId;

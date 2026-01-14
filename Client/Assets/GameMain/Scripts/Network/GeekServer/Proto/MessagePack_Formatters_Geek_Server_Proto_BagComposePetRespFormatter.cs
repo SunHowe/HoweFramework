@@ -22,8 +22,6 @@ namespace MessagePack.Formatters.Geek.Server.Proto
         private static global::System.ReadOnlySpan<byte> GetSpan_PetId() => new byte[1 + 5] { 165, 80, 101, 116, 73, 100 };
         // ErrorCode
         private static global::System.ReadOnlySpan<byte> GetSpan_ErrorCode() => new byte[1 + 9] { 169, 69, 114, 114, 111, 114, 67, 111, 100, 101 };
-        // Desc
-        private static global::System.ReadOnlySpan<byte> GetSpan_Desc() => new byte[1 + 4] { 164, 68, 101, 115, 99 };
         // UniId
         private static global::System.ReadOnlySpan<byte> GetSpan_UniId() => new byte[1 + 5] { 165, 85, 110, 105, 73, 100 };
 
@@ -35,14 +33,11 @@ namespace MessagePack.Formatters.Geek.Server.Proto
                 return;
             }
 
-            var formatterResolver = options.Resolver;
-            writer.WriteMapHeader(4);
+            writer.WriteMapHeader(3);
             writer.WriteRaw(GetSpan_PetId());
             writer.Write(value.PetId);
             writer.WriteRaw(GetSpan_ErrorCode());
             writer.Write(value.ErrorCode);
-            writer.WriteRaw(GetSpan_Desc());
-            global::MessagePack.FormatterResolverExtensions.GetFormatterWithVerify<string>(formatterResolver).Serialize(ref writer, value.Desc, options);
             writer.WriteRaw(GetSpan_UniId());
             writer.Write(value.UniId);
         }
@@ -55,7 +50,6 @@ namespace MessagePack.Formatters.Geek.Server.Proto
             }
 
             options.Security.DepthStep(ref reader);
-            var formatterResolver = options.Resolver;
             var length = reader.ReadMapHeader();
             var ____result = new global::Geek.Server.Proto.BagComposePetResp();
 
@@ -83,11 +77,6 @@ namespace MessagePack.Formatters.Geek.Server.Proto
                         if (!global::System.MemoryExtensions.SequenceEqual(stringKey, GetSpan_ErrorCode().Slice(1))) { goto FAIL; }
 
                         ____result.ErrorCode = reader.ReadInt32();
-                        continue;
-                    case 4:
-                        if (global::MessagePack.Internal.AutomataKeyGen.GetKey(ref stringKey) != 1668506948UL) { goto FAIL; }
-
-                        ____result.Desc = global::MessagePack.FormatterResolverExtensions.GetFormatterWithVerify<string>(formatterResolver).Deserialize(ref reader, options);
                         continue;
 
                 }

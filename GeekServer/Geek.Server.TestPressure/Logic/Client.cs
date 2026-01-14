@@ -24,9 +24,11 @@ namespace Geek.Server.TestPressure.Logic
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         long id;
+        RequestWaiter m_Waiter = new();
         NetChannel netChannel;
-        MsgWaiter msgWaiter = new();
         int msgUniId = 200;
+        
+        Dictionary<int, Action<Message>> m_MsgHandlers = new();
 
         public Client(long id)
         {
@@ -70,12 +72,10 @@ namespace Geek.Server.TestPressure.Logic
                 _ = netChannel.StartAsync();
             }
 
-
             await ReqLogin();
-            await ReqComposePet();
         }
 
-        private Task<bool> ReqLogin()
+        private async Task ReqLogin()
         {
             //登陆
             var req = new LoginReq();
@@ -84,51 +84,40 @@ namespace Geek.Server.TestPressure.Logic
             req.UserName = "name" + id;
             req.Device = new Random().NextInt64().ToString();
             req.Platform = "android";
-            return SendMsgAndWaitBack(req);
-        }
-
-        private Task ReqComposePet()
-        {
-            return SendMsgAndWaitBack(new BagComposePetReq() { FragmentId = 1000 });
+            var resp = await SendMsgAsync<LoginResp>(req);
+            Log.Info($"{id} 登陆成功:{JsonConvert.SerializeObject(resp)}");
         }
          
-        async Task<bool> SendMsgAndWaitBack(Message msg)
+        private Task<ResponseMessage> SendMsgAsync(Message msg)
         {
             msg.UniId = (int)id*10000 +  msgUniId++;
             Log.Info($"{id} 发送消息:{JsonConvert.SerializeObject(msg)}");
-            var awaiter = msgWaiter.StartWait(msg.UniId,  msg.GetType().Name); 
+            var awaiter = m_Waiter.CreateWait(msg.UniId);
             netChannel.Write(msg);
-            return await awaiter;
+            return awaiter;
         }
 
+        private async Task<T> SendMsgAsync<T>(Message msg) where T : ResponseMessage
+        {
+            var response = await SendMsgAsync(msg);
+            return (T)response;
+        }
 
-
-        public void OnRevice(Message msg)
+        private void OnRevice(Message msg)
         {
             Log.Info($"收到消息:{msg.MsgId} {MsgFactory.GetType(msg.MsgId)}"); 
 
             if (msg is ResponseMessage resp)
             {
-                switch (resp.ErrorCode)
-                {
-                    case (int)ServerErrorCode.Success:
-                        //do some thing
-                        break;
-                    case (int)ServerErrorCode.ConfigErr:
-                        //do some thing
-                        break;
-                    //case ....
-                    default:
-                        break;
-                }
-                msgWaiter.EndWait(resp.UniId, resp.ErrorCode == (int)ServerErrorCode.Success);
-                if (!string.IsNullOrEmpty(resp.Desc))
-                    Log.Info("服务器提示:" + resp.Desc);
+                m_Waiter.SetResponse(resp.UniId, resp);
+            }
+            else if (m_MsgHandlers.TryGetValue(msg.MsgId, out var handler))
+            {
+                handler(msg);
             }
             else
             {
-
-                //Log.Info($"{id} 收到消息:{JsonConvert.SerializeObject(msg)}");
+                Log.Warn($"未处理的消息:{msg.MsgId} {MsgFactory.GetType(msg.MsgId)}");
             }
         }
     }

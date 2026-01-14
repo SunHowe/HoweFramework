@@ -24,16 +24,10 @@ public abstract class ResponseMessage : Message, IResponse
     /// 错误码。0表示成功，其他表示失败。
     /// </summary>
     public int ErrorCode { get; set; }
-    
-    /// <summary>
-    /// 错误描述（不为0时有效）
-    /// </summary>
-    public string Desc { get; set; }
 
     public virtual void Clear()
     {
         ErrorCode = 0;
-        Desc = string.Empty;
     }
 
     public void Dispose()
