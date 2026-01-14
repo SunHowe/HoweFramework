@@ -28,6 +28,8 @@ namespace MessagePack.Formatters.Geek.Server.Proto
         private static global::System.ReadOnlySpan<byte> GetSpan_CreateTime() => new byte[1 + 10] { 170, 67, 114, 101, 97, 116, 101, 84, 105, 109, 101 };
         // VipLevel
         private static global::System.ReadOnlySpan<byte> GetSpan_VipLevel() => new byte[1 + 8] { 168, 86, 105, 112, 76, 101, 118, 101, 108 };
+        // UniId
+        private static global::System.ReadOnlySpan<byte> GetSpan_UniId() => new byte[1 + 5] { 165, 85, 110, 105, 73, 100 };
 
         public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::Geek.Server.Proto.UserInfo value, global::MessagePack.MessagePackSerializerOptions options)
         {
@@ -38,7 +40,7 @@ namespace MessagePack.Formatters.Geek.Server.Proto
             }
 
             var formatterResolver = options.Resolver;
-            writer.WriteMapHeader(5);
+            writer.WriteMapHeader(6);
             writer.WriteRaw(GetSpan_RoleName());
             global::MessagePack.FormatterResolverExtensions.GetFormatterWithVerify<string>(formatterResolver).Serialize(ref writer, value.RoleName, options);
             writer.WriteRaw(GetSpan_RoleId());
@@ -49,6 +51,8 @@ namespace MessagePack.Formatters.Geek.Server.Proto
             writer.Write(value.CreateTime);
             writer.WriteRaw(GetSpan_VipLevel());
             writer.Write(value.VipLevel);
+            writer.WriteRaw(GetSpan_UniId());
+            writer.Write(value.UniId);
         }
 
         public global::Geek.Server.Proto.UserInfo Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
@@ -89,10 +93,16 @@ namespace MessagePack.Formatters.Geek.Server.Proto
                         ____result.RoleId = reader.ReadInt64();
                         continue;
                     case 5:
-                        if (global::MessagePack.Internal.AutomataKeyGen.GetKey(ref stringKey) != 465558725964UL) { goto FAIL; }
-
-                        ____result.Level = reader.ReadInt32();
-                        continue;
+                        switch (global::MessagePack.Internal.AutomataKeyGen.GetKey(ref stringKey))
+                        {
+                            default: goto FAIL;
+                            case 465558725964UL:
+                                ____result.Level = reader.ReadInt32();
+                                continue;
+                            case 430728375893UL:
+                                ____result.UniId = reader.ReadInt32();
+                                continue;
+                        }
                     case 10:
                         if (!global::System.MemoryExtensions.SequenceEqual(stringKey, GetSpan_CreateTime().Slice(1))) { goto FAIL; }
 

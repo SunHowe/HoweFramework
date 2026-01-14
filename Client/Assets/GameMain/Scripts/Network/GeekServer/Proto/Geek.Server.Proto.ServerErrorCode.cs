@@ -14,5 +14,9 @@ namespace Geek.Server.Proto
         // Login
         Login_AccountCannotBeNull = 100100,
         Login_UnknownPlatform,
+        
+        // Bag
+        Bag_ItemNotEnough = 100200,
+ 
     }
 }

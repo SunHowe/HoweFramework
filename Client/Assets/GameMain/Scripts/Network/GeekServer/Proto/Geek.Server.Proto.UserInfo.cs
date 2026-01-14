@@ -5,11 +5,15 @@ using MessagePack;
 namespace Geek.Server.Proto
 {
 	[MessagePackObject(true)]
-	public class UserInfo 
+	public class UserInfo : Message
 	{
 		[IgnoreMember]
 		public const int Sid = -593677237;
 
+		[IgnoreMember]
+		public const int MsgID = Sid;
+		[IgnoreMember]
+		public override int MsgId => MsgID;
 
         /// <summary>
         /// 角色名

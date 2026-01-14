@@ -8,7 +8,7 @@ namespace Geek.Server.Proto
     /// 用户背包信息。
     /// </summary>
     [MessagePackObject(true)]
-    public class UserBagInfo
+    public class UserBagInfo : Message
     {
         public Dictionary<int, long> ItemDic { get; set; } = new Dictionary<int, long>();
     }

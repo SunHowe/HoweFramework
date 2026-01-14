@@ -6,11 +6,15 @@ using System.Collections.Generic;
 namespace Geek.Server.Proto
 {
 	[MessagePackObject(true)]
-	public class UserBagInfo 
+	public class UserBagInfo : Message
 	{
 		[IgnoreMember]
 		public const int Sid = -1907559902;
 
+		[IgnoreMember]
+		public const int MsgID = Sid;
+		[IgnoreMember]
+		public override int MsgId => MsgID;
 
         public Dictionary<int, long> ItemDic { get; set; } = new Dictionary<int, long>();
 	}

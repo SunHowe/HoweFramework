@@ -11,6 +11,7 @@ namespace Geek.Server.Proto
 
 		public static void Register()
         {
+			PolymorphicTypeMapper.Register<Geek.Server.Proto.UserBagInfo>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.BagComposePetReq>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.BagComposePetResp>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.BagUseItemReq>();
@@ -21,6 +22,7 @@ namespace Geek.Server.Proto
 			PolymorphicTypeMapper.Register<ClientProto.HearBeat>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.Proto.A>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.Proto.B>();
+			PolymorphicTypeMapper.Register<Geek.Server.Proto.UserInfo>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.LoginReq>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.LoginResp>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.KickOut>();

@@ -7,7 +7,7 @@ namespace Geek.Server.Proto
     /// 玩家基础信息
     /// </summary>
     [MessagePackObject(true)]
-    public class UserInfo
+    public class UserInfo : Message
     {
         /// <summary>
         /// 角色名

@@ -33,6 +33,24 @@ namespace Geek.Server.TestPressure.Logic
         public Client(long id)
         {
             this.id = id;
+            AddMsgHandler<UserInfo>(OnReceiveUserInfo);
+            AddMsgHandler<UserBagInfo>(OnReceiveUserBagInfo);
+        }
+
+        /// <summary>
+        /// 收到玩家信息推送。
+        /// </summary>
+        private void OnReceiveUserInfo(UserInfo obj)
+        {
+            Log.Info($"{id} 收到玩家信息推送:{JsonConvert.SerializeObject(obj)}");
+        }
+
+        /// <summary>
+        /// 收到背包信息推送。
+        /// </summary>
+        private void OnReceiveUserBagInfo(UserBagInfo obj)
+        {
+            Log.Info($"{id} 收到背包信息推送:{JsonConvert.SerializeObject(obj)}");
         }
 
         public async void Start()
@@ -73,6 +91,7 @@ namespace Geek.Server.TestPressure.Logic
             }
 
             await ReqLogin();
+            await ReqComposePet();
         }
 
         private async Task ReqLogin()
@@ -86,6 +105,14 @@ namespace Geek.Server.TestPressure.Logic
             req.Platform = "android";
             var resp = await SendMsgAsync<LoginResp>(req);
             Log.Info($"{id} 登陆成功:{JsonConvert.SerializeObject(resp)}");
+        }
+
+        private async Task ReqComposePet()
+        {
+            var req = new BagComposePetReq();
+            req.FragmentId = 103;
+            var resp = await SendMsgAsync<BagComposePetResp>(req);
+            Log.Info($"{id} 合成宠物成功:{JsonConvert.SerializeObject(resp)}");
         }
          
         private Task<ResponseMessage> SendMsgAsync(Message msg)
@@ -101,6 +128,23 @@ namespace Geek.Server.TestPressure.Logic
         {
             var response = await SendMsgAsync(msg);
             return (T)response;
+        }
+
+        /// <summary>
+        /// 添加消息处理函数(目前只支持单个)
+        /// </summary>
+        private void AddMsgHandler(int msgId, Action<Message> handler)
+        {
+            m_MsgHandlers[msgId] = handler;
+        }
+
+        /// <summary>
+        /// 添加消息处理函数(目前只支持单个)
+        /// </summary>
+        private void AddMsgHandler<T>(Action<T> handler) where T : Message
+        {
+            var msgId = MsgFactory.GetMsgId(typeof(T));
+            AddMsgHandler(msgId, msg => handler((T)msg));
         }
 
         private void OnRevice(Message msg)
