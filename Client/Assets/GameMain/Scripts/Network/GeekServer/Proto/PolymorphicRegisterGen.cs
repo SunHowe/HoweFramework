@@ -11,23 +11,19 @@ namespace Geek.Server.Proto
 
 		public static void Register()
         {
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.ReqBagInfo>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.ResBagInfo>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.ReqComposePet>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.ResComposePet>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.ReqUseItem>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.ReqSellItem>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.ResItemChange>();
+			PolymorphicTypeMapper.Register<Geek.Server.Proto.BagComposePetReq>();
+			PolymorphicTypeMapper.Register<Geek.Server.Proto.BagComposePetResp>();
+			PolymorphicTypeMapper.Register<Geek.Server.Proto.BagUseItemReq>();
+			PolymorphicTypeMapper.Register<Geek.Server.Proto.BagSellItemReq>();
 			PolymorphicTypeMapper.Register<Geek.Server.Proto.CommonResp>();
 			PolymorphicTypeMapper.Register<ClientProto.NetConnectMessage>();
 			PolymorphicTypeMapper.Register<ClientProto.NetDisConnectMessage>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.A>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.B>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.ReqLogin>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.ResLogin>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.ResLevelUp>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.HearBeat>();
-			PolymorphicTypeMapper.Register<Geek.Server.Proto.ResPrompt>();
+			PolymorphicTypeMapper.Register<ClientProto.HearBeat>();
+			PolymorphicTypeMapper.Register<Geek.Server.Proto.Proto.A>();
+			PolymorphicTypeMapper.Register<Geek.Server.Proto.Proto.B>();
+			PolymorphicTypeMapper.Register<Geek.Server.Proto.LoginReq>();
+			PolymorphicTypeMapper.Register<Geek.Server.Proto.LoginResp>();
+			PolymorphicTypeMapper.Register<Geek.Server.Proto.KickOut>();
         }
 	}
 }

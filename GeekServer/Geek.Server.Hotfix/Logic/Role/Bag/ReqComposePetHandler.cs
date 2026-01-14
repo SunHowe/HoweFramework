@@ -2,12 +2,12 @@
 
 namespace Server.Logic.Logic.Role.Bag
 {
-    [MsgMapping(typeof(ReqComposePet))]
-    public class ReqComposePetHandler : RoleCompHandler<BagCompAgent>
+    [MsgMapping(typeof(BagComposePetReq))]
+    public class ReqComposePetHandler : RoleCompReqHandler<BagCompAgent, BagComposePetReq, BagComposePetResp>
     {
-        public override async Task ActionAsync()
+        protected override Task OnHandleRequest(BagComposePetReq req, BagComposePetResp resp)
         {
-            await Comp.ComposePet(Msg as ReqComposePet);
+            return Comp.ComposePet(req, resp);
         }
     }
 }

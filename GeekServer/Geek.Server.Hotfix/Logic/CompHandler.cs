@@ -13,9 +13,9 @@ namespace Server.Logic
     {
         protected readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
 
-        public override sealed async Task ActionAsync()
+        public sealed override async Task ActionAsync()
         {
-            var req = Msg as TReq;
+            var req = (TReq)Msg;
             var resp = new TResp();
 
             try
@@ -57,13 +57,13 @@ namespace Server.Logic
     /// <typeparam name="T">组件类型</typeparam>
     /// <typeparam name="TReq">请求类型</typeparam>
     /// <typeparam name="TResp">响应类型</typeparam>
-    public abstract class GlobalReqCompHandler<T, TReq, TResp> : GlobalCompHandler<T> where T : ICompAgent where TReq : Message where TResp : ResponseMessage, new()
+    public abstract class GlobalCompReqHandler<T, TReq, TResp> : GlobalCompHandler<T> where T : ICompAgent where TReq : Message where TResp : ResponseMessage, new()
     {
         protected readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
 
-        public override sealed async Task ActionAsync()
+        public sealed override async Task ActionAsync()
         {
-            var req = Msg as TReq;
+            var req = (TReq)Msg;
             var resp = new TResp();
 
             try
@@ -95,7 +95,7 @@ namespace Server.Logic
     /// </summary>
     /// <typeparam name="T">组件类型</typeparam>
     /// <typeparam name="TReq">请求类型</typeparam>
-    public abstract class GlobalReqCompHandler<T, TReq> : GlobalReqCompHandler<T, TReq, CommonResp> where T : ICompAgent where TReq : Message
+    public abstract class GlobalCompReqHandler<T, TReq> : GlobalCompReqHandler<T, TReq, CommonResp> where T : ICompAgent where TReq : Message
     {
     }
 }

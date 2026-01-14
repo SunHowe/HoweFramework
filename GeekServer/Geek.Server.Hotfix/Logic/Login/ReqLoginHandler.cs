@@ -3,12 +3,12 @@ using Geek.Server.Core.Net.BaseHandler;
 
 namespace Server.Logic.Logic.Login
 {
-    [MsgMapping(typeof(ReqLogin))]
-    internal class ReqLoginHandler : GlobalCompHandler<LoginCompAgent>
+    [MsgMapping(typeof(LoginReq))]
+    internal class ReqLoginHandler : GlobalCompReqHandler<LoginCompAgent, LoginReq, LoginResp>
     {
-        public override async Task ActionAsync()
+        protected override Task OnHandleRequest(LoginReq req, LoginResp resp)
         {
-            await Comp.OnLogin(Channel, Msg as ReqLogin);
+            return Comp.OnLogin(Channel, req, resp);
         }
     }
 }

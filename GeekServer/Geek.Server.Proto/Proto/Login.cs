@@ -3,36 +3,6 @@ using MessagePack;
 
 namespace Geek.Server.Proto
 {
-    public enum TestEnum
-    {
-        A, B, C, D, E, F, G, H, I, J, K, L,
-    }
-
-
-    [MessagePackObject(true)]
-    public struct TestStruct
-    {
-        public int Age { get; set; }
-        public string Name { get; set; }
-    }
-
-    [MessagePackObject(true)]
-    public class A
-    {
-        public int Age { get; set; }
-        public TestEnum E { get; set; } = TestEnum.B;
-        public TestStruct TS { get; set; }
-    }
-
-    [MessagePackObject(true)]
-    public class B : A
-    {
-        public string Name { get; set; }
-        [IgnoreMember]
-        public string Test { get; set; }
-    }
-
-
     /// <summary>
     /// 玩家基础信息
     /// </summary>
@@ -65,7 +35,7 @@ namespace Geek.Server.Proto
     /// 请求登录
     /// </summary>
     [MessagePackObject(true)]
-    public class ReqLogin : Message
+    public class LoginReq : Message
     {
         public string UserName { get; set; }
         public string Platform { get; set; }
@@ -74,48 +44,33 @@ namespace Geek.Server.Proto
         public string Device { get; set; }
     }
 
-
     /// <summary>
     /// 请求登录
     /// </summary>
     [MessagePackObject(true)]
-    public class ResLogin : ResponseMessage
+    public class LoginResp : ResponseMessage
     {
         public UserInfo UserInfo { get; set; }
-    }
-
-
-    /// <summary>
-    /// 等级变化
-    /// </summary>
-    [MessagePackObject(true)]
-    public class ResLevelUp : Message
-    {
-        /// <summary>
-        /// 玩家等级
-        /// </summary>
-        public int Level { get; set; }
+        public UserBagInfo BagInfo { get; set; }
     }
 
     /// <summary>
-    /// 双向心跳/收到恢复同样的消息
+    /// 被踢下线原因
     /// </summary>
-    [MessagePackObject(true)]
-    public class HearBeat : Message
+    public enum KickOutReason
     {
         /// <summary>
-        /// 当前时间
+        /// 其他设备登录
         /// </summary>
-        public long TimeTick { get; set; }
+        OtherClientLogin = 1,
     }
 
+    /// <summary>
+    /// 被踢下线
+    /// </summary>
     [MessagePackObject(true)]
-    public class ResPrompt : Message
+    public class KickOut : Message
     {
-        ///<summary>提示信息类型（1Tip提示，2跑马灯，3插队跑马灯，4弹窗，5弹窗回到登陆，6弹窗退出游戏）</summary>
-		public int Type { get; set; }
-        ///<summary>提示内容</summary>
-        public string Content { get; set; }
+        public KickOutReason Reason { get; set; }
     }
-
 }

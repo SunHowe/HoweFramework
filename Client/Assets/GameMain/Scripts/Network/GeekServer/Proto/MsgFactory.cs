@@ -10,50 +10,44 @@ namespace Geek.Server.Proto
 
         static MsgFactory()
         {
-            lookup = new System.Collections.Generic.Dictionary<int, Type>(19)
+            lookup = new System.Collections.Generic.Dictionary<int, Type>(16)
             {
-			    { 1435193915, typeof(Geek.Server.Proto.ReqBagInfo) },
-			    { -1872884227, typeof(Geek.Server.Proto.ResBagInfo) },
-			    { 225320501, typeof(Geek.Server.Proto.ReqComposePet) },
-			    { 750865816, typeof(Geek.Server.Proto.ResComposePet) },
-			    { 1686846581, typeof(Geek.Server.Proto.ReqUseItem) },
-			    { -1395845865, typeof(Geek.Server.Proto.ReqSellItem) },
-			    { 901279609, typeof(Geek.Server.Proto.ResItemChange) },
+			    { -1907559902, typeof(Geek.Server.Proto.UserBagInfo) },
+			    { -306139429, typeof(Geek.Server.Proto.BagComposePetReq) },
+			    { -527122749, typeof(Geek.Server.Proto.BagComposePetResp) },
+			    { -103943650, typeof(Geek.Server.Proto.BagUseItemReq) },
+			    { 1493681131, typeof(Geek.Server.Proto.BagSellItemReq) },
 			    { -1509970890, typeof(Geek.Server.Proto.CommonResp) },
 			    { 667869091, typeof(ClientProto.NetConnectMessage) },
 			    { 1245418514, typeof(ClientProto.NetDisConnectMessage) },
-			    { 299119425, typeof(Geek.Server.Proto.TestStruct) },
-			    { 1250601847, typeof(Geek.Server.Proto.A) },
-			    { -899515946, typeof(Geek.Server.Proto.B) },
+			    { -71242399, typeof(ClientProto.HearBeat) },
+			    { -138638180, typeof(Geek.Server.Proto.Proto.TestStruct) },
+			    { -359623823, typeof(Geek.Server.Proto.Proto.A) },
+			    { 1375358240, typeof(Geek.Server.Proto.Proto.B) },
 			    { -593677237, typeof(Geek.Server.Proto.UserInfo) },
-			    { 1267074761, typeof(Geek.Server.Proto.ReqLogin) },
-			    { 785960738, typeof(Geek.Server.Proto.ResLogin) },
-			    { 1587576546, typeof(Geek.Server.Proto.ResLevelUp) },
-			    { 1575482382, typeof(Geek.Server.Proto.HearBeat) },
-			    { 537499886, typeof(Geek.Server.Proto.ResPrompt) },
+			    { -1451735748, typeof(Geek.Server.Proto.LoginReq) },
+			    { 1721248663, typeof(Geek.Server.Proto.LoginResp) },
+			    { -499789670, typeof(Geek.Server.Proto.KickOut) },
             };
 			
-            revertLookup = new System.Collections.Generic.Dictionary<Type, int>(19)
+            revertLookup = new System.Collections.Generic.Dictionary<Type, int>(16)
             {
-			    { typeof(Geek.Server.Proto.ReqBagInfo), 1435193915 },
-			    { typeof(Geek.Server.Proto.ResBagInfo), -1872884227 },
-			    { typeof(Geek.Server.Proto.ReqComposePet), 225320501 },
-			    { typeof(Geek.Server.Proto.ResComposePet), 750865816 },
-			    { typeof(Geek.Server.Proto.ReqUseItem), 1686846581 },
-			    { typeof(Geek.Server.Proto.ReqSellItem), -1395845865 },
-			    { typeof(Geek.Server.Proto.ResItemChange), 901279609 },
+			    { typeof(Geek.Server.Proto.UserBagInfo), -1907559902 },
+			    { typeof(Geek.Server.Proto.BagComposePetReq), -306139429 },
+			    { typeof(Geek.Server.Proto.BagComposePetResp), -527122749 },
+			    { typeof(Geek.Server.Proto.BagUseItemReq), -103943650 },
+			    { typeof(Geek.Server.Proto.BagSellItemReq), 1493681131 },
 			    { typeof(Geek.Server.Proto.CommonResp), -1509970890 },
 			    { typeof(ClientProto.NetConnectMessage), 667869091 },
 			    { typeof(ClientProto.NetDisConnectMessage), 1245418514 },
-			    { typeof(Geek.Server.Proto.TestStruct), 299119425 },
-			    { typeof(Geek.Server.Proto.A), 1250601847 },
-			    { typeof(Geek.Server.Proto.B), -899515946 },
+			    { typeof(ClientProto.HearBeat), -71242399 },
+			    { typeof(Geek.Server.Proto.Proto.TestStruct), -138638180 },
+			    { typeof(Geek.Server.Proto.Proto.A), -359623823 },
+			    { typeof(Geek.Server.Proto.Proto.B), 1375358240 },
 			    { typeof(Geek.Server.Proto.UserInfo), -593677237 },
-			    { typeof(Geek.Server.Proto.ReqLogin), 1267074761 },
-			    { typeof(Geek.Server.Proto.ResLogin), 785960738 },
-			    { typeof(Geek.Server.Proto.ResLevelUp), 1587576546 },
-			    { typeof(Geek.Server.Proto.HearBeat), 1575482382 },
-			    { typeof(Geek.Server.Proto.ResPrompt), 537499886 },
+			    { typeof(Geek.Server.Proto.LoginReq), -1451735748 },
+			    { typeof(Geek.Server.Proto.LoginResp), 1721248663 },
+			    { typeof(Geek.Server.Proto.KickOut), -499789670 },
             };
         }
 

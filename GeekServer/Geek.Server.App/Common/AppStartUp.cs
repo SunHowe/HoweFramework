@@ -1,4 +1,5 @@
-﻿using Geek.Server.Core.Actors.Impl;
+﻿using ClientProto;
+using Geek.Server.Core.Actors.Impl;
 using Geek.Server.Core.Comps;
 using Geek.Server.Core.Hotfix;
 using Geek.Server.Core.Storage;
@@ -62,7 +63,7 @@ namespace Geek.Server.App.Common
 
                 //mongodb bson
                 BsonClassMapHelper.SetConvention();
-                BsonClassMapHelper.RegisterAllClass(typeof(ReqLogin).Assembly);
+                BsonClassMapHelper.RegisterAllClass(typeof(HearBeat).Assembly);
                 BsonClassMapHelper.RegisterAllClass(typeof(Program).Assembly);
 
                 return true;

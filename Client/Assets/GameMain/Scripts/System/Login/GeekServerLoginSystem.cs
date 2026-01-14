@@ -56,14 +56,14 @@ namespace GameMain
             var retryCount = 0;
             do
             {
-                var req = new ReqLogin();
+                var req = new LoginReq();
                 req.SdkType = 0;
                 req.SdkToken = password;
                 req.UserName = account;
                 req.Device = SystemInfo.deviceUniqueIdentifier;
                 req.Platform = "android";
 
-                using var response = await req.SendPacketAsync<ResLogin>();
+                using var response = await req.SendPacketAsync<LoginResp>();
                 if (response.ErrorCode == 0)
                 {
                     code = 0;

@@ -6,7 +6,6 @@ using Geek.Server.App.Logic.Role.Base;
 using Geek.Server.Core.Actors;
 using Geek.Server.Core.Events;
 using Geek.Server.Core.Hotfix.Agent;
-using Geek.Server.Core.Net.BaseHandler;
 using Geek.Server.Core.Timer;
 using Server.Logic.Common.Handler;
 using Server.Logic.Logic.Role.Bag;
@@ -14,20 +13,6 @@ using Server.Logic.Logic.Server;
 
 namespace Server.Logic.Logic.Role.Base
 {
-
-    public static class RoleCompAgentExt
-    {
-        private static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
-        public static async Task NotifyClient(this ICompAgent agent, Message msg, int uniId = 0, ServerErrorCode code = ServerErrorCode.Success)
-        {
-            var roleComp = await agent.GetCompAgent<RoleCompAgent>();
-            if (roleComp != null)
-                roleComp.NotifyClient(msg, uniId, code);
-            else
-                LOGGER.Warn($"{agent.OwnerType}未注册RoleComp组件");
-        }
-    }
-
     public class RoleCompAgent : StateCompAgent<RoleComp, RoleState>, ICrossDay
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
@@ -43,7 +28,7 @@ namespace Server.Logic.Logic.Role.Base
         }
 
         [Service]
-        public virtual async Task<ResLogin> OnLogin(ReqLogin reqLogin, bool isNewRole)
+        public virtual async Task OnLogin(bool isNewRole, LoginResp resp)
         {
             SetAutoRecycle(false);
             if (isNewRole)
@@ -51,12 +36,23 @@ namespace Server.Logic.Logic.Role.Base
                 State.CreateTime = DateTime.Now;
                 State.Level = 1;
                 State.VipLevel = 1;
-                State.RoleName = new System.Random().Next(1000, 10000).ToString();//随机给一个
-                //激活背包组件
-                await GetCompAgent<BagCompAgent>();
+                State.RoleName = new Random().Next(1000, 10000).ToString();//随机给一个
             }
+            
             State.LoginTime = DateTime.Now;
-            return BuildLoginMsg();
+
+            // 填写基础信息。
+            resp.UserInfo = new UserInfo()
+            {
+                CreateTime = State.CreateTime.Ticks,
+                Level = State.Level,
+                RoleId = State.RoleId,
+                RoleName = State.RoleName,
+                VipLevel = State.VipLevel
+            };
+            
+            // 激活各组件填写上线数据推送。
+            await (await GetCompAgent<BagCompAgent>()).OnLogin(isNewRole, resp);
         }
 
         public async Task OnLogout()
@@ -67,23 +63,6 @@ namespace Server.Logic.Logic.Role.Base
             //下线后会被自动回收
             SetAutoRecycle(true);
             QuartzTimer.Unschedule(ScheduleIdSet);
-        }
-
-        private ResLogin BuildLoginMsg()
-        {
-            var res = new ResLogin()
-            {
-                ErrorCode = 0,
-                UserInfo = new UserInfo()
-                {
-                    CreateTime = State.CreateTime.Ticks,
-                    Level = State.Level,
-                    RoleId = State.RoleId,
-                    RoleName = State.RoleName,
-                    VipLevel = State.VipLevel
-                }
-            };
-            return res;
         }
 
         Task ICrossDay.OnCrossDay(int openServerDay)
