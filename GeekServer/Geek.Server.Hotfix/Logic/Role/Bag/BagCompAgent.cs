@@ -14,11 +14,6 @@ namespace Server.Logic.Logic.Role.Bag
 
         public override void Active()
         {
-            if (State.ItemMap.Count <= 0)
-            {
-                State.ItemMap.Add(101, 1);
-                State.ItemMap.Add(103, 100);
-            }
         }
 
         private ResBagInfo BuildInfoMsg()

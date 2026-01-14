@@ -53,7 +53,7 @@ namespace Server.Logic.Logic.Login
 
             //登陆流程
             var roleComp = await ActorMgr.GetCompAgent<RoleCompAgent>(roleId);
-            //从登录线程-->调用Role线程 所以需要入队
+            //从登录线程-->调用Role线程 所以需要入队(这里实际上入不入队无所谓，因为此时不会有其他逻辑访问到roleActor)
             var resLogin = await roleComp.OnLogin(reqLogin, isNewRole);
             channel.Write(resLogin, reqLogin.UniId, ServerErrorCode.Success);
 

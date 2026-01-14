@@ -42,7 +42,8 @@ namespace Server.Logic.Logic.Role.Base
             }
         }
 
-        public async Task<ResLogin> OnLogin(ReqLogin reqLogin, bool isNewRole)
+        [Service]
+        public virtual async Task<ResLogin> OnLogin(ReqLogin reqLogin, bool isNewRole)
         {
             SetAutoRecycle(false);
             if (isNewRole)
