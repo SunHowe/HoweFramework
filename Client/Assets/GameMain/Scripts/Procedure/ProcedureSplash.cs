@@ -58,7 +58,8 @@ namespace GameMain
             await ResModule.Instance.RequestUpdatePackageManifest();
 
             SoundUtility.InitSoundGroup();
-            NetworkModule.Instance.CreateDefaultNetworkChannel(NetworkConst.GatewayChannelName, ServiceType.Tcp, new GeekServerChannelHelper());
+            NetworkModule.Instance.CreateDefaultNetworkChannel(NetworkConst.GatewayChannelName, ServiceType.Tcp, new GeekServerChannelHelper())
+                .MappingPacketHandler(GetType().Assembly);
 
             await UIModule.Instance.UseFairyGUI(new FairyGUISettings());
             UIModule.Instance.SetPreloadPackageMode(enablePreloadPackageMode);
