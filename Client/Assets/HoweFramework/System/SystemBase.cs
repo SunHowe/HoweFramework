@@ -34,6 +34,14 @@ namespace HoweFramework
             m_DisposableEventSubscribe?.Unsubscribe(id, handler);
         }
 
+        /// <summary>
+        /// 分发事件。
+        /// </summary>
+        public void Dispatch(GameEventArgs args)
+        {
+            EventModule.Instance.Dispatch(this, args);
+        }
+
         #endregion
     }
 }
