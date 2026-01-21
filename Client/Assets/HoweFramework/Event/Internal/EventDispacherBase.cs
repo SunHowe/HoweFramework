@@ -147,7 +147,8 @@ namespace HoweFramework
         protected void HandleEvent(object sender, GameEventArgs e)
         {
             bool noHandlerException = true;
-            if (m_EventHandlerDict.TryGetValue(e.Id, out var range))
+            var eventId = e.Id;
+            if (m_EventHandlerDict.TryGetValue(eventId, out var range))
             {
                 noHandlerException = false;
                 
@@ -162,7 +163,7 @@ namespace HoweFramework
                     }
                     catch (Exception ex)
                     {
-                        Log.Error($"Handle event '{e.Id}' error: {ex.Message}\n{ex.StackTrace}");
+                        Log.Error($"Handle event '{eventId}' error: {ex.Message}\n{ex.StackTrace}");
                     }
 
                     current = m_CachedNodes[e];
@@ -179,7 +180,7 @@ namespace HoweFramework
                     }
                     catch (Exception ex)
                     {
-                        Log.Error($"Handle event '{e.Id}' error: {ex.Message}\n{ex.StackTrace}");
+                        Log.Error($"Handle event '{eventId}' error: {ex.Message}\n{ex.StackTrace}");
                     }
                 }
             }
@@ -191,7 +192,7 @@ namespace HoweFramework
                 }
                 catch (Exception ex)
                 {
-                    Log.Error($"Handle event '{e.Id}' error: {ex.Message}\n{ex.StackTrace}");
+                    Log.Error($"Handle event '{eventId}' error: {ex.Message}\n{ex.StackTrace}");
                 }
             }
 
@@ -208,7 +209,7 @@ namespace HoweFramework
 
             if (noHandlerException)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Event '{e.Id}' not allow no handler.");
+                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Event '{eventId}' not allow no handler.");
             }
         }
 

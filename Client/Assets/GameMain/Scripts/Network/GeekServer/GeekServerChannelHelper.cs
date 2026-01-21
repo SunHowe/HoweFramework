@@ -42,7 +42,7 @@ namespace GameMain
             }
             else
             {
-                var packet = ReferencePool.Acquire<GeekServerRequestPacket>();
+                var packet = ReferencePool.Acquire<GeekServerPacket>();
                 packet.Message = msg;
                 return packet;
             }
