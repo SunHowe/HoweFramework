@@ -19,7 +19,7 @@ namespace HoweFramework
             while (m_CurrentIndex < ChildCount)
             {
                 var result = ExecuteChild(m_CurrentIndex);
-                if (result != ErrorCode.Success)
+                if (result != FrameworkErrorCode.Success)
                 {
                     return result;
                 }
@@ -27,7 +27,7 @@ namespace HoweFramework
                 ++m_CurrentIndex;
             }
 
-            return ErrorCode.Success;
+            return FrameworkErrorCode.Success;
         }
 
         /// <summary>

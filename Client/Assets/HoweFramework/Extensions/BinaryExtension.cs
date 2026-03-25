@@ -24,7 +24,7 @@ namespace HoweFramework
             {
                 if (shift >= 35)
                 {
-                    throw new ErrorCodeException(ErrorCode.InvalidOperationException, "7 bit encoded int is invalid.");
+                    throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "7 bit encoded int is invalid.");
                 }
 
                 b = binaryReader.ReadByte();
@@ -86,7 +86,7 @@ namespace HoweFramework
             {
                 if (shift >= 70)
                 {
-                    throw new ErrorCodeException(ErrorCode.InvalidOperationException, "7 bit encoded int is invalid.");
+                    throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "7 bit encoded int is invalid.");
                 }
 
                 b = binaryReader.ReadByte();
@@ -150,7 +150,7 @@ namespace HoweFramework
 
             if (length > byte.MaxValue)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "String is too long.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "String is too long.");
             }
 
             for (byte i = 0; i < length; i++)
@@ -181,7 +181,7 @@ namespace HoweFramework
             int length = ConverterUtility.GetBytes(value, s_CachedBytes);
             if (length > byte.MaxValue)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"String '{value}' is too long.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"String '{value}' is too long.");
             }
 
             EncryptionUtility.GetSelfXorBytes(s_CachedBytes, encryptBytes);

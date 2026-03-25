@@ -32,7 +32,7 @@ namespace HoweFramework
                 while (!token.IsCancellationRequested)
                 {
                     var result = root.Execute();
-                    if (result != ErrorCode.BehaviorRunningState)
+                    if (result != FrameworkErrorCode.BehaviorRunningState)
                     {
                         return result;
                     }
@@ -40,12 +40,12 @@ namespace HoweFramework
                     await UniTask.NextFrame(token).SuppressCancellationThrow();
                 }
 
-                return ErrorCode.RequestCanceled;
+                return FrameworkErrorCode.RequestCanceled;
             }
             catch (Exception e)
             {
                 Log.Error(e.Message);
-                return ErrorCode.Exception;
+                return FrameworkErrorCode.Exception;
             }
             finally
             {

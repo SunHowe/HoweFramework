@@ -19,7 +19,7 @@ namespace HoweFramework
         {
             if (!m_IsReferenced)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
             }
 
             m_StringBuilder.Append(str);
@@ -36,7 +36,7 @@ namespace HoweFramework
         {
             if (!m_IsReferenced)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
             }
 
             m_StringBuilder.Append(str, startIndex, length);
@@ -50,7 +50,7 @@ namespace HoweFramework
         {
             if (!m_IsReferenced)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
             }
 
             m_StringBuilder.Append(ch);
@@ -65,7 +65,7 @@ namespace HoweFramework
         {
             if (!m_IsReferenced)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
             }
 
             m_StringBuilder.AppendFormat(format, args);
@@ -78,7 +78,7 @@ namespace HoweFramework
         {
             if (!m_IsReferenced)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
             }
 
             m_StringBuilder.AppendLine();
@@ -92,7 +92,7 @@ namespace HoweFramework
         {
             if (!m_IsReferenced)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
             }
 
             m_StringBuilder.AppendLine(value);
@@ -102,7 +102,7 @@ namespace HoweFramework
         {
             if (!m_IsReferenced)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
             }
 
             return m_StringBuilder.ToString();
@@ -112,7 +112,7 @@ namespace HoweFramework
         {
             if (!m_IsReferenced)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "StringBuilder is not referenced.");
             }
 
             var str = m_StringBuilder.ToString();

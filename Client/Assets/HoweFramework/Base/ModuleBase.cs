@@ -42,7 +42,7 @@ namespace HoweFramework
         {
             if (Instance != null)
             {
-                throw new ErrorCodeException(ErrorCode.FrameworkException, $"{typeof(T)} 模块已初始化。");
+                throw new ErrorCodeException(FrameworkErrorCode.FrameworkException, $"{typeof(T)} 模块已初始化。");
             }
 
             Instance = (T)this;
@@ -61,7 +61,7 @@ namespace HoweFramework
         {
             if (Instance != this)
             {
-                throw new ErrorCodeException(ErrorCode.FrameworkException, $"{typeof(T)} 模块未初始化。");
+                throw new ErrorCodeException(FrameworkErrorCode.FrameworkException, $"{typeof(T)} 模块未初始化。");
             }
 
             if (RegisterIOC)

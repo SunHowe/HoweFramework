@@ -74,7 +74,7 @@ namespace HoweFramework
         {
             if (m_SoundGroupHelperDict.ContainsKey(groupId))
             {
-                throw new ErrorCodeException(ErrorCode.SoundGroupAlreadyExists, $"Sound group '{groupId}' has been created.");
+                throw new ErrorCodeException(FrameworkErrorCode.SoundGroupAlreadyExists, $"Sound group '{groupId}' has been created.");
             }
 
             var soundGroupHelper = new AudioClipSoundGroupHelper(groupId, groupName, volume, m_GlobalVolume, soundLimit, m_Root);
@@ -86,7 +86,7 @@ namespace HoweFramework
         {
             if (!m_SoundGroupHelperDict.TryGetValue(groupId, out var soundGroupHelper))
             {
-                throw new ErrorCodeException(ErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
+                throw new ErrorCodeException(FrameworkErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
             }
 
             m_SoundGroupHelperDict.Remove(groupId);
@@ -112,12 +112,12 @@ namespace HoweFramework
                 }
                 else
                 {
-                    throw new ErrorCodeException(ErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
+                    throw new ErrorCodeException(FrameworkErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
                 }
             }
             else
             {
-                throw new ErrorCodeException(ErrorCode.SoundNotExist, $"Sound '{serialId}' not exist.");
+                throw new ErrorCodeException(FrameworkErrorCode.SoundNotExist, $"Sound '{serialId}' not exist.");
             }
         }
 
@@ -125,7 +125,7 @@ namespace HoweFramework
         {
             if (!m_SoundGroupHelperDict.ContainsKey(groupId))
             {
-                throw new ErrorCodeException(ErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
+                throw new ErrorCodeException(FrameworkErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
             }
 
             var serialId = ++m_SerialId;
@@ -165,7 +165,7 @@ namespace HoweFramework
                 m_ResLoader.UnloadAsset(loadInfo.SoundAssetName);
                 loadInfo.Dispose();
                 
-                throw new ErrorCodeException(ErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
+                throw new ErrorCodeException(FrameworkErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
             }
 
             m_SoundGroupIdDict.Add(loadInfo.SerialId, loadInfo.GroupId);
@@ -188,12 +188,12 @@ namespace HoweFramework
                 }
                 else
                 {
-                    throw new ErrorCodeException(ErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
+                    throw new ErrorCodeException(FrameworkErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
                 }
             }
             else
             {
-                throw new ErrorCodeException(ErrorCode.SoundNotExist, $"Sound '{serialId}' not exist.");
+                throw new ErrorCodeException(FrameworkErrorCode.SoundNotExist, $"Sound '{serialId}' not exist.");
             }
         }
 
@@ -220,7 +220,7 @@ namespace HoweFramework
             }
             else
             {
-                throw new ErrorCodeException(ErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
+                throw new ErrorCodeException(FrameworkErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
             }
         }
 
@@ -239,12 +239,12 @@ namespace HoweFramework
                 }
                 else
                 {
-                    throw new ErrorCodeException(ErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
+                    throw new ErrorCodeException(FrameworkErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
                 }
             }
             else
             {
-                throw new ErrorCodeException(ErrorCode.SoundNotExist, $"Sound '{serialId}' not exist.");
+                throw new ErrorCodeException(FrameworkErrorCode.SoundNotExist, $"Sound '{serialId}' not exist.");
             }
         }
 
@@ -256,7 +256,7 @@ namespace HoweFramework
             }
             else
             {
-                throw new ErrorCodeException(ErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
+                throw new ErrorCodeException(FrameworkErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
             }
         }
         

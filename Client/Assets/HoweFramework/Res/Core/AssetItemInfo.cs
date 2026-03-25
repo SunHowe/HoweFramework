@@ -97,7 +97,7 @@ namespace HoweFramework
             while (m_TaskQueue.Count > 0)
             {
                 var task = m_TaskQueue.Dequeue();
-                task.TrySetException(new ErrorCodeException(ErrorCode.ResLoaderDisposed));
+                task.TrySetException(new ErrorCodeException(FrameworkErrorCode.ResLoaderDisposed));
             }
 
             ReferencePool.Release(this);

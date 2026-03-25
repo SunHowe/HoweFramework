@@ -50,7 +50,7 @@ namespace HoweFramework
         /// <summary>
         /// 当界面关闭时，返回的错误码。
         /// </summary>
-        public virtual int ErrorCodeOnClose => ErrorCode.UIFormClosed;
+        public virtual int ErrorCodeOnClose => FrameworkErrorCode.UIFormClosed;
 
         /// <summary>
         /// 屏幕适配器类型。

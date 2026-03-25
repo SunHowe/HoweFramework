@@ -28,7 +28,7 @@ namespace HoweFramework
         {
             if (Instance != null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "GameApp already exists.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "GameApp already exists.");
             }
 
             Instance = this;

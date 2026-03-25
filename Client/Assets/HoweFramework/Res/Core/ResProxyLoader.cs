@@ -52,7 +52,7 @@ namespace HoweFramework
 
             if (resLoaderToken.IsCancellationRequested)
             {
-                throw new ErrorCodeException(ErrorCode.ResLoaderDisposed);
+                throw new ErrorCodeException(FrameworkErrorCode.ResLoaderDisposed);
             }
 
             if (token.IsCancellationRequested)
@@ -122,7 +122,7 @@ namespace HoweFramework
         /// <returns>场景。</returns>
         public UniTask<Scene> LoadScene(string sceneAssetName)
         {
-            throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Please use SceneModule to load scene.");
+            throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Please use SceneModule to load scene.");
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace HoweFramework
         /// <param name="sceneAssetName">场景资源名称。</param>
         public UniTask UnloadScene(string sceneAssetName)
         {
-            throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Please use SceneModule to unload scene.");
+            throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Please use SceneModule to unload scene.");
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace HoweFramework
         /// <returns>场景是否已加载。</returns>
         public bool SceneIsLoaded(string sceneAssetName)
         {
-            throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Please use SceneModule to check scene is loaded.");
+            throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Please use SceneModule to check scene is loaded.");
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace HoweFramework
         /// <returns>场景是否正在加载。</returns>
         public bool SceneIsLoading(string sceneAssetName)
         {
-            throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Please use SceneModule to check scene is loading.");
+            throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Please use SceneModule to check scene is loading.");
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace HoweFramework
         /// <returns>场景是否正在卸载。</returns>
         public bool SceneIsUnloading(string sceneAssetName)
         {
-            throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Please use SceneModule to check scene is unloading.");
+            throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Please use SceneModule to check scene is unloading.");
         }
 
         /// <summary>

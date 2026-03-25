@@ -47,7 +47,7 @@ namespace HoweFramework
         {
             if (index < 0 || index >= m_Children.Count)
             {
-                return ErrorCode.InvalidParam;
+                return FrameworkErrorCode.InvalidParam;
             }
 
             return m_Children[index].Execute();

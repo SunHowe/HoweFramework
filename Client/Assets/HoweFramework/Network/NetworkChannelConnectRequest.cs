@@ -33,12 +33,12 @@ namespace HoweFramework
         {
             if (NetworkChannel == null)
             {
-                throw new ErrorCodeException(ErrorCode.NetworkChannelNotExist);
+                throw new ErrorCodeException(FrameworkErrorCode.NetworkChannelNotExist);
             }
 
             if (NetworkChannel.Connected)
             {
-                return CommonResponse.Create(ErrorCode.Success);
+                return CommonResponse.Create(FrameworkErrorCode.Success);
             }
 
             m_UniTaskCompletionSource = AutoResetUniTaskCompletionSource<IResponse>.Create();
@@ -85,7 +85,7 @@ namespace HoweFramework
                 return;
             }
 
-            m_UniTaskCompletionSource.TrySetResult(CommonResponse.Create(ErrorCode.Success));
+            m_UniTaskCompletionSource.TrySetResult(CommonResponse.Create(FrameworkErrorCode.Success));
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace HoweFramework
             }
             else
             {
-                m_UniTaskCompletionSource.TrySetResult(CommonResponse.Create(ErrorCode.NetworkConnectError));
+                m_UniTaskCompletionSource.TrySetResult(CommonResponse.Create(FrameworkErrorCode.NetworkConnectError));
             }
         }
 

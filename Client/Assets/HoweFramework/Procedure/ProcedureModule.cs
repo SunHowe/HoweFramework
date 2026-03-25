@@ -31,7 +31,7 @@ namespace HoweFramework
         {
             if (Procedure != null)
             {
-                throw new ErrorCodeException(ErrorCode.ProcedureAlreadyLaunch);
+                throw new ErrorCodeException(FrameworkErrorCode.ProcedureAlreadyLaunch);
             }
 
             m_ProcedureDict.Clear();
@@ -42,7 +42,7 @@ namespace HoweFramework
 
             if (!m_ProcedureDict.TryGetValue(procedureId, out var launchProcedure))
             {
-                throw new ErrorCodeException(ErrorCode.ProcedureNotExist);
+                throw new ErrorCodeException(FrameworkErrorCode.ProcedureNotExist);
             }
 
             Procedure = launchProcedure;
@@ -71,12 +71,12 @@ namespace HoweFramework
         {
             if (Procedure == null)
             {
-                throw new ErrorCodeException(ErrorCode.ProcedureNotRunning);
+                throw new ErrorCodeException(FrameworkErrorCode.ProcedureNotRunning);
             }
 
             if (!m_ProcedureDict.TryGetValue(procedureId, out var newProcedure))
             {
-                throw new ErrorCodeException(ErrorCode.ProcedureNotExist);
+                throw new ErrorCodeException(FrameworkErrorCode.ProcedureNotExist);
             }
 
             Procedure.Leave();

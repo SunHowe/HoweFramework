@@ -29,7 +29,7 @@ namespace HoweFramework
             var bytes = await m_ResLoader.LoadBinaryAsync(assetPath);
             if (bytes == null)
             {
-                throw new ErrorCodeException(ErrorCode.ResNotFound, assetPath);
+                throw new ErrorCodeException(FrameworkErrorCode.ResNotFound, assetPath);
             }
 
             var byteBuf = new ByteBuf(bytes);

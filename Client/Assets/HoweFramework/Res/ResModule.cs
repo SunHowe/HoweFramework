@@ -28,7 +28,7 @@ namespace HoweFramework
         {
             if (m_ResLoader == null)
             {
-                throw new ErrorCodeException(ErrorCode.ResCoreLoaderNotSet);
+                throw new ErrorCodeException(FrameworkErrorCode.ResCoreLoaderNotSet);
             }
 
             if (resLoader == null)

@@ -23,7 +23,7 @@ namespace HoweFramework
         {
             if (first == null || terminal == null || first == terminal)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Range is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Range is invalid.");
             }
 
             m_First = first;
@@ -144,7 +144,7 @@ namespace HoweFramework
             {
                 if (!range.IsValid)
                 {
-                    throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Range is invalid.");
+                    throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Range is invalid.");
                 }
 
                 m_LinkedListRange = range;

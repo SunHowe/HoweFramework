@@ -307,7 +307,7 @@ namespace HoweFramework
             {
                 if (handler == null)
                 {
-                    throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Packet handler is invalid.");
+                    throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Packet handler is invalid.");
                 }
 
                 m_ReceivePacketPool.Subscribe(handler.Id, handler.Handle);
@@ -360,11 +360,11 @@ namespace HoweFramework
                         string errorMessage = $"Not supported address family '{ipAddress.AddressFamily}'.";
                         if (NetworkChannelError != null)
                         {
-                            NetworkChannelError(this, ErrorCode.NetworkAddressFamilyError, SocketError.Success, errorMessage);
+                            NetworkChannelError(this, FrameworkErrorCode.NetworkAddressFamilyError, SocketError.Success, errorMessage);
                             return;
                         }
 
-                        throw new ErrorCodeException(ErrorCode.NetworkAddressFamilyError, errorMessage);
+                        throw new ErrorCodeException(FrameworkErrorCode.NetworkAddressFamilyError, errorMessage);
                 }
 
                 m_SendState.Reset();
@@ -432,7 +432,7 @@ namespace HoweFramework
                     string errorMessage = "You must connect first.";
                     if (NetworkChannelError != null)
                     {
-                        NetworkChannelError(this, ErrorCode.NetworkSendError, SocketError.Success, errorMessage);
+                        NetworkChannelError(this, FrameworkErrorCode.NetworkSendError, SocketError.Success, errorMessage);
 
                         if (!ThrowSendException)
                         {
@@ -440,7 +440,7 @@ namespace HoweFramework
                         }
                     }
 
-                    throw new ErrorCodeException(ErrorCode.NetworkSendError, errorMessage);
+                    throw new ErrorCodeException(FrameworkErrorCode.NetworkSendError, errorMessage);
                 }
 
                 if (!m_Active)
@@ -448,7 +448,7 @@ namespace HoweFramework
                     string errorMessage = "Socket is not active.";
                     if (NetworkChannelError != null)
                     {
-                        NetworkChannelError(this, ErrorCode.NetworkSendError, SocketError.Success, errorMessage);
+                        NetworkChannelError(this, FrameworkErrorCode.NetworkSendError, SocketError.Success, errorMessage);
 
                         if (!ThrowSendException)
                         {
@@ -456,7 +456,7 @@ namespace HoweFramework
                         }
                     }
 
-                    throw new ErrorCodeException(ErrorCode.NetworkSendError, errorMessage);
+                    throw new ErrorCodeException(FrameworkErrorCode.NetworkSendError, errorMessage);
                 }
 
                 if (packet == null)
@@ -464,7 +464,7 @@ namespace HoweFramework
                     string errorMessage = "Packet is invalid.";
                     if (NetworkChannelError != null)
                     {
-                        NetworkChannelError(this, ErrorCode.NetworkSendError, SocketError.Success, errorMessage);
+                        NetworkChannelError(this, FrameworkErrorCode.NetworkSendError, SocketError.Success, errorMessage);
 
                         if (!ThrowSendException)
                         {
@@ -472,7 +472,7 @@ namespace HoweFramework
                         }
                     }
 
-                    throw new ErrorCodeException(ErrorCode.NetworkSendError, errorMessage);
+                    throw new ErrorCodeException(FrameworkErrorCode.NetworkSendError, errorMessage);
                 }
 
                 lock (m_SendPacketPool)
@@ -539,7 +539,7 @@ namespace HoweFramework
                         if (NetworkChannelError != null)
                         {
                             SocketException socketException = exception as SocketException;
-                            NetworkChannelError(this, ErrorCode.NetworkSerializeError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                            NetworkChannelError(this, FrameworkErrorCode.NetworkSerializeError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
                             return false;
                         }
 
@@ -551,11 +551,11 @@ namespace HoweFramework
                         string errorMessage = "Serialized packet failure.";
                         if (NetworkChannelError != null)
                         {
-                            NetworkChannelError(this, ErrorCode.NetworkSerializeError, SocketError.Success, errorMessage);
+                            NetworkChannelError(this, FrameworkErrorCode.NetworkSerializeError, SocketError.Success, errorMessage);
                             return false;
                         }
 
-                        throw new ErrorCodeException(ErrorCode.NetworkSerializeError, errorMessage);
+                        throw new ErrorCodeException(FrameworkErrorCode.NetworkSerializeError, errorMessage);
                     }
                 }
 
@@ -584,11 +584,11 @@ namespace HoweFramework
                         string errorMessage = "Packet header is invalid.";
                         if (NetworkChannelError != null)
                         {
-                            NetworkChannelError(this, ErrorCode.NetworkDeserializePacketHeaderError, SocketError.Success, errorMessage);
+                            NetworkChannelError(this, FrameworkErrorCode.NetworkDeserializePacketHeaderError, SocketError.Success, errorMessage);
                             return false;
                         }
 
-                        throw new ErrorCodeException(ErrorCode.NetworkDeserializePacketHeaderError, errorMessage);
+                        throw new ErrorCodeException(FrameworkErrorCode.NetworkDeserializePacketHeaderError, errorMessage);
                     }
 
                     m_ReceiveState.PrepareForPacket(packetHeader);
@@ -605,7 +605,7 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, ErrorCode.NetworkDeserializePacketHeaderError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                        NetworkChannelError(this, FrameworkErrorCode.NetworkDeserializePacketHeaderError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
                         return false;
                     }
 
@@ -646,7 +646,7 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, ErrorCode.NetworkDeserializePacketError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                        NetworkChannelError(this, FrameworkErrorCode.NetworkDeserializePacketError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
                         return false;
                     }
 

@@ -29,7 +29,7 @@ namespace GameMain
         {
             if (!GameSoundConstant.SoundGroupSettings.TryGetValue(groupId, out var setting))
             {
-                throw new ErrorCodeException(ErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
+                throw new ErrorCodeException(FrameworkErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
             }
 
             var key = string.Format(GameSoundConstant.SoundGroupVolumeSettingKeyFormat, groupId.ToString());

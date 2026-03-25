@@ -58,7 +58,7 @@ namespace HoweFramework
         {
             if (callback == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Serialize callback is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Serialize callback is invalid.");
             }
 
             m_SerializeCallbacks[version] = callback;
@@ -77,7 +77,7 @@ namespace HoweFramework
         {
             if (callback == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Deserialize callback is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Deserialize callback is invalid.");
             }
 
             m_DeserializeCallbacks[version] = callback;
@@ -92,7 +92,7 @@ namespace HoweFramework
         {
             if (callback == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Try get value callback is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Try get value callback is invalid.");
             }
 
             m_TryGetValueCallbacks[version] = callback;
@@ -108,7 +108,7 @@ namespace HoweFramework
         {
             if (m_SerializeCallbacks.Count <= 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "No serialize callback registered.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "No serialize callback registered.");
             }
 
             return Serialize(stream, data, m_LatestSerializeCallbackVersion);
@@ -131,7 +131,7 @@ namespace HoweFramework
             SerializeCallback callback = null;
             if (!m_SerializeCallbacks.TryGetValue(version, out callback))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Serialize callback '{version}' is not exist.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"Serialize callback '{version}' is not exist.");
             }
 
             return callback(stream, data);
@@ -150,14 +150,14 @@ namespace HoweFramework
             byte header2 = (byte)stream.ReadByte();
             if (header0 != header[0] || header1 != header[1] || header2 != header[2])
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Header is invalid, need '{header[0]}{header[1]}{header[2]}', current '{header0}{header1}{header2}'.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"Header is invalid, need '{header[0]}{header[1]}{header[2]}', current '{header0}{header1}{header2}'.");
             }
 
             byte version = (byte)stream.ReadByte();
             DeserializeCallback callback = null;
             if (!m_DeserializeCallbacks.TryGetValue(version, out callback))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Deserialize callback '{version}' is not exist.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"Deserialize callback '{version}' is not exist.");
             }
 
             return callback(stream);

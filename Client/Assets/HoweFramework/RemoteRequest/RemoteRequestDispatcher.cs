@@ -52,7 +52,7 @@ namespace HoweFramework
         /// 中断所有请求。
         /// </summary>
         /// <param name="errorCode">错误码。</param>
-        public void InterruptAllRequests(int errorCode = ErrorCode.RequestCanceled)
+        public void InterruptAllRequests(int errorCode = FrameworkErrorCode.RequestCanceled)
         {
             using var buffer = ReusableList<AutoResetUniTaskCompletionSource<IResponse>>.Create();
             foreach (var request in m_RequestDict)
@@ -70,7 +70,7 @@ namespace HoweFramework
 
         public void Dispose()
         {
-            InterruptAllRequests(ErrorCode.RequestDispatcherDisposing);
+            InterruptAllRequests(FrameworkErrorCode.RequestDispatcherDisposing);
             ReferencePool.Release(this);
         }
 

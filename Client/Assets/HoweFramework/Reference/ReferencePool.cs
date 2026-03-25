@@ -33,7 +33,7 @@ namespace HoweFramework
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (!type.IsClass || !typeof(IReference).IsAssignableFrom(type))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Type is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Type is invalid.");
             }
 #endif
 

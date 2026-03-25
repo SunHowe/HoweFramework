@@ -26,7 +26,7 @@ namespace HoweFramework
         {
             if (eventArgs == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Event args is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Event args is invalid.");
             }
 
             var eventItem = EventItem.Create(eventArgs.Id, eventArgs, sender);

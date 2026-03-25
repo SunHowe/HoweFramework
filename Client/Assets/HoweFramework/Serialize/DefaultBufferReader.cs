@@ -37,7 +37,7 @@ namespace HoweFramework
         {
             if (Position >= BufferSize)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
             }
 
             return m_Buffer[Position++];
@@ -48,7 +48,7 @@ namespace HoweFramework
         {
             if (Position + size > BufferSize)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
             }
 
             var result = new ReadOnlySpan<byte>(m_Buffer, Position, size);
@@ -59,7 +59,7 @@ namespace HoweFramework
         public bool ReadBool()
         {
             if (Position + 1 > BufferSize)
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
             bool value = m_Buffer[Position] != 0;
             Position += 1;
             return value;
@@ -68,7 +68,7 @@ namespace HoweFramework
         public char ReadChar()
         {
             if (Position + 2 > BufferSize)
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
             char value = ConverterUtility.GetChar(m_Buffer, Position);
             Position += 2;
             return value;
@@ -77,7 +77,7 @@ namespace HoweFramework
         public short ReadInt16()
         {
             if (Position + 2 > BufferSize)
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
             short value = ConverterUtility.GetInt16(m_Buffer, Position);
             Position += 2;
             return value;
@@ -86,7 +86,7 @@ namespace HoweFramework
         public int ReadInt32()
         {
             if (Position + 4 > BufferSize)
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
             int value = ConverterUtility.GetInt32(m_Buffer, Position);
             Position += 4;
             return value;
@@ -95,7 +95,7 @@ namespace HoweFramework
         public long ReadInt64()
         {
             if (Position + 8 > BufferSize)
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
             long value = ConverterUtility.GetInt64(m_Buffer, Position);
             Position += 8;
             return value;
@@ -104,7 +104,7 @@ namespace HoweFramework
         public float ReadFloat()
         {
             if (Position + 4 > BufferSize)
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
             float value = ConverterUtility.GetSingle(m_Buffer, Position);
             Position += 4;
             return value;
@@ -113,7 +113,7 @@ namespace HoweFramework
         public double ReadDouble()
         {
             if (Position + 8 > BufferSize)
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
             double value = ConverterUtility.GetDouble(m_Buffer, Position);
             Position += 8;
             return value;
@@ -124,7 +124,7 @@ namespace HoweFramework
             int length = ReadInt32();
             if (length == 0) return string.Empty;
             if (Position + length > BufferSize)
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
             string value = ConverterUtility.GetString(m_Buffer, Position, length);
             Position += length;
             return value;

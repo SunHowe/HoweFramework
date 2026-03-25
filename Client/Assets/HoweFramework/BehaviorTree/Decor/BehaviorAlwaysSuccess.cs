@@ -12,12 +12,12 @@ namespace HoweFramework
         public override int Execute()
         {
             var result = ExecuteChild();
-            if (result == ErrorCode.BehaviorRunningState)
+            if (result == FrameworkErrorCode.BehaviorRunningState)
             {
                 return result;
             }
 
-            return ErrorCode.Success;
+            return FrameworkErrorCode.Success;
         }
 
         /// <summary>

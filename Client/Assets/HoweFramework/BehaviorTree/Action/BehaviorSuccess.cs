@@ -11,7 +11,7 @@ namespace HoweFramework
         /// <returns>返回执行结果。</returns>
         public override int Execute()
         {
-            return ErrorCode.Success;
+            return FrameworkErrorCode.Success;
         }
 
         /// <summary>

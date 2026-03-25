@@ -16,7 +16,7 @@ namespace HoweFramework
         {
             if (writer == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区写入器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区写入器不能为空。");
             }
 
             if (value == null)
@@ -41,7 +41,7 @@ namespace HoweFramework
         {
             if (writer == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区写入器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区写入器不能为空。");
             }
 
             if (value == null)
@@ -66,7 +66,7 @@ namespace HoweFramework
         {
             if (writer == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区写入器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区写入器不能为空。");
             }
 
             if (value == null)
@@ -91,7 +91,7 @@ namespace HoweFramework
         {
             if (writer == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区写入器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区写入器不能为空。");
             }
 
             if (value == null)
@@ -116,7 +116,7 @@ namespace HoweFramework
         {
             if (writer == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区写入器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区写入器不能为空。");
             }
 
             if (value == null)
@@ -141,7 +141,7 @@ namespace HoweFramework
         {
             if (writer == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区写入器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区写入器不能为空。");
             }
 
             if (value == null)
@@ -166,7 +166,7 @@ namespace HoweFramework
         {
             if (writer == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区写入器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区写入器不能为空。");
             }
 
             if (value == null)
@@ -191,7 +191,7 @@ namespace HoweFramework
         {
             if (writer == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区写入器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区写入器不能为空。");
             }
 
             if (value == null)
@@ -216,11 +216,11 @@ namespace HoweFramework
         {
             if (reader == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区读取器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区读取器不能为空。");
             }
             if (list == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "目标列表不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "目标列表不能为空。");
             }
             list.Clear();
             var count = reader.ReadInt32();
@@ -243,11 +243,11 @@ namespace HoweFramework
         {
             if (reader == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区读取器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区读取器不能为空。");
             }
             if (list == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "目标列表不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "目标列表不能为空。");
             }
             list.Clear();
             var count = reader.ReadInt32();
@@ -270,11 +270,11 @@ namespace HoweFramework
         {
             if (reader == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区读取器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区读取器不能为空。");
             }
             if (list == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "目标列表不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "目标列表不能为空。");
             }
             list.Clear();
             var count = reader.ReadInt32();
@@ -297,11 +297,11 @@ namespace HoweFramework
         {
             if (reader == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区读取器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区读取器不能为空。");
             }
             if (list == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "目标列表不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "目标列表不能为空。");
             }
             list.Clear();
             var count = reader.ReadInt32();
@@ -324,11 +324,11 @@ namespace HoweFramework
         {
             if (reader == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区读取器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区读取器不能为空。");
             }
             if (list == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "目标列表不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "目标列表不能为空。");
             }
             list.Clear();
             var count = reader.ReadInt32();
@@ -351,11 +351,11 @@ namespace HoweFramework
         {
             if (reader == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区读取器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区读取器不能为空。");
             }
             if (list == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "目标列表不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "目标列表不能为空。");
             }
             list.Clear();
             var count = reader.ReadInt32();
@@ -378,11 +378,11 @@ namespace HoweFramework
         {
             if (reader == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区读取器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区读取器不能为空。");
             }
             if (list == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "目标列表不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "目标列表不能为空。");
             }
             list.Clear();
             var count = reader.ReadInt32();
@@ -405,11 +405,11 @@ namespace HoweFramework
         {
             if (reader == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "缓冲区读取器不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "缓冲区读取器不能为空。");
             }
             if (list == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "目标列表不能为空。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "目标列表不能为空。");
             }
             list.Clear();
             var count = reader.ReadInt32();

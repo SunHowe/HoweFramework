@@ -51,7 +51,7 @@ namespace HoweFramework
         {
             if (m_SoundHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "SoundHelper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "SoundHelper is not set.");
             }
 
             m_SoundHelper.CreateSoundGroup(groupId, groupName, volume, soundLimit);
@@ -65,7 +65,7 @@ namespace HoweFramework
         {
             if (m_SoundHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "SoundHelper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "SoundHelper is not set.");
             }
 
             m_SoundHelper.DestroySoundGroup(groupId);
@@ -98,7 +98,7 @@ namespace HoweFramework
         {
             if (m_SoundHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "SoundHelper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "SoundHelper is not set.");
             }
 
             return m_SoundHelper.PlaySound(groupId, soundAssetName, playSoundParams);
@@ -112,7 +112,7 @@ namespace HoweFramework
         {
             if (m_SoundHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "SoundHelper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "SoundHelper is not set.");
             }
 
             m_SoundHelper.StopSound(serialId);
@@ -127,7 +127,7 @@ namespace HoweFramework
         {
             if (m_SoundHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "SoundHelper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "SoundHelper is not set.");
             }
 
             m_SoundHelper.StopSound(soundAssetName, groupId);
@@ -141,7 +141,7 @@ namespace HoweFramework
         {
             if (m_SoundHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "SoundHelper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "SoundHelper is not set.");
             }
 
             m_SoundHelper.StopAllSounds(groupId);
@@ -155,7 +155,7 @@ namespace HoweFramework
         {
             if (m_SoundHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "SoundHelper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "SoundHelper is not set.");
             }
 
             m_SoundHelper.PauseSound(serialId);
@@ -169,7 +169,7 @@ namespace HoweFramework
         {
             if (m_SoundHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "SoundHelper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "SoundHelper is not set.");
             }
 
             m_SoundHelper.ResumeSound(serialId);
@@ -184,7 +184,7 @@ namespace HoweFramework
         {
             if (m_SoundHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "SoundHelper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "SoundHelper is not set.");
             }
 
             return m_SoundHelper.IsLoadingSound(serialId);

@@ -47,7 +47,7 @@ namespace HoweFramework
         {
             if (string.IsNullOrEmpty(directoryName))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Directory name is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Directory name is invalid.");
             }
 
             try

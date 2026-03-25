@@ -8,7 +8,7 @@ namespace HoweFramework
         /// <summary>
         /// 错误码。
         /// </summary>
-        public int ErrorCode { get; set; } = HoweFramework.ErrorCode.Unknown;
+        public int ErrorCode { get; set; } = HoweFramework.FrameworkErrorCode.Unknown;
 
         /// <summary>
         /// 执行。
@@ -31,7 +31,7 @@ namespace HoweFramework
         /// </summary>
         /// <param name="errorCode">错误码。</param>
         /// <returns>返回行为树失败节点。</returns>
-        public static BehaviorFailure Create(int errorCode = HoweFramework.ErrorCode.Unknown)
+        public static BehaviorFailure Create(int errorCode = HoweFramework.FrameworkErrorCode.Unknown)
         {
             var behaviorFailure = ReferencePool.Acquire<BehaviorFailure>();
             behaviorFailure.ErrorCode = errorCode;

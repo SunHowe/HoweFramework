@@ -99,18 +99,18 @@ namespace HoweFramework
 
             if (code == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Code is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Code is invalid.");
             }
 
             int codeLength = code.Length;
             if (codeLength <= 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Code length is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Code length is invalid.");
             }
 
             if (startIndex < 0 || length < 0 || startIndex + length > bytes.Length)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Start index or length is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Start index or length is invalid.");
             }
 
             int codeIndex = startIndex % codeLength;

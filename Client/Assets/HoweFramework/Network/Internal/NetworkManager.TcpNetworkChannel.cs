@@ -54,11 +54,11 @@ namespace HoweFramework
                     string errorMessage = "Initialize network channel failure.";
                     if (NetworkChannelError != null)
                     {
-                        NetworkChannelError(this, ErrorCode.NetworkSocketError, SocketError.Success, errorMessage);
+                        NetworkChannelError(this, FrameworkErrorCode.NetworkSocketError, SocketError.Success, errorMessage);
                         return;
                     }
 
-                    throw new ErrorCodeException(ErrorCode.NetworkSocketError, errorMessage);
+                    throw new ErrorCodeException(FrameworkErrorCode.NetworkSocketError, errorMessage);
                 }
 
                 m_NetworkChannelHelper.PrepareForConnecting();
@@ -87,7 +87,7 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, ErrorCode.NetworkConnectError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                        NetworkChannelError(this, FrameworkErrorCode.NetworkConnectError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
                         return;
                     }
 
@@ -112,7 +112,7 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, ErrorCode.NetworkConnectError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                        NetworkChannelError(this, FrameworkErrorCode.NetworkConnectError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
                         return;
                     }
 
@@ -155,7 +155,7 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, ErrorCode.NetworkSendError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                        NetworkChannelError(this, FrameworkErrorCode.NetworkSendError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
                         return;
                     }
 
@@ -182,7 +182,7 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, ErrorCode.NetworkSendError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                        NetworkChannelError(this, FrameworkErrorCode.NetworkSendError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
                         return;
                     }
 
@@ -212,7 +212,7 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, ErrorCode.NetworkReceiveError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                        NetworkChannelError(this, FrameworkErrorCode.NetworkReceiveError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
                         return;
                     }
 
@@ -239,7 +239,7 @@ namespace HoweFramework
                     if (NetworkChannelError != null)
                     {
                         SocketException socketException = exception as SocketException;
-                        NetworkChannelError(this, ErrorCode.NetworkReceiveError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                        NetworkChannelError(this, FrameworkErrorCode.NetworkReceiveError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
                         return;
                     }
 

@@ -22,12 +22,12 @@ namespace HoweFramework
         {
             if (NetworkChannel == null)
             {
-                throw new ErrorCodeException(ErrorCode.NetworkChannelNotExist);
+                throw new ErrorCodeException(FrameworkErrorCode.NetworkChannelNotExist);
             }
 
             if (Packet is not IRemoteRequest remoteRequest)
             {
-                throw new ErrorCodeException(ErrorCode.NetworkPacketRequestNotRemoteRequest);
+                throw new ErrorCodeException(FrameworkErrorCode.NetworkPacketRequestNotRemoteRequest);
             }
 
             var packet = Packet;

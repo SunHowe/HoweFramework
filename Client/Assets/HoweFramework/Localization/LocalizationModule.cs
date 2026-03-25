@@ -24,7 +24,7 @@ namespace HoweFramework
             {
                 if (value == Language.Unspecified)
                 {
-                    throw new ErrorCodeException(ErrorCode.InvalidParam, "Language is unspecified.");
+                    throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Language is unspecified.");
                 }
 
                 if (m_Language == value)
@@ -178,7 +178,7 @@ namespace HoweFramework
         {
             if (m_Language == Language.Unspecified)
             {
-                throw new ErrorCodeException(ErrorCode.FrameworkException, "Language is unspecified.");
+                throw new ErrorCodeException(FrameworkErrorCode.FrameworkException, "Language is unspecified.");
             }
 
             using var uniTaskList = ReusableList<UniTask>.Create();

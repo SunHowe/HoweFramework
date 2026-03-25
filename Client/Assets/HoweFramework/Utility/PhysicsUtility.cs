@@ -18,7 +18,7 @@ namespace HoweFramework
         {
             if (capacity <= 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Capacity is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Capacity is invalid.");
             }
 
             s_RaycastHits = new RaycastHit[capacity];

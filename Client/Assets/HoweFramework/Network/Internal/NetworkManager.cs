@@ -195,7 +195,7 @@ namespace HoweFramework
         {
             if (results == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Results is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Results is invalid.");
             }
 
             results.Clear();
@@ -216,17 +216,17 @@ namespace HoweFramework
         {
             if (networkChannelHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Network channel helper is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Network channel helper is invalid.");
             }
 
             if (networkChannelHelper.PacketHeaderLength < 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Packet header length is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Packet header length is invalid.");
             }
 
             if (HasNetworkChannel(name))
             {
-                throw new ErrorCodeException(ErrorCode.NetworkChannelAlreadyExists, $"Already exist network channel '{name ?? string.Empty}'.");
+                throw new ErrorCodeException(FrameworkErrorCode.NetworkChannelAlreadyExists, $"Already exist network channel '{name ?? string.Empty}'.");
             }
 
             NetworkChannelBase networkChannel = null;
@@ -241,7 +241,7 @@ namespace HoweFramework
                     break;
 
                 default:
-                    throw new ErrorCodeException(ErrorCode.NetworkNotSupportServiceType, $"Not supported service type '{serviceType}'.");
+                    throw new ErrorCodeException(FrameworkErrorCode.NetworkNotSupportServiceType, $"Not supported service type '{serviceType}'.");
             }
 
             networkChannel.NetworkChannelConnected += OnNetworkChannelConnected;

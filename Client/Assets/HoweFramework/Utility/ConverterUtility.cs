@@ -40,7 +40,7 @@ namespace HoweFramework
         {
             if (ScreenDpi <= 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "You must set screen DPI first.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "You must set screen DPI first.");
             }
 
             return InchesToCentimeters * pixels / ScreenDpi;
@@ -55,7 +55,7 @@ namespace HoweFramework
         {
             if (ScreenDpi <= 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "You must set screen DPI first.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "You must set screen DPI first.");
             }
 
             return CentimetersToInches * centimeters * ScreenDpi;
@@ -70,7 +70,7 @@ namespace HoweFramework
         {
             if (ScreenDpi <= 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "You must set screen DPI first.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "You must set screen DPI first.");
             }
 
             return pixels / ScreenDpi;
@@ -85,7 +85,7 @@ namespace HoweFramework
         {
             if (ScreenDpi <= 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "You must set screen DPI first.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "You must set screen DPI first.");
             }
 
             return inches * ScreenDpi;
@@ -123,12 +123,12 @@ namespace HoweFramework
         {
             if (buffer == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Buffer is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Buffer is invalid.");
             }
 
             if (startIndex < 0 || startIndex + 1 > buffer.Length)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Start index is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Start index is invalid.");
             }
 
             buffer[startIndex] = value ? (byte)1 : (byte)0;
@@ -241,12 +241,12 @@ namespace HoweFramework
         {
             if (buffer == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Buffer is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Buffer is invalid.");
             }
 
             if (startIndex < 0 || startIndex + 2 > buffer.Length)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Start index is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Start index is invalid.");
             }
 
             fixed (byte* valueRef = buffer)
@@ -362,12 +362,12 @@ namespace HoweFramework
         {
             if (buffer == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Buffer is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Buffer is invalid.");
             }
 
             if (startIndex < 0 || startIndex + 4 > buffer.Length)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Start index is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Start index is invalid.");
             }
 
             fixed (byte* valueRef = buffer)
@@ -483,12 +483,12 @@ namespace HoweFramework
         {
             if (buffer == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Buffer is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Buffer is invalid.");
             }
 
             if (startIndex < 0 || startIndex + 8 > buffer.Length)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Start index is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Start index is invalid.");
             }
 
             fixed (byte* valueRef = buffer)
@@ -700,12 +700,12 @@ namespace HoweFramework
         {
             if (value == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Value is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Value is invalid.");
             }
 
             if (encoding == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Encoding is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Encoding is invalid.");
             }
 
             return encoding.GetByteCount(value);
@@ -754,12 +754,12 @@ namespace HoweFramework
         {
             if (value == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Value is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Value is invalid.");
             }
 
             if (encoding == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Encoding is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Encoding is invalid.");
             }
 
             return encoding.GetBytes(value);
@@ -789,12 +789,12 @@ namespace HoweFramework
         {
             if (value == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Value is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Value is invalid.");
             }
 
             if (encoding == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Encoding is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Encoding is invalid.");
             }
 
             return encoding.GetBytes(value, 0, value.Length, buffer, startIndex);
@@ -820,12 +820,12 @@ namespace HoweFramework
         {
             if (value == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Value is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Value is invalid.");
             }
 
             if (encoding == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Encoding is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Encoding is invalid.");
             }
 
             return encoding.GetString(value);
@@ -855,12 +855,12 @@ namespace HoweFramework
         {
             if (value == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Value is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Value is invalid.");
             }
 
             if (encoding == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Encoding is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Encoding is invalid.");
             }
 
             return encoding.GetString(value, startIndex, length);
