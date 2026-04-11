@@ -22,6 +22,34 @@ howe-framework/Client/
 
 ## 文档索引
 
+### AI Agent 技术文档（完整 API 参考）
+
+> 详细技术文档路径：`Assets/HoweFramework/Doc/README.md`
+
+| 模块 | AI Agent 文档路径 | 说明 |
+|------|-------------------|------|
+| **框架架构** | [Doc/architecture.md](Assets/HoweFramework/Doc/architecture.md) | 模块依赖、初始化顺序、设计模式 |
+| **IOC 系统** | [Doc/modules/ioc.md](Assets/HoweFramework/Doc/modules/ioc.md) | 依赖注入、Inject 属性 |
+| **事件系统** | [Doc/modules/event.md](Assets/HoweFramework/Doc/modules/event.md) | 事件订阅/发布、GameEventArgs |
+| **UI 系统** | [Doc/modules/ui.md](Assets/HoweFramework/Doc/modules/ui.md) | FairyGUIFormLogicBase、Form 生命周期 |
+| **流程系统** | [Doc/modules/procedure.md](Assets/HoweFramework/Doc/modules/procedure.md) | ProcedureBase、状态切换 |
+| **引用池** | [Doc/modules/reference-pool.md](Assets/HoweFramework/Doc/modules/reference-pool.md) | ReferencePool、IReference |
+| **资源系统** | [Doc/modules/resource.md](Assets/HoweFramework/Doc/modules/resource.md) | ResModule、IResLoader |
+| **网络系统** | [Doc/modules/network.md](Assets/HoweFramework/Doc/modules/network.md) | TCP、Packet、INetworkChannel |
+| **计时器** | [Doc/modules/timer.md](Assets/HoweFramework/Doc/modules/timer.md) | AddTimer、AddFrameTimer |
+| **状态机** | [Doc/modules/fsm.md](Assets/HoweFramework/Doc/modules/fsm.md) | FsmMachine、状态切换 |
+| **行为树** | [Doc/modules/behavior-tree.md](Assets/HoweFramework/Doc/modules/behavior-tree.md) | BehaviorTree、Composite/Action 节点 |
+| **Gameplay 框架** | [Doc/gameplay/README.md](Assets/HoweFramework/Doc/gameplay/README.md) | 概览 |
+| **实体组件** | [Doc/gameplay/entity-component.md](Assets/HoweFramework/Doc/gameplay/entity-component.md) | IGameEntity、GameComponentBase |
+| **视图系统** | [Doc/gameplay/view-system.md](Assets/HoweFramework/Doc/gameplay/view-system.md) | ViewComponent、MonoConverter |
+| **数值系统** | [Doc/gameplay/numeric-system.md](Assets/HoweFramework/Doc/gameplay/numeric-system.md) | NumericComponent、公式计算 |
+| **状态组件** | [Doc/gameplay/state-component.md](Assets/HoweFramework/Doc/gameplay/state-component.md) | StateComponent、引用计数 |
+| **资源组件** | [Doc/gameplay/resource-component.md](Assets/HoweFramework/Doc/gameplay/resource-component.md) | ResourceComponent、HP/MP 管理 |
+| **游戏上下文** | [Doc/gameplay/game-context.md](Assets/HoweFramework/Doc/gameplay/game-context.md) | GameContextBase、游戏状态 |
+| **管理器** | [Doc/gameplay/managers.md](Assets/HoweFramework/Doc/gameplay/managers.md) | Update/Random/Timer/Entity Manager |
+
+### 其他文档
+
 | 模块 | 文档路径 | 说明 |
 |------|----------|------|
 | **框架核心** | `Assets/HoweFramework/README.md` | 模块系统、IOC、UI、事件、引用池、20+模块 |
@@ -94,7 +122,7 @@ ReferencePool.Release(obj);
 
 ### Gameplay 框架
 
-> Gameplay框架详细文档：[`Assets/GameMain/Scripts/Gameplay/Doc/README.md`](Assets/GameMain/Scripts/Gameplay/Doc/README.md)
+> Gameplay框架详细文档：[`Assets/HoweFramework/Doc/gameplay/README.md`](Assets/HoweFramework/Doc/gameplay/README.md)（AI Agent 完整 API 参考）
 
 ```csharp
 // 创建实体
@@ -113,7 +141,33 @@ context.GetManager<GameEntityManager>().DestroyEntity(entity.EntityId);
 
 ## 关键文件
 
-> 完整文件列表及详细说明见 [`Assets/HoweFramework/README.md`](Assets/HoweFramework/README.md) 和 [`Gameplay/Doc/README.md`](Assets/GameMain/Scripts/Gameplay/Doc/README.md)
+> 完整文件列表及详细 API 说明见 [`Assets/HoweFramework/Doc/README.md`](Assets/HoweFramework/Doc/README.md)
+
+### 框架核心
+
+| 文件 | AI Agent 文档 |
+|------|---------------|
+| `Assets/HoweFramework/GameApp.cs` | [Doc/architecture.md](Assets/HoweFramework/Doc/architecture.md) |
+| `Assets/HoweFramework/Base/ModuleBase.cs` | [Doc/modules/README.md](Assets/HoweFramework/Doc/modules/README.md) |
+| `Assets/HoweFramework/IOC/IOCModule.cs` | [Doc/modules/ioc.md](Assets/HoweFramework/Doc/modules/ioc.md) |
+| `Assets/HoweFramework/Event/EventModule.cs` | [Doc/modules/event.md](Assets/HoweFramework/Doc/modules/event.md) |
+| `Assets/HoweFramework/UI/UIModule.cs` | [Doc/modules/ui.md](Assets/HoweFramework/Doc/modules/ui.md) |
+| `Assets/HoweFramework/Procedure/ProcedureModule.cs` | [Doc/modules/procedure.md](Assets/HoweFramework/Doc/modules/procedure.md) |
+| `Assets/HoweFramework/Reference/ReferencePool.cs` | [Doc/modules/reference-pool.md](Assets/HoweFramework/Doc/modules/reference-pool.md) |
+| `Assets/HoweFramework/Res/ResModule.cs` | [Doc/modules/resource.md](Assets/HoweFramework/Doc/modules/resource.md) |
+| `Assets/HoweFramework/Network/NetworkModule.cs` | [Doc/modules/network.md](Assets/HoweFramework/Doc/modules/network.md) |
+
+### 游戏业务
+
+| 文件 | AI Agent 文档 |
+|------|---------------|
+| `Assets/GameMain/Scripts/GameEntry.cs` | [Doc/architecture.md](Assets/HoweFramework/Doc/architecture.md) |
+| `Assets/GameMain/Scripts/Gameplay/Framework/GameContextBase.cs` | [Doc/gameplay/game-context.md](Assets/HoweFramework/Doc/gameplay/game-context.md) |
+| `Assets/GameMain/Scripts/Gameplay/Framework/Entity/GameEntityManager.cs` | [Doc/gameplay/entity-component.md](Assets/HoweFramework/Doc/gameplay/entity-component.md) |
+| `Assets/GameMain/Scripts/Gameplay/Framework/Update/GameUpdateManager.cs` | [Doc/gameplay/managers.md](Assets/HoweFramework/Doc/gameplay/managers.md) |
+| `Assets/GameMain/Scripts/Gameplay/Framework/Timer/GameTimerManager.cs` | [Doc/gameplay/managers.md](Assets/HoweFramework/Doc/gameplay/managers.md) |
+| `Assets/GameMain/Scripts/Gameplay/Common/State/StateComponent.cs` | [Doc/gameplay/state-component.md](Assets/HoweFramework/Doc/gameplay/state-component.md) |
+| `Assets/GameMain/Scripts/Gameplay/Common/Resource/ResourceComponent.cs` | [Doc/gameplay/resource-component.md](Assets/HoweFramework/Doc/gameplay/resource-component.md) |
 
 ### 框架核心
 
