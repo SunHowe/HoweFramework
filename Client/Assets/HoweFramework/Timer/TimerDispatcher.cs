@@ -96,6 +96,8 @@ namespace HoweFramework
                     continue;
                 }
 
+                m_TimerInfoDict.Remove(info.TimerId);
+
                 // 从列表中移除
                 ReferencePool.Release(info);
 

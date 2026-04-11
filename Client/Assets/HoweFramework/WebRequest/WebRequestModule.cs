@@ -65,14 +65,18 @@ namespace HoweFramework
             if (request.Parameters.Count > 0)
             {
                 using var sb = ReusableStringBuilder.Create();
-                sb.AppendFormat("{0}?", url);
+                sb.AppendFormat("{0}", url);
                 var first = true;
                 foreach (var (key, value) in request.Parameters)
                 {
                     if (first)
                     {
-                        sb.Append("&");
+                        sb.Append("?");
                         first = false;
+                    }
+                    else
+                    {
+                        sb.Append("&");
                     }
 
                     sb.Append(key);

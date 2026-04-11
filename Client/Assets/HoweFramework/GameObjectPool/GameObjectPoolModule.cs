@@ -73,10 +73,13 @@ namespace HoweFramework
 
         protected override void OnInit()
         {
+            m_GameObjectPool = CreateGameObjectPool();
         }
 
         protected override void OnDestroy()
         {
+            m_GameObjectPool.Dispose();
+            m_GameObjectPool = null;
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)

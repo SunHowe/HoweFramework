@@ -70,6 +70,10 @@ namespace HoweFramework
         /// </summary>
         public static void ClearAllCache()
         {
+            foreach (var cache in m_ReferenceCacheDict.Values)
+            {
+                cache.Clear();
+            }
             m_ReferenceCacheDict.Clear();
         }
 
