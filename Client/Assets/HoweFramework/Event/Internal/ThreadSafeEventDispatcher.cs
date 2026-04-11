@@ -40,8 +40,14 @@ namespace HoweFramework
         {
             while (m_EventItemQueue.TryDequeue(out var eventItem))
             {
-                HandleEvent(eventItem.Sender, eventItem.EventArgs);
-                ReferencePool.Release(eventItem);
+                try
+                {
+                    HandleEvent(eventItem.Sender, eventItem.EventArgs);
+                }
+                finally
+                {
+                    ReferencePool.Release(eventItem);
+                }
             }
         }
 

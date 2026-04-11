@@ -294,6 +294,15 @@ namespace HoweFramework
             /// </summary>
             public virtual void Shutdown()
             {
+                lock (this)
+                {
+                    if (m_Disposed)
+                    {
+                        return;
+                    }
+                    m_Disposed = true;
+                }
+
                 Close();
                 m_ReceivePacketPool.Dispose();
                 m_NetworkChannelHelper.Dispose();

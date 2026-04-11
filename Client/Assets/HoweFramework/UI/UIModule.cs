@@ -310,14 +310,16 @@ namespace HoweFramework
                         while (node != null)
                         {
                             var form = node.Value;
-                            node = node.Next;
+                            var nextNode = node.Next;
                             if (!form.IsAllowControlCloseByFramework)
                             {
+                                node = nextNode;
                                 continue;
                             }
 
                             form.CloseImmediate();
-                            m_UIFormOpenedList.Remove(node.Previous);
+                            m_UIFormOpenedList.Remove(node);
+                            node = nextNode;
                         }
                     }
                     break;
