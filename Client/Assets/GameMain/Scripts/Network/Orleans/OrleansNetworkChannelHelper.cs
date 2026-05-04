@@ -40,7 +40,7 @@ namespace GameMain
             var messageType = ProtocolBinder.GetProtocolType(header.ProtocolId);
             if (messageType == null)
             {
-                customErrorData = new ErrorCodeException(ErrorCode.NetworkDeserializePacketError, "Protocol id is invalid.");
+                customErrorData = new ErrorCodeException(FrameworkErrorCode.NetworkDeserializePacketError, "Protocol id is invalid.");
                 return null;
             }
 
@@ -52,7 +52,7 @@ namespace GameMain
                 protocol = ReferencePool.Acquire(messageType) as ProtocolBase;
                 if (protocol == null)
                 {
-                    customErrorData = new ErrorCodeException(ErrorCode.NetworkDeserializePacketError, "Protocol id is invalid.");
+                    customErrorData = new ErrorCodeException(FrameworkErrorCode.NetworkDeserializePacketError, "Protocol id is invalid.");
                     return null;
                 }
             }
@@ -61,14 +61,14 @@ namespace GameMain
                 // 读取包体数据到缓冲区。
                 if (source.Read(m_PacketBodyBuffer, 0, header.PacketLength) != header.PacketLength)
                 {
-                    customErrorData = new ErrorCodeException(ErrorCode.NetworkDeserializePacketHeaderError, "Packet header length is invalid.");
+                    customErrorData = new ErrorCodeException(FrameworkErrorCode.NetworkDeserializePacketHeaderError, "Packet header length is invalid.");
                     return null;
                 }
 
                 protocol = ReferencePool.Acquire(messageType) as ProtocolBase;
                 if (protocol == null)
                 {
-                    customErrorData = new ErrorCodeException(ErrorCode.NetworkDeserializePacketError, "Protocol id is invalid.");
+                    customErrorData = new ErrorCodeException(FrameworkErrorCode.NetworkDeserializePacketError, "Protocol id is invalid.");
                     return null;
                 }
 
@@ -81,7 +81,7 @@ namespace GameMain
                 protocol = obj as ProtocolBase;
                 if (protocol == null)
                 {
-                    customErrorData = new ErrorCodeException(ErrorCode.NetworkDeserializePacketError, "Protocol id is invalid.");
+                    customErrorData = new ErrorCodeException(FrameworkErrorCode.NetworkDeserializePacketError, "Protocol id is invalid.");
                     return null;
                 }
             }
@@ -107,7 +107,7 @@ namespace GameMain
         {
             if (source.Read(m_PacketHeaderBuffer, 0, PacketHeaderLength) != PacketHeaderLength)
             {
-                customErrorData = new ErrorCodeException(ErrorCode.NetworkDeserializePacketHeaderError, "Packet header length is invalid.");
+                customErrorData = new ErrorCodeException(FrameworkErrorCode.NetworkDeserializePacketHeaderError, "Packet header length is invalid.");
                 return null;
             }
 
@@ -145,7 +145,7 @@ namespace GameMain
         {
             if (packet is not IRemoteRequest remoteRequest)
             {
-                throw new ErrorCodeException(ErrorCode.NetworkSerializeError, "Only accept IRemoteRequest Packet.");
+                throw new ErrorCodeException(FrameworkErrorCode.NetworkSerializeError, "Only accept IRemoteRequest Packet.");
             }
 
             // 写入协议id(ushort)。
