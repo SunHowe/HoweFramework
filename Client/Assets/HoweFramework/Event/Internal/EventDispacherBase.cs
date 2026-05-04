@@ -54,7 +54,7 @@ namespace HoweFramework
         {
             if (handler == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Event handler is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Event handler is invalid.");
             }
 
             return m_EventHandlerDict.Contains(id, handler);
@@ -69,7 +69,7 @@ namespace HoweFramework
         {
             if (handler == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Event handler is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Event handler is invalid.");
             }
 
             if (!m_EventHandlerDict.Contains(id))
@@ -78,11 +78,11 @@ namespace HoweFramework
             }
             else if ((m_Mode & EventDispatcherMode.AllowMultiHandler) != EventDispatcherMode.AllowMultiHandler)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Event '{id}' not allow multi handler.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"Event '{id}' not allow multi handler.");
             }
             else if ((m_Mode & EventDispatcherMode.AllowDuplicateHandler) != EventDispatcherMode.AllowDuplicateHandler && Check(id, handler))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Event '{id}' not allow duplicate handler.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"Event '{id}' not allow duplicate handler.");
             }
             else
             {
@@ -99,7 +99,7 @@ namespace HoweFramework
         {
             if (handler == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Event handler is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Event handler is invalid.");
             }
 
             if (m_CachedNodes.Count > 0)
@@ -125,7 +125,7 @@ namespace HoweFramework
 
             if (!m_EventHandlerDict.Remove(id, handler))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Event '{id}' not exists specified handler.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"Event '{id}' not exists specified handler.");
             }
         }
 
@@ -138,7 +138,7 @@ namespace HoweFramework
         {
             if (eventArgs == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Event args is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Event args is invalid.");
             }
 
             HandleEvent(sender, eventArgs);
@@ -208,7 +208,7 @@ namespace HoweFramework
 
             if (noHandlerException)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"Event '{e.Id}' not allow no handler.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"Event '{e.Id}' not allow no handler.");
             }
         }
 

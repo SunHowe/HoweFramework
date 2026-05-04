@@ -19,12 +19,12 @@ namespace HoweFramework
             while (m_CurrentIndex < ChildCount)
             {
                 var result = ExecuteChild(m_CurrentIndex);
-                if (result == ErrorCode.BehaviorRunningState)
+                if (result == FrameworkErrorCode.BehaviorRunningState)
                 {
                     return result;
                 }
 
-                if (result == ErrorCode.Success)
+                if (result == FrameworkErrorCode.Success)
                 {
                     return result;
                 }
@@ -32,7 +32,7 @@ namespace HoweFramework
                 ++m_CurrentIndex;
             }
 
-            return ErrorCode.BehaviorTreeSelectorNoSuccess;
+            return FrameworkErrorCode.BehaviorTreeSelectorNoSuccess;
         }
 
         /// <summary>

@@ -26,7 +26,7 @@ namespace HoweFramework
         {
             if (eventArgs == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Event args is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Event args is invalid.");
             }
 
             var eventItem = EventItem.Create(eventArgs.Id, eventArgs, sender);
@@ -40,8 +40,14 @@ namespace HoweFramework
         {
             while (m_EventItemQueue.TryDequeue(out var eventItem))
             {
-                HandleEvent(eventItem.Sender, eventItem.EventArgs);
-                ReferencePool.Release(eventItem);
+                try
+                {
+                    HandleEvent(eventItem.Sender, eventItem.EventArgs);
+                }
+                finally
+                {
+                    ReferencePool.Release(eventItem);
+                }
             }
         }
 

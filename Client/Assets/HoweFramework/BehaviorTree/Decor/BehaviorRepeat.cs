@@ -29,7 +29,7 @@ namespace HoweFramework
         public override int Execute()
         {
             // 若上一次执行结果不是成功或运行状态，则返回上一次执行结果。
-            if (m_PreviousResult != ErrorCode.Success && m_PreviousResult != ErrorCode.BehaviorRunningState)
+            if (m_PreviousResult != FrameworkErrorCode.Success && m_PreviousResult != FrameworkErrorCode.BehaviorRunningState)
             {
                 return m_PreviousResult;
             }
@@ -37,13 +37,13 @@ namespace HoweFramework
             while (m_Times < RepeatCount)
             {
                 var result = ExecuteChild();
-                if (result == ErrorCode.BehaviorRunningState)
+                if (result == FrameworkErrorCode.BehaviorRunningState)
                 {
                     m_PreviousResult = result;
-                    return ErrorCode.BehaviorRunningState;
+                    return FrameworkErrorCode.BehaviorRunningState;
                 }
 
-                if (result != ErrorCode.Success)
+                if (result != FrameworkErrorCode.Success)
                 {
                     m_PreviousResult = result;
                     return result;
@@ -52,7 +52,7 @@ namespace HoweFramework
                 ++m_Times;
             }
 
-            return ErrorCode.Success;
+            return FrameworkErrorCode.Success;
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace HoweFramework
         public override void ResetState()
         {
             m_Times = 0;
-            m_PreviousResult = ErrorCode.Success;
+            m_PreviousResult = FrameworkErrorCode.Success;
             base.ResetState();
         }
 
@@ -71,7 +71,7 @@ namespace HoweFramework
         public override void Clear()
         {
             m_Times = 0;
-            m_PreviousResult = ErrorCode.Success;
+            m_PreviousResult = FrameworkErrorCode.Success;
             RepeatCount = 0;
             base.Clear();
         }
@@ -85,7 +85,7 @@ namespace HoweFramework
         {
             if (timesLimit <= 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "timesLimit must be greater than 0");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "timesLimit must be greater than 0");
             }
 
             var behaviorRepeat = ReferencePool.Acquire<BehaviorRepeat>();

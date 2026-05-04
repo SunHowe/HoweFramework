@@ -64,7 +64,10 @@ namespace HoweFramework
         /// </summary>
         public void Release()
         {
-            --m_RefCount;
+            if (m_RefCount > 0)
+            {
+                --m_RefCount;
+            }
         }
 
         public void Clear()
@@ -97,7 +100,7 @@ namespace HoweFramework
             while (m_TaskQueue.Count > 0)
             {
                 var task = m_TaskQueue.Dequeue();
-                task.TrySetException(new ErrorCodeException(ErrorCode.ResLoaderDisposed));
+                task.TrySetException(new ErrorCodeException(FrameworkErrorCode.ResLoaderDisposed));
             }
 
             ReferencePool.Release(this);
@@ -122,7 +125,7 @@ namespace HoweFramework
 
             m_Asset = asset;
             m_LoadState = 2;
-            AssetInstanceId = m_Asset != null ? AssetInstanceId.GetHashCode() : 0;
+            AssetInstanceId = m_Asset != null ? m_Asset.GetInstanceID() : 0;
 
             while (m_TaskQueue.Count > 0)
             {

@@ -62,12 +62,12 @@ namespace HoweFramework
         {
             if (weight <= 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, nameof(weight));
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, nameof(weight));
             }
 
             if (loadable == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, nameof(loadable));
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, nameof(loadable));
             }
 
             m_LoadableTasks.Add(LoadableTask.Create(loadable, weight));

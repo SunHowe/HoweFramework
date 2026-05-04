@@ -8,7 +8,7 @@ namespace HoweFramework
         /// <summary>
         /// 错误码。
         /// </summary>
-        public int ErrorCode { get; set; } = HoweFramework.ErrorCode.Unknown;
+        public int ErrorCode { get; set; } = HoweFramework.FrameworkErrorCode.Unknown;
 
         /// <summary>
         /// 执行。
@@ -17,7 +17,7 @@ namespace HoweFramework
         public override int Execute()
         {
             var result = ExecuteChild();
-            if (result == HoweFramework.ErrorCode.BehaviorRunningState)
+            if (result == HoweFramework.FrameworkErrorCode.BehaviorRunningState)
             {
                 return result;
             }
@@ -30,7 +30,7 @@ namespace HoweFramework
         /// </summary>
         /// <param name="errorCode">错误码。</param>
         /// <returns>返回行为树-总是失败装饰节点。</returns>
-        public static BehaviorAlwaysFailure Create(int errorCode = HoweFramework.ErrorCode.Unknown)
+        public static BehaviorAlwaysFailure Create(int errorCode = HoweFramework.FrameworkErrorCode.Unknown)
         {
             var behaviorAlwaysFailure = ReferencePool.Acquire<BehaviorAlwaysFailure>();
             behaviorAlwaysFailure.ErrorCode = errorCode;

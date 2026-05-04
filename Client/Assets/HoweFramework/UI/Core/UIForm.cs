@@ -134,7 +134,7 @@ namespace HoweFramework
             m_LoadId = 0;
             m_UIFormHelper = null;
             m_FormLogic = null;
-            InnerSetRequestResponse(CommonResponse.Create(ErrorCode.UIFormWhileDestroying));
+            InnerSetRequestResponse(CommonResponse.Create(FrameworkErrorCode.UIFormWhileDestroying));
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace HoweFramework
             if (!IsOpen)
             {
                 // 未打开，则触发异常。
-                throw new ErrorCodeException(ErrorCode.UIFormNotOpen);
+                throw new ErrorCodeException(FrameworkErrorCode.UIFormNotOpen);
             }
 
             if (IsVisible == visible)
@@ -183,7 +183,7 @@ namespace HoweFramework
         public void HandleOpenRequest(OpenFormRequest request)
         {
             // 使用错误码处理旧的请求。
-            InnerSetRequestResponse(CommonResponse.Create(ErrorCode.UIFormNewOpenRequest));
+            InnerSetRequestResponse(CommonResponse.Create(FrameworkErrorCode.UIFormNewOpenRequest));
             Request = request;
             request.OnSetResponse += OnRequestSetResponse;
             request.CancellationToken.Register(OnRequestCancel, request);
@@ -237,7 +237,7 @@ namespace HoweFramework
             if (!IsOpen)
             {
                 // 未打开，则触发异常。
-                throw new ErrorCodeException(ErrorCode.UIFormNotOpen);
+                throw new ErrorCodeException(FrameworkErrorCode.UIFormNotOpen);
             }
 
             if (IsVisible)
@@ -322,7 +322,7 @@ namespace HoweFramework
         {
             if (param is OpenFormRequest request && Request == request)
             {
-                request.SetResponse(CommonResponse.Create(ErrorCode.RequestCanceled));
+                request.SetResponse(CommonResponse.Create(FrameworkErrorCode.RequestCanceled));
             }
         }
 

@@ -94,7 +94,7 @@ namespace HoweFramework
         {
             if (s_TextTemplateHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Text template helper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Text template helper is not set.");
             }
 
             return s_TextTemplateHelper.ParseTemplate(template, getTemplateValue);
@@ -109,7 +109,7 @@ namespace HoweFramework
         {
             if (s_TextTemplateHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Text template helper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Text template helper is not set.");
             }
 
             s_TextTemplateHelper.AddGlobalTemplateValue(key, value);
@@ -123,7 +123,7 @@ namespace HoweFramework
         {
             if (s_TextTemplateHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Text template helper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Text template helper is not set.");
             }
 
             s_TextTemplateHelper.RemoveGlobalTemplateValue(key);

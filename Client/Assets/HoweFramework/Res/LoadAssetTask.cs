@@ -41,17 +41,17 @@ namespace HoweFramework
         {
             if (resLoader == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, nameof(resLoader));
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, nameof(resLoader));
             }
 
             if (string.IsNullOrEmpty(assetKey))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, nameof(assetKey));
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, nameof(assetKey));
             }
             
             if (assetType == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, nameof(assetType));
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, nameof(assetType));
             }
 
             var loadAssetTask = ReferencePool.Acquire<LoadAssetTask>();

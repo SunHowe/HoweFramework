@@ -18,7 +18,7 @@ namespace HoweFramework
         {
             if (m_Child != null)
             {
-                throw new ErrorCodeException(ErrorCode.BehaviorTreeDecorNodeAlreadyHasChild);
+                throw new ErrorCodeException(FrameworkErrorCode.BehaviorTreeDecorNodeAlreadyHasChild);
             }
 
             m_Child = child;
@@ -41,7 +41,7 @@ namespace HoweFramework
         {
             if (m_Child == null)
             {
-                return ErrorCode.BehaviorTreeDecorNodeNoChild;
+                return FrameworkErrorCode.BehaviorTreeDecorNodeNoChild;
             }
 
             return m_Child.Execute();

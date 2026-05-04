@@ -75,7 +75,7 @@ namespace HoweFramework
             var audioClip = soundAsset as AudioClip;
             if (audioClip == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, $"Sound asset '{soundAssetName}' is not a AudioClip.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, $"Sound asset '{soundAssetName}' is not a AudioClip.");
             }
 
             CheckSoundLimit(true);

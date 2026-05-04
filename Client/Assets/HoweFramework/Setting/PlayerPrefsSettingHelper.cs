@@ -65,7 +65,7 @@ namespace HoweFramework
         {
             if (results == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Results is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Results is invalid.");
             }
 
             results.Clear();

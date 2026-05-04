@@ -25,8 +25,13 @@ namespace HoweFramework
         /// </summary>
         /// <typeparam name="T">实例类型。</typeparam>
         /// <param name="instance">实例。</param>
-        public void Register<T>(T instance)
+        public void Register<T>(T instance) where T : class
         {
+            if (instance == null)
+            {
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Instance cannot be null.");
+            }
+
             m_RegistedDict[typeof(T)] = instance;
         }
 
@@ -105,37 +110,49 @@ namespace HoweFramework
         /// </summary>
         public void Inject(object instance)
         {
+            if (instance == null)
+            {
+                return;
+            }
+
             var type = instance.GetType();
             if (!m_InjectMemberDict.TryGetValue(type, out var memberInfos))
             {
                 var attributeType = typeof(InjectAttribute);
                 memberInfos = new List<MemberInfo>();
 
-                var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                foreach (var field in fields)
+                // 遍历类型层次，包括父类
+                var currentType = type;
+                while (currentType != null && currentType != typeof(object))
                 {
-                    if (!field.IsDefined(attributeType))
+                    var fields = currentType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    foreach (var field in fields)
                     {
-                        continue;
+                        if (!field.IsDefined(attributeType))
+                        {
+                            continue;
+                        }
+
+                        memberInfos.Add(field);
                     }
 
-                    memberInfos.Add(field);
-                }
-
-                var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                foreach (var property in properties)
-                {
-                    if (property.SetMethod == null)
+                    var properties = currentType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    foreach (var property in properties)
                     {
-                        continue;
+                        if (property.SetMethod == null || property.SetMethod.IsPrivate)
+                        {
+                            continue;
+                        }
+
+                        if (!property.IsDefined(attributeType))
+                        {
+                            continue;
+                        }
+
+                        memberInfos.Add(property);
                     }
 
-                    if (!property.IsDefined(attributeType))
-                    {
-                        continue;
-                    }
-
-                    memberInfos.Add(property);
+                    currentType = currentType.BaseType;
                 }
 
                 m_InjectMemberDict[type] = memberInfos;

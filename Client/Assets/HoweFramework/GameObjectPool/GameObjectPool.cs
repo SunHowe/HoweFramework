@@ -133,7 +133,7 @@ namespace HoweFramework
             var prefab = await m_ResLoader.LoadAssetAsync<GameObject>(assetKey, token);
             if (prefab == null)
             {
-                throw new ErrorCodeException(ErrorCode.ResNotFound, $"Load asset '{assetKey}' failed.");
+                throw new ErrorCodeException(FrameworkErrorCode.ResNotFound, $"Load asset '{assetKey}' failed.");
             }
 
             gameObject = Object.Instantiate(prefab);
@@ -175,7 +175,7 @@ namespace HoweFramework
             var prefab = await m_ResLoader.LoadAssetAsync<GameObject>(assetKey, token);
             if (prefab == null)
             {
-                throw new ErrorCodeException(ErrorCode.ResNotFound, $"Load asset '{assetKey}' failed.");
+                throw new ErrorCodeException(FrameworkErrorCode.ResNotFound, $"Load asset '{assetKey}' failed.");
             }
 
             while (count > 0)

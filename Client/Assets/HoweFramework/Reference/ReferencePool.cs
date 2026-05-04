@@ -33,7 +33,7 @@ namespace HoweFramework
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (!type.IsClass || !typeof(IReference).IsAssignableFrom(type))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Type is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Type is invalid.");
             }
 #endif
 
@@ -70,6 +70,10 @@ namespace HoweFramework
         /// </summary>
         public static void ClearAllCache()
         {
+            foreach (var cache in m_ReferenceCacheDict.Values)
+            {
+                cache.Clear();
+            }
             m_ReferenceCacheDict.Clear();
         }
 

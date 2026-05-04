@@ -22,7 +22,7 @@ namespace HoweFramework
         public override int Execute()
         {
             Log.Info(TextUtility.ParseTemplate(Message, GetContextValue));
-            return ErrorCode.Success;
+            return FrameworkErrorCode.Success;
         }
 
         /// <summary>

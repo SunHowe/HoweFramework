@@ -251,7 +251,7 @@ namespace HoweFramework
             {
                 if (dictionary == null)
                 {
-                    throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Dictionary is invalid.");
+                    throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Dictionary is invalid.");
                 }
 
                 m_Enumerator = dictionary.GetEnumerator();

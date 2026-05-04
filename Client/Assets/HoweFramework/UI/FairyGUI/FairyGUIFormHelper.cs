@@ -126,7 +126,7 @@ namespace HoweFramework
             var packageMapping = await m_ResLoader.LoadAssetAsync<UIPackageMapping>(assetKey);
             if (packageMapping == null)
             {
-                throw new ErrorCodeException(ErrorCode.UIPackageMappingNotFound);
+                throw new ErrorCodeException(FrameworkErrorCode.UIPackageMappingNotFound);
             }
 
             using var packageNameList = ReusableList<string>.Create();
@@ -192,7 +192,7 @@ namespace HoweFramework
                 return formBinding.Creator();
             }
 
-            throw new ErrorCodeException(ErrorCode.UIFormBindingNotFound, $"界面绑定信息[{uiFormId}]未找到。");
+            throw new ErrorCodeException(FrameworkErrorCode.UIFormBindingNotFound, $"界面绑定信息[{uiFormId}]未找到。");
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace HoweFramework
         {
             if (!m_FormBindingDict.TryGetValue(uiFormId, out var formBinding))
             {
-                throw new ErrorCodeException(ErrorCode.UIFormBindingNotFound, $"界面绑定信息[{uiFormId}]未找到。");
+                throw new ErrorCodeException(FrameworkErrorCode.UIFormBindingNotFound, $"界面绑定信息[{uiFormId}]未找到。");
             }
 
             var loadId = ++m_LoadId;
@@ -231,7 +231,7 @@ namespace HoweFramework
             {
                 if (obj == null)
                 {
-                    throw new ErrorCodeException(ErrorCode.UIFormInstantiateFailed, $"界面[{uiFormId}]实例化失败。");
+                    throw new ErrorCodeException(FrameworkErrorCode.UIFormInstantiateFailed, $"界面[{uiFormId}]实例化失败。");
                 }
 
                 if (token.IsCancellationRequested)
@@ -325,7 +325,7 @@ namespace HoweFramework
             var textAsset = await m_ResLoader.LoadAssetAsync<TextAsset>(packagePath);
             if (textAsset == null)
             {
-                throw new ErrorCodeException(ErrorCode.UIPackageNotFound, $"UI包[{packageName}]未找到。");
+                throw new ErrorCodeException(FrameworkErrorCode.UIPackageNotFound, $"UI包[{packageName}]未找到。");
             }
 
             var bytes = textAsset.bytes;

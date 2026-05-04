@@ -3,7 +3,7 @@ namespace HoweFramework
     /// <summary>
     /// 错误码。
     /// </summary>
-    public static class ErrorCode
+    public static class FrameworkErrorCode
     {
         /// <summary>
         /// 成功。

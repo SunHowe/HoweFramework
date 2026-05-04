@@ -30,12 +30,12 @@ namespace HoweFramework
         {
             if (m_WebRequestHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Web request helper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Web request helper is not set.");
             }
 
             if (string.IsNullOrEmpty(request.ContentType))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, "Content type is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Content type is not set.");
             }
 
             var (statusCode, responseBody) = await m_WebRequestHelper.Post(request.Url, request.RequestBody, request.Headers, request.ContentType, token);
@@ -57,7 +57,7 @@ namespace HoweFramework
         {
             if (m_WebRequestHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Web request helper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Web request helper is not set.");
             }
 
             var url = request.Url;
@@ -65,14 +65,18 @@ namespace HoweFramework
             if (request.Parameters.Count > 0)
             {
                 using var sb = ReusableStringBuilder.Create();
-                sb.AppendFormat("{0}?", url);
+                sb.AppendFormat("{0}", url);
                 var first = true;
                 foreach (var (key, value) in request.Parameters)
                 {
                     if (first)
                     {
-                        sb.Append("&");
+                        sb.Append("?");
                         first = false;
+                    }
+                    else
+                    {
+                        sb.Append("&");
                     }
 
                     sb.Append(key);
@@ -101,45 +105,45 @@ namespace HoweFramework
         {
             return statusCode switch
             {
-                (int)HttpStatusCode.BadRequest => ErrorCode.WebRequestBadRequest,
-                (int)HttpStatusCode.Unauthorized => ErrorCode.WebRequestUnauthorized,
-                (int)HttpStatusCode.PaymentRequired => ErrorCode.WebRequestPaymentRequired,
-                (int)HttpStatusCode.Forbidden => ErrorCode.WebRequestForbidden,
-                (int)HttpStatusCode.NotFound => ErrorCode.WebRequestNotFound,
-                (int)HttpStatusCode.MethodNotAllowed => ErrorCode.WebRequestMethodNotAllowed,
-                (int)HttpStatusCode.NotAcceptable => ErrorCode.WebRequestNotAcceptable,
-                (int)HttpStatusCode.ProxyAuthenticationRequired => ErrorCode.WebRequestProxyAuthenticationRequired,
-                (int)HttpStatusCode.RequestTimeout => ErrorCode.WebRequestRequestTimeout,
-                (int)HttpStatusCode.Conflict => ErrorCode.WebRequestConflict,
-                (int)HttpStatusCode.Gone => ErrorCode.WebRequestGone,
-                (int)HttpStatusCode.LengthRequired => ErrorCode.WebRequestLengthRequired,
-                (int)HttpStatusCode.PreconditionFailed => ErrorCode.WebRequestPreconditionFailed,
-                (int)HttpStatusCode.RequestEntityTooLarge => ErrorCode.WebRequestRequestEntityTooLarge,
-                (int)HttpStatusCode.RequestUriTooLong => ErrorCode.WebRequestRequestUriTooLong,
-                (int)HttpStatusCode.UnsupportedMediaType => ErrorCode.WebRequestUnsupportedMediaType,
-                (int)HttpStatusCode.RequestedRangeNotSatisfiable => ErrorCode.WebRequestRequestedRangeNotSatisfiable,
-                (int)HttpStatusCode.ExpectationFailed => ErrorCode.WebRequestExpectationFailed,
-                (int)HttpStatusCode.MisdirectedRequest => ErrorCode.WebRequestMisdirectedRequest,
-                (int)HttpStatusCode.UnprocessableEntity => ErrorCode.WebRequestUnprocessableEntity,
-                (int)HttpStatusCode.Locked => ErrorCode.WebRequestLocked,
-                (int)HttpStatusCode.FailedDependency => ErrorCode.WebRequestFailedDependency,
-                (int)HttpStatusCode.UpgradeRequired => ErrorCode.WebRequestUpgradeRequired,
-                (int)HttpStatusCode.PreconditionRequired => ErrorCode.WebRequestPreconditionRequired,
-                (int)HttpStatusCode.TooManyRequests => ErrorCode.WebRequestTooManyRequests,
-                (int)HttpStatusCode.RequestHeaderFieldsTooLarge => ErrorCode.WebRequestRequestHeaderFieldsTooLarge,
-                (int)HttpStatusCode.UnavailableForLegalReasons => ErrorCode.WebRequestUnavailableForLegalReasons,
-                (int)HttpStatusCode.InternalServerError => ErrorCode.WebRequestInternalServerError,
-                (int)HttpStatusCode.NotImplemented => ErrorCode.WebRequestNotImplemented,
-                (int)HttpStatusCode.BadGateway => ErrorCode.WebRequestBadGateway,
-                (int)HttpStatusCode.ServiceUnavailable => ErrorCode.WebRequestServiceUnavailable,
-                (int)HttpStatusCode.GatewayTimeout => ErrorCode.WebRequestGatewayTimeout,
-                (int)HttpStatusCode.HttpVersionNotSupported => ErrorCode.WebRequestHttpVersionNotSupported,
-                (int)HttpStatusCode.VariantAlsoNegotiates => ErrorCode.WebRequestVariantAlsoNegotiates,
-                (int)HttpStatusCode.InsufficientStorage => ErrorCode.WebRequestInsufficientStorage,
-                (int)HttpStatusCode.LoopDetected => ErrorCode.WebRequestLoopDetected,
-                (int)HttpStatusCode.NotExtended => ErrorCode.WebRequestNotExtended,
-                (int)HttpStatusCode.NetworkAuthenticationRequired => ErrorCode.WebRequestNetworkAuthenticationRequired,
-                _ => ErrorCode.Unknown,
+                (int)HttpStatusCode.BadRequest => FrameworkErrorCode.WebRequestBadRequest,
+                (int)HttpStatusCode.Unauthorized => FrameworkErrorCode.WebRequestUnauthorized,
+                (int)HttpStatusCode.PaymentRequired => FrameworkErrorCode.WebRequestPaymentRequired,
+                (int)HttpStatusCode.Forbidden => FrameworkErrorCode.WebRequestForbidden,
+                (int)HttpStatusCode.NotFound => FrameworkErrorCode.WebRequestNotFound,
+                (int)HttpStatusCode.MethodNotAllowed => FrameworkErrorCode.WebRequestMethodNotAllowed,
+                (int)HttpStatusCode.NotAcceptable => FrameworkErrorCode.WebRequestNotAcceptable,
+                (int)HttpStatusCode.ProxyAuthenticationRequired => FrameworkErrorCode.WebRequestProxyAuthenticationRequired,
+                (int)HttpStatusCode.RequestTimeout => FrameworkErrorCode.WebRequestRequestTimeout,
+                (int)HttpStatusCode.Conflict => FrameworkErrorCode.WebRequestConflict,
+                (int)HttpStatusCode.Gone => FrameworkErrorCode.WebRequestGone,
+                (int)HttpStatusCode.LengthRequired => FrameworkErrorCode.WebRequestLengthRequired,
+                (int)HttpStatusCode.PreconditionFailed => FrameworkErrorCode.WebRequestPreconditionFailed,
+                (int)HttpStatusCode.RequestEntityTooLarge => FrameworkErrorCode.WebRequestRequestEntityTooLarge,
+                (int)HttpStatusCode.RequestUriTooLong => FrameworkErrorCode.WebRequestRequestUriTooLong,
+                (int)HttpStatusCode.UnsupportedMediaType => FrameworkErrorCode.WebRequestUnsupportedMediaType,
+                (int)HttpStatusCode.RequestedRangeNotSatisfiable => FrameworkErrorCode.WebRequestRequestedRangeNotSatisfiable,
+                (int)HttpStatusCode.ExpectationFailed => FrameworkErrorCode.WebRequestExpectationFailed,
+                (int)HttpStatusCode.MisdirectedRequest => FrameworkErrorCode.WebRequestMisdirectedRequest,
+                (int)HttpStatusCode.UnprocessableEntity => FrameworkErrorCode.WebRequestUnprocessableEntity,
+                (int)HttpStatusCode.Locked => FrameworkErrorCode.WebRequestLocked,
+                (int)HttpStatusCode.FailedDependency => FrameworkErrorCode.WebRequestFailedDependency,
+                (int)HttpStatusCode.UpgradeRequired => FrameworkErrorCode.WebRequestUpgradeRequired,
+                (int)HttpStatusCode.PreconditionRequired => FrameworkErrorCode.WebRequestPreconditionRequired,
+                (int)HttpStatusCode.TooManyRequests => FrameworkErrorCode.WebRequestTooManyRequests,
+                (int)HttpStatusCode.RequestHeaderFieldsTooLarge => FrameworkErrorCode.WebRequestRequestHeaderFieldsTooLarge,
+                (int)HttpStatusCode.UnavailableForLegalReasons => FrameworkErrorCode.WebRequestUnavailableForLegalReasons,
+                (int)HttpStatusCode.InternalServerError => FrameworkErrorCode.WebRequestInternalServerError,
+                (int)HttpStatusCode.NotImplemented => FrameworkErrorCode.WebRequestNotImplemented,
+                (int)HttpStatusCode.BadGateway => FrameworkErrorCode.WebRequestBadGateway,
+                (int)HttpStatusCode.ServiceUnavailable => FrameworkErrorCode.WebRequestServiceUnavailable,
+                (int)HttpStatusCode.GatewayTimeout => FrameworkErrorCode.WebRequestGatewayTimeout,
+                (int)HttpStatusCode.HttpVersionNotSupported => FrameworkErrorCode.WebRequestHttpVersionNotSupported,
+                (int)HttpStatusCode.VariantAlsoNegotiates => FrameworkErrorCode.WebRequestVariantAlsoNegotiates,
+                (int)HttpStatusCode.InsufficientStorage => FrameworkErrorCode.WebRequestInsufficientStorage,
+                (int)HttpStatusCode.LoopDetected => FrameworkErrorCode.WebRequestLoopDetected,
+                (int)HttpStatusCode.NotExtended => FrameworkErrorCode.WebRequestNotExtended,
+                (int)HttpStatusCode.NetworkAuthenticationRequired => FrameworkErrorCode.WebRequestNetworkAuthenticationRequired,
+                _ => FrameworkErrorCode.Unknown,
             };
         }
 

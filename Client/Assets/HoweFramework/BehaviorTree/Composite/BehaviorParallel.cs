@@ -22,21 +22,21 @@ namespace HoweFramework
             {
                 for (int i = 0; i < ChildCount; i++)
                 {
-                    m_ChildResultList.Add(ErrorCode.BehaviorRunningState);
+                    m_ChildResultList.Add(FrameworkErrorCode.BehaviorRunningState);
                 }
             }
 
-            var result = ErrorCode.Success;
+            var result = FrameworkErrorCode.Success;
 
             for (int i = 0; i < ChildCount; i++)
             {
                 var childResult = m_ChildResultList[i];
-                if (childResult == ErrorCode.Success)
+                if (childResult == FrameworkErrorCode.Success)
                 {
                     continue;
                 }
 
-                if (childResult != ErrorCode.BehaviorRunningState)
+                if (childResult != FrameworkErrorCode.BehaviorRunningState)
                 {
                     result = childResult;
                     continue;
@@ -45,14 +45,14 @@ namespace HoweFramework
                 childResult = ExecuteChild(i);
                 m_ChildResultList[i] = childResult;
 
-                if (childResult == ErrorCode.Success)
+                if (childResult == FrameworkErrorCode.Success)
                 {
                     continue;
                 }
 
-                if (childResult == ErrorCode.BehaviorRunningState)
+                if (childResult == FrameworkErrorCode.BehaviorRunningState)
                 {
-                    if (result == ErrorCode.Success)
+                    if (result == FrameworkErrorCode.Success)
                     {
                         // 仅当其他节点都是成功，才允许返回Running状态。
                         result = childResult;

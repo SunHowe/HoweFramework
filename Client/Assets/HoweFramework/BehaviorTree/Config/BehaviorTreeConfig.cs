@@ -55,12 +55,12 @@ namespace HoweFramework
         {
             if (!NodeMap.TryGetValue(RootNodeId, out var rootNodeConfig))
             {
-                throw new ErrorCodeException(ErrorCode.BehaviorNodeConfigNotFound);
+                throw new ErrorCodeException(FrameworkErrorCode.BehaviorNodeConfigNotFound);
             }
 
             if (rootNodeConfig.CreateBehaviorNode() is not BehaviorRoot rootNode)
             {
-                throw new ErrorCodeException(ErrorCode.BehaviorNodeCreateFailed);
+                throw new ErrorCodeException(FrameworkErrorCode.BehaviorNodeCreateFailed);
             }
 
             using var checkNodeQueue = ReusableQueue<(IBehaviorNode, BehaviorNodeConfig)>.Create();
@@ -82,7 +82,7 @@ namespace HoweFramework
                     // 装饰节点和复合节点不能没有子节点。
                     if (decorNode != null || compositeNode != null)
                     {
-                        errorCode = ErrorCode.BehaviorNodeInvalid;
+                        errorCode = FrameworkErrorCode.BehaviorNodeInvalid;
                         break;
                     }
 
@@ -91,7 +91,7 @@ namespace HoweFramework
 
                 if (decorNode == null && compositeNode == null)
                 {
-                    errorCode = ErrorCode.BehaviorNodeInvalid;
+                    errorCode = FrameworkErrorCode.BehaviorNodeInvalid;
                     break;
                 }
 
@@ -100,21 +100,21 @@ namespace HoweFramework
                     // 装饰节点只能有一个子节点。
                     if (nodeConfig.ChildrenIds.Count > 1)
                     {
-                        errorCode = ErrorCode.BehaviorNodeInvalid;
+                        errorCode = FrameworkErrorCode.BehaviorNodeInvalid;
                         break;
                     }
 
                     var childId = nodeConfig.ChildrenIds[0];
                     if (!NodeMap.TryGetValue(childId, out var childNodeConfig))
                     {
-                        errorCode = ErrorCode.BehaviorNodeConfigNotFound;
+                        errorCode = FrameworkErrorCode.BehaviorNodeConfigNotFound;
                         break;
                     }
 
                     var childNode = childNodeConfig.CreateBehaviorNode();
                     if (childNode == null)
                     {
-                        errorCode = ErrorCode.BehaviorNodeCreateFailed;
+                        errorCode = FrameworkErrorCode.BehaviorNodeCreateFailed;
                         break;
                     }
 
@@ -130,14 +130,14 @@ namespace HoweFramework
                     {
                         if (!NodeMap.TryGetValue(childId, out var childNodeConfig))
                         {
-                            errorCode = ErrorCode.BehaviorNodeConfigNotFound;
+                            errorCode = FrameworkErrorCode.BehaviorNodeConfigNotFound;
                             break;
                         }
 
                         var childNode = childNodeConfig.CreateBehaviorNode();
                         if (childNode == null)
                         {
-                            errorCode = ErrorCode.BehaviorNodeCreateFailed;
+                            errorCode = FrameworkErrorCode.BehaviorNodeCreateFailed;
                             break;
                         }
 
@@ -156,7 +156,7 @@ namespace HoweFramework
                 else
                 {
                     // 有子节点的必须是装饰节点或复合节点。
-                    errorCode = ErrorCode.BehaviorNodeInvalid;
+                    errorCode = FrameworkErrorCode.BehaviorNodeInvalid;
                     break;
                 }
             }

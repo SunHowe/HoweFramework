@@ -61,7 +61,7 @@ namespace HoweFramework
             {
                 // 不符合目标类型时，若返回的是成功，则返回类型不匹配的错误。
                 response = ReferencePool.Acquire<T>();
-                response.ErrorCode = ErrorCode.ResponseTypeMismatch;
+                response.ErrorCode = FrameworkErrorCode.ResponseTypeMismatch;
                 raw.Dispose();
                 return response;
             }

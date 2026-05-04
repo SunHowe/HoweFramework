@@ -7,7 +7,7 @@
       "dependencies": {
         "com.unity.test-framework": "1.1.9"
       },
-      "hash": "c784f5a74d7e12162c72d7c2f2374036679abacf"
+      "hash": "1b8b6649ea7bbfee53130398b0211a42f03055e2"
     },
     "com.cysharp.memorypack": {
       "version": "https://github.com/Cysharp/MemoryPack.git?path=src/MemoryPack.Unity/Assets/MemoryPack.Unity#1.21.4",
@@ -35,14 +35,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "930232e66074eaad4ef66341b9ad0f9d6b22daae"
+      "hash": "58ac43aa79dcf66a4ca1176fd5871b80a3fc9668"
     },
     "com.howegame.fariygui.generator": {
       "version": "https://github.com/SunHowe/FairyGUI-CodeGenerator.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "cb5288cbbde1c5df8f9708003740e3949d3dd8d7"
+      "hash": "38726a7f0d01cc9623c7dd9c3bc11a127f71f314"
     },
     "com.smkplus.custom-toolbar": {
       "version": "https://github.com/smkplus/CustomToolbar.git",

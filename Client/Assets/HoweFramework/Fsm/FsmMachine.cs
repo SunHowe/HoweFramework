@@ -49,7 +49,7 @@ namespace HoweFramework
         {
             if (stateId == 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "状态id不能为0");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "状态id不能为0");
             }
 
             m_StateSet.Add(stateId);
@@ -67,7 +67,7 @@ namespace HoweFramework
 
             if (stateId != 0 && !m_StateSet.Contains(stateId))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"状态 {stateId} 不存在");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"状态 {stateId} 不存在");
             }
 
             if (CurrentState != 0)
@@ -103,17 +103,17 @@ namespace HoweFramework
         {
             if (stateId == 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "状态id不能为0");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "状态id不能为0");
             }
 
             if (!m_StateSet.Contains(stateId))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"状态 {stateId} 不存在");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"状态 {stateId} 不存在");
             }
 
             if (m_StateEnterHandlerDict.ContainsKey(stateId))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"状态进入处理函数 {stateId} 已存在");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"状态进入处理函数 {stateId} 已存在");
             }
 
             m_StateEnterHandlerDict[stateId] = handler;
@@ -129,17 +129,17 @@ namespace HoweFramework
         {
             if (stateId == 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "状态id不能为0");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "状态id不能为0");
             }
 
             if (!m_StateSet.Contains(stateId))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"状态 {stateId} 不存在");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"状态 {stateId} 不存在");
             }
 
             if (m_StateExitHandlerDict.ContainsKey(stateId))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, $"状态退出处理函数 {stateId} 已存在");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"状态退出处理函数 {stateId} 已存在");
             }
 
             m_StateExitHandlerDict[stateId] = handler;

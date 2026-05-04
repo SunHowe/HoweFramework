@@ -44,7 +44,7 @@ namespace HoweFramework
             {
                 if (packetHeader == null)
                 {
-                    throw new ErrorCodeException(ErrorCode.InvalidParam, "Packet header is invalid.");
+                    throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Packet header is invalid.");
                 }
 
                 Reset(packetHeader.PacketLength, packetHeader);
@@ -79,7 +79,7 @@ namespace HoweFramework
             {
                 if (targetLength < 0)
                 {
-                    throw new ErrorCodeException(ErrorCode.InvalidParam, "Target length is invalid.");
+                    throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Target length is invalid.");
                 }
 
                 m_Stream.Position = 0L;

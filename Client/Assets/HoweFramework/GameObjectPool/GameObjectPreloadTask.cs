@@ -49,17 +49,17 @@ namespace HoweFramework
         {
             if (gameObjectPool == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, nameof(gameObjectPool));
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, nameof(gameObjectPool));
             }
 
             if (string.IsNullOrEmpty(assetKey))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, nameof(assetKey));
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, nameof(assetKey));
             }
             
             if (count <= 0)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, nameof(count));
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, nameof(count));
             }
 
             var gameObjectPreloadTask = ReferencePool.Acquire<GameObjectPreloadTask>();

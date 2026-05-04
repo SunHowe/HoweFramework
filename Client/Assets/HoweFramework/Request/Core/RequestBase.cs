@@ -31,7 +31,7 @@ namespace HoweFramework
             {
                 if (token.IsCancellationRequested)
                 {
-                    return CommonResponse.Create(ErrorCode.RequestCanceled);
+                    return CommonResponse.Create(FrameworkErrorCode.RequestCanceled);
                 }
 
                 return await OnExecute(token);
@@ -44,7 +44,7 @@ namespace HoweFramework
             catch (Exception e)
             {
                 Log.Error($"Catch exception: {e.Message}\n{e.StackTrace}");
-                return CommonResponse.Create(ErrorCode.Exception);
+                return CommonResponse.Create(FrameworkErrorCode.Exception);
             }
             finally
             {

@@ -112,7 +112,7 @@ namespace HoweFramework
 
             if (resLoaderToken.IsCancellationRequested)
             {
-                throw new ErrorCodeException(ErrorCode.ResLoaderDisposed);
+                throw new ErrorCodeException(FrameworkErrorCode.ResLoaderDisposed);
             }
 
             if (token.IsCancellationRequested)
@@ -216,10 +216,10 @@ namespace HoweFramework
             {
                 if (operation.Status == EOperationStatus.Succeed)
                 {
-                    throw new ErrorCodeException(ErrorCode.ResSceneAlreadyLoaded);
+                    throw new ErrorCodeException(FrameworkErrorCode.ResSceneAlreadyLoaded);
                 }
 
-                throw new ErrorCodeException(ErrorCode.ResSceneLoading);
+                throw new ErrorCodeException(FrameworkErrorCode.ResSceneLoading);
             }
 
             operation = m_ResourcePackage.LoadSceneAsync(sceneAssetName, LoadSceneMode.Additive);
@@ -231,7 +231,7 @@ namespace HoweFramework
             {
                 operation.Release();
                 m_SceneHandlerDict.Remove(sceneAssetName);
-                throw new ErrorCodeException(ErrorCode.ResSceneLoadFailed);
+                throw new ErrorCodeException(FrameworkErrorCode.ResSceneLoadFailed);
             }
 
             return operation.SceneObject;
@@ -246,17 +246,17 @@ namespace HoweFramework
         {
             if (m_UnloadSceneOperationDict.ContainsKey(sceneAssetName))
             {
-                throw new ErrorCodeException(ErrorCode.ResSceneUnloading);
+                throw new ErrorCodeException(FrameworkErrorCode.ResSceneUnloading);
             }
 
             if (!m_SceneHandlerDict.TryGetValue(sceneAssetName, out var operation))
             {
-                throw new ErrorCodeException(ErrorCode.ResSceneNotLoad);
+                throw new ErrorCodeException(FrameworkErrorCode.ResSceneNotLoad);
             }
 
             if (operation.Status != EOperationStatus.Succeed)
             {
-                throw new ErrorCodeException(ErrorCode.ResSceneLoading);
+                throw new ErrorCodeException(FrameworkErrorCode.ResSceneLoading);
             }
 
             m_SceneHandlerDict.Remove(sceneAssetName);
@@ -268,7 +268,7 @@ namespace HoweFramework
 
             if (unloadOperation.Status != EOperationStatus.Succeed)
             {
-                throw new ErrorCodeException(ErrorCode.ResSceneUnloadFailed);
+                throw new ErrorCodeException(FrameworkErrorCode.ResSceneUnloadFailed);
             }
 
             operation.Release();

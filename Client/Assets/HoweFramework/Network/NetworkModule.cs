@@ -99,12 +99,12 @@ namespace HoweFramework
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam);
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam);
             }
             
             if (!string.IsNullOrEmpty(DefaultChannelName))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Default channel name has been set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Default channel name has been set.");
             }
 
             var channel = CreateNetworkChannel(name, serviceType, networkChannelHelper);

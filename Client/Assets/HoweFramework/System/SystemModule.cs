@@ -72,7 +72,7 @@ namespace HoweFramework
             var systemType = typeof(T);
             if (m_SystemCache.ContainsKey(systemType))
             {
-                throw new ErrorCodeException(ErrorCode.FrameworkException, $"系统 {systemType.Name} 已注册。");
+                throw new ErrorCodeException(FrameworkErrorCode.FrameworkException, $"系统 {systemType.Name} 已注册。");
             }
 
             system.Init();
@@ -90,7 +90,7 @@ namespace HoweFramework
             var systemType = typeof(T);
             if (!m_SystemCache.TryGetValue(systemType, out var system))
             {
-                throw new ErrorCodeException(ErrorCode.FrameworkException, $"系统 {systemType.Name} 未注册。");
+                throw new ErrorCodeException(FrameworkErrorCode.FrameworkException, $"系统 {systemType.Name} 未注册。");
             }
 
             m_SystemCache.Remove(systemType);

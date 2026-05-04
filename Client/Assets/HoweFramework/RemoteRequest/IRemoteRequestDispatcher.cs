@@ -25,6 +25,6 @@ namespace HoweFramework
         /// 中断所有请求。
         /// </summary>
         /// <param name="errorCode">错误码。</param>
-        void InterruptAllRequests(int errorCode = ErrorCode.RequestCanceled);
+        void InterruptAllRequests(int errorCode = FrameworkErrorCode.RequestCanceled);
     }
 }

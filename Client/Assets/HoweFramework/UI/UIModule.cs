@@ -81,12 +81,12 @@ namespace HoweFramework
         {
             if (m_UIFormGroupDict.ContainsKey(groupId))
             {
-                throw new ErrorCodeException(ErrorCode.UIFormGroupAlreadyExists);
+                throw new ErrorCodeException(FrameworkErrorCode.UIFormGroupAlreadyExists);
             }
 
             if (m_UIFormGroupHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.UIFormGroupHelperNotSet);
+                throw new ErrorCodeException(FrameworkErrorCode.UIFormGroupHelperNotSet);
             }
 
             var instance = m_UIFormGroupHelper.CreateUIFormGroupInstance(groupName);
@@ -107,7 +107,7 @@ namespace HoweFramework
                 return uiFormGroup;
             }
 
-            throw new ErrorCodeException(ErrorCode.UIFormGroupNotExist);
+            throw new ErrorCodeException(FrameworkErrorCode.UIFormGroupNotExist);
         }
 
         /// <summary>
@@ -208,13 +208,13 @@ namespace HoweFramework
                     // 创建界面。
                     if (m_UIFormHelper == null)
                     {
-                        throw new ErrorCodeException(ErrorCode.UIFormHelperNotSet);
+                        throw new ErrorCodeException(FrameworkErrorCode.UIFormHelperNotSet);
                     }
 
                     var uiFormLogic = m_UIFormHelper.CreateUIFormLogic(request.FormId);
                     if (uiFormLogic == null)
                     {
-                        throw new ErrorCodeException(ErrorCode.UIFormLogicNotFound);
+                        throw new ErrorCodeException(FrameworkErrorCode.UIFormLogicNotFound);
                     }
 
                     uiForm = CreateUIForm(request.FormId);
@@ -244,7 +244,7 @@ namespace HoweFramework
             catch (Exception e)
             {
                 Log.Error($"处理UI打开请求时发生异常：{e.Message}\n{e.StackTrace}");
-                request.SetResponse(CommonResponse.Create(ErrorCode.Exception));
+                request.SetResponse(CommonResponse.Create(FrameworkErrorCode.Exception));
             }
         }
 
@@ -260,7 +260,7 @@ namespace HoweFramework
                 if (uiForm == null)
                 {
                     // 界面未打开。
-                    request.SetResponse(CommonResponse.Create(ErrorCode.UIFormNotOpen));
+                    request.SetResponse(CommonResponse.Create(FrameworkErrorCode.UIFormNotOpen));
                     return;
                 }
 
@@ -280,7 +280,7 @@ namespace HoweFramework
                 CacheUIForm(uiForm);
 
                 // 设置请求成功。
-                request.SetResponse(CommonResponse.Create(ErrorCode.Success));
+                request.SetResponse(CommonResponse.Create(FrameworkErrorCode.Success));
             }
             catch (ErrorCodeException e)
             {
@@ -290,7 +290,7 @@ namespace HoweFramework
             catch (Exception e)
             {
                 Log.Error($"处理UI关闭请求时发生异常：{e.Message}\n{e.StackTrace}");
-                request.SetResponse(CommonResponse.Create(ErrorCode.Exception));
+                request.SetResponse(CommonResponse.Create(FrameworkErrorCode.Exception));
             }
         }
 
@@ -310,14 +310,16 @@ namespace HoweFramework
                         while (node != null)
                         {
                             var form = node.Value;
-                            node = node.Next;
+                            var nextNode = node.Next;
                             if (!form.IsAllowControlCloseByFramework)
                             {
+                                node = nextNode;
                                 continue;
                             }
 
                             form.CloseImmediate();
-                            m_UIFormOpenedList.Remove(node.Previous);
+                            m_UIFormOpenedList.Remove(node);
+                            node = nextNode;
                         }
                     }
                     break;

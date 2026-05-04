@@ -37,7 +37,7 @@ namespace HoweFramework
         {
             if (string.IsNullOrEmpty(sceneAssetName))
             {
-                throw new ErrorCodeException(ErrorCode.InvalidParam, nameof(sceneAssetName));
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, nameof(sceneAssetName));
             }
 
             var loadSceneTask = ReferencePool.Acquire<LoadSceneTask>();

@@ -44,7 +44,7 @@ namespace HoweFramework
         /// <param name="jsonHelper">Json 辅助器。</param>
         public static void SetJsonHelper(IJsonHelper jsonHelper)
         {
-            s_JsonHelper = jsonHelper ?? throw new ErrorCodeException(ErrorCode.InvalidParam, "Json helper is invalid.");
+            s_JsonHelper = jsonHelper ?? throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Json helper is invalid.");
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace HoweFramework
         {
             if (s_JsonHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Json helper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Json helper is not set.");
             }
 
             return s_JsonHelper.ToJson(obj);
@@ -84,7 +84,7 @@ namespace HoweFramework
         {
             if (s_JsonHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Json helper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Json helper is not set.");
             }
 
             return s_JsonHelper.ToObject<T>(json);
@@ -100,7 +100,7 @@ namespace HoweFramework
         {
             if (s_JsonHelper == null)
             {
-                throw new ErrorCodeException(ErrorCode.InvalidOperationException, "Json helper is not set.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "Json helper is not set.");
             }
 
             return s_JsonHelper.ToObject(objectType, json);
