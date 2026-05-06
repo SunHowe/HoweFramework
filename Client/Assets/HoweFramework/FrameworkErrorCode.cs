@@ -322,25 +322,6 @@ namespace HoweFramework
 
         #endregion
 
-        #region [Login]
-
-        /// <summary>
-        /// 重复登录。
-        /// </summary>
-        public const int LoginDuplicate = 801;
-
-        /// <summary>
-        /// 未登录。
-        /// </summary>
-        public const int NoLogin = 802;
-
-        /// <summary>
-        /// 登录认证失败。
-        /// </summary>
-        public const int LoginAuthFailed = 803;
-
-        #endregion
-
         #region [BehaviorTree]
 
         /// <summary>
