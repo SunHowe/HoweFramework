@@ -36,5 +36,20 @@ namespace GameMain
         /// 未知错误。
         /// </summary>
         public const int Unknown = FrameworkErrorCode.Unknown;
+
+        /// <summary>
+        /// 框架错误码最大值。
+        /// </summary>
+        public const int FrameworkErrorCodeMax = FrameworkErrorCode.FrameworkErrorCodeMax;
+
+        /// <summary>
+        /// 服务器错误码最大值。
+        /// </summary>
+        public const int ServerErrorCodeMax = Protocol.ServerErrorCode.ServerErrorCodeMax;
+
+        /// <summary>
+        /// 客户端错误码最小值。
+        /// </summary>
+        public const int ClientErrorCodeMin = ServerErrorCodeMax + 1;
     }
 }

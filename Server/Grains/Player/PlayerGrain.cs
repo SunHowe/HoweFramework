@@ -1,5 +1,4 @@
 using IGrains;
-using Protocol;
 using ServerProtocol;
 
 namespace Grains;
@@ -24,7 +23,7 @@ public class PlayerGrain : Grain, IPlayerGrain
         {
             // 无协议处理器.
             Console.WriteLine($"No handler for protocol: {package.ProtocolId} rpcId={package.RpcId}");
-            await sessionGrain.SendResponse(package.RpcId, HoweFramework.ErrorCode.NetworkNotSupportPacket);
+            await sessionGrain.SendResponse(package.RpcId, ErrorCode.NetworkNotSupportPacket);
             return;
         }
 
@@ -33,7 +32,7 @@ public class PlayerGrain : Grain, IPlayerGrain
         {
             // 协议解析失败.
             Console.WriteLine($"Failed to unpack protocol: {package.ProtocolId} rpcId={package.RpcId}");
-            await sessionGrain.SendResponse(package.RpcId, HoweFramework.ErrorCode.NetworkDeserializePacketError);
+            await sessionGrain.SendResponse(package.RpcId, ErrorCode.NetworkDeserializePacketError);
             return;
         }
 

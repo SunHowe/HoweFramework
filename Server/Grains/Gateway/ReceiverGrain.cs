@@ -38,7 +38,7 @@ public class ReceiverGrain : Grain, IReceiverGrain
             if (m_IsLoginSucess)
             {
                 // 重复登录.
-                await sessionGrain.SendResponse(package.RpcId, HoweFramework.ErrorCode.LoginDuplicate);
+                await sessionGrain.SendResponse(package.RpcId, ServerErrorCode.LoginDuplicate);
                 return;
             }
 
@@ -69,7 +69,7 @@ public class ReceiverGrain : Grain, IReceiverGrain
                 m_IsLoginSucess = false;
                 m_UserId = Guid.Empty;
                 Console.WriteLine(e);
-                await sessionGrain.SendResponse(package.RpcId, HoweFramework.ErrorCode.Exception);
+                await sessionGrain.SendResponse(package.RpcId, ServerErrorCode.Exception);
             }
 
             return;
@@ -80,7 +80,7 @@ public class ReceiverGrain : Grain, IReceiverGrain
         {
             // 未登录成功不允许请求其他包.
             var sessionGrain = GrainFactory.GetGrain<ISessionGrain>(this.GetPrimaryKey());
-            await sessionGrain.SendResponse(package.RpcId, HoweFramework.ErrorCode.NoLogin);
+            await sessionGrain.SendResponse(package.RpcId, ServerErrorCode.NoLogin);
             return;
         }
 

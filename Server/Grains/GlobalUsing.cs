@@ -1,1 +1,1 @@
-﻿global using ErrorCode = HoweFramework.ErrorCode;
+﻿global using ErrorCode = Protocol.ServerErrorCode;

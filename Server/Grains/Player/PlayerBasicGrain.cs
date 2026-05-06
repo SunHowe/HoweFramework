@@ -39,7 +39,7 @@ public class PlayerBasicGrain : PlayerFeatureGrain<PlayerBasicState>, IPlayerBas
     {
         if (string.IsNullOrEmpty(name))
         {
-            throw new GameException(ErrorCode.InvalidParam);
+            throw new GameException(ServerErrorCode.InvalidParam);
         }
 
         State.Name = name;

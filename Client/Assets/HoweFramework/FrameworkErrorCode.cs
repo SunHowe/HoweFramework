@@ -375,5 +375,10 @@ namespace HoweFramework
         public const int BehaviorNodeInvalid = 910;
 
         #endregion
+
+        /// <summary>
+        /// 框架错误码最大值。
+        /// </summary>
+        public const int FrameworkErrorCodeMax = 9999;
     }
 }

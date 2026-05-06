@@ -33,7 +33,7 @@ public class OfficialAccountLoginGrain : Grain<OfficialAccountState>, IOfficialA
 
         if (State.PasswordHash != passwordHash)
         {
-            throw new GameException(HoweFramework.ErrorCode.LoginAuthFailed);
+            throw new GameException(ErrorCode.LoginAuthFailed);
         }
         
         return State.UserId;
