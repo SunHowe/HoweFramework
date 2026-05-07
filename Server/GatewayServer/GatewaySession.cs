@@ -22,10 +22,12 @@ public class GatewaySession : TcpSession
     private readonly ConcurrentQueue<ServerPackage> messageQueue = new();
     private readonly SemaphoreSlim queueLock = new(1, 1);
     private bool m_IsConnected;
+    private readonly GatewayReceiveState m_ReceiveState;
 
     public GatewaySession(TcpServer server, IClusterClient clusterClient) : base(server)
     {
         m_ClusterClient = clusterClient;
+        m_ReceiveState = new(OnReceivedServerPackage);
     }
 
     protected override void OnConnected()
@@ -46,14 +48,18 @@ public class GatewaySession : TcpSession
     {
         try
         {
-            var package = ParseMessage(buffer, offset, size);
-            messageQueue.Enqueue(package);
-            _ = ProcessQueueAsync().ConfigureAwait(false);
+            m_ReceiveState.Handle(buffer, offset, size);
         }
         catch (Exception e)
         {
             Console.WriteLine($"Gateway Session({Id}) caught an exception: {e}");
         }
+    }
+
+    private void OnReceivedServerPackage(ServerPackage package)
+    {
+        messageQueue.Enqueue(package);
+        _ = ProcessQueueAsync().ConfigureAwait(false);
     }
 
     protected override void OnError(SocketError error)
@@ -114,12 +120,7 @@ public class GatewaySession : TcpSession
                 if (message.ProtocolId == (int)ProtocolId.Heartbeat)
                 {
                     // 心跳包，直接返回一个应答包。
-                    var heartbeat = new Heartbeat
-                    {
-                        UnixTime = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()
-                    };
-
-                    Send(heartbeat);
+                    Send(Heartbeat.Create(new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()));
                     continue;
                 }
 
@@ -142,36 +143,6 @@ public class GatewaySession : TcpSession
                 await ProcessQueueAsync().ConfigureAwait(false);
             }
         }
-    }
-
-    private ServerPackage ParseMessage(byte[] buffer, long offset, long size)
-    {
-        // 确保有足够的数据读取头部
-        var headerSize = Marshal.SizeOf<RequestHeader>();
-        if (size < headerSize)
-        {
-            throw new Exception("Invalid protocol size");
-        }
-
-        // 读取消息头
-        RequestHeader header;
-        unsafe
-        {
-            fixed (byte* pBuffer = buffer)
-            {
-                header = *(RequestHeader*)(pBuffer + offset);
-            }
-        }
-
-        // 检查消息长度是否匹配
-        if (size != headerSize + header.BodyLength)
-        {
-            throw new Exception("Protocol length mismatch");
-        }
-
-        // 读取消息体.
-        var bodySpan = buffer.AsSpan((int)(offset + headerSize), header.BodyLength);
-        return GatewayServerPackageHelper.Pack(header, bodySpan.ToArray());
     }
 
     private Task OnReceiveGameServerPackage(ServerPackage package, StreamSequenceToken token)
@@ -198,9 +169,9 @@ public class GatewaySession : TcpSession
         Send(responseHeader, bytes);
     }
 
-    private void Send(in ResponseHeader header, byte[]? body)
+    private void Send(in ProtocolHeader header, byte[]? body)
     {
-        var headerSize = Marshal.SizeOf<ResponseHeader>();
+        var headerSize = ProtocolHeaderHelper.HeaderLength;
         var size = headerSize + header.BodyLength;
 
         Console.WriteLine($"Gateway Session({Id}) preparing to send: headerSize={headerSize}, bodySize={header.BodyLength}, totalSize={size}, IsConnected={m_IsConnected}");
@@ -215,19 +186,16 @@ public class GatewaySession : TcpSession
         var buffer = ArrayPool<byte>.Shared.Rent(size);
         try
         {
-            unsafe
-            {
-                fixed (byte* pBuffer = buffer)
-                {
-                    *(ResponseHeader*)pBuffer = header;
-                }
-            }
+            // 序列化协议头。
+            ProtocolHeaderHelper.Serialize(header, buffer, 0);
 
+            // 序列化协议体。
             if (body != null)
             {
                 Array.Copy(body, 0, buffer, headerSize, header.BodyLength);
             }
-            
+
+            // 发送数据。
             var sendSize = Send(buffer, 0, size);
             Console.WriteLine($"Gateway Session({Id}) send to client: header={header}, sendSize={sendSize}, expectedSize={size}, IsConnected={m_IsConnected}");
         }
@@ -238,6 +206,7 @@ public class GatewaySession : TcpSession
         }
         finally
         {
+            // 释放缓冲区。
             ArrayPool<byte>.Shared.Return(buffer);
         }
     }

@@ -8,7 +8,7 @@ public static class GatewayServerPackageHelper
     /// <summary>
     /// 根据协议头和协议body数据创建传输对象.
     /// </summary>
-    public static ServerPackage Pack(in RequestHeader header, byte[] body)
+    public static ServerPackage Pack(in ProtocolHeader header, byte[] body)
     {
         return new ServerPackage
         {
@@ -21,23 +21,23 @@ public static class GatewayServerPackageHelper
     /// <summary>
     /// 根据传输对象解析出协议头和协议body.
     /// </summary>
-    public static void Unpack(ServerPackage package, out ResponseHeader responseHeader, out byte[]? bytes)
+    public static void Unpack(ServerPackage package, out ProtocolHeader responseHeader, out byte[]? bytes)
     {
         bytes = package.ProtocolBody;
 
         if (package.RpcId != 0)
         {
-            responseHeader = new ResponseHeader
+            responseHeader = new ProtocolHeader
             {
                 ProtocolId = package.ProtocolId,
                 RpcId = package.RpcId,
-                ErrorCode = package.ErrorCode,
+                Param = package.ErrorCode,
                 BodyLength = (ushort)(package.ProtocolBody?.Length ?? 0),
             };
         }
         else
         {
-            responseHeader = new ResponseHeader
+            responseHeader = new ProtocolHeader
             {
                 ProtocolId = package.ProtocolId,
                 BodyLength = (ushort)(package.ProtocolBody?.Length ?? 0),

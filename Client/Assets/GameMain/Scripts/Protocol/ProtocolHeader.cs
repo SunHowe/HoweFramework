@@ -3,22 +3,26 @@
 namespace Protocol
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct RequestHeader
+    public struct ProtocolHeader
     {
+        /// <summary>
+        /// 协议ID。
+        /// </summary>
         public ushort ProtocolId;
-        public ushort BodyLength;
-        
-        public int RpcId;
-        public int MagicNumber;
-    }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ResponseHeader
-    {
-        public ushort ProtocolId;
+        /// <summary>
+        /// 包体长度。
+        /// </summary>
         public ushort BodyLength;
         
+        /// <summary>
+        /// 请求ID。
+        /// </summary>
         public int RpcId;
-        public int ErrorCode;
+
+        /// <summary>
+        /// 参数。在请求时是MagicNumber，在响应时是ErrorCode。
+        /// </summary>
+        public int Param;
     }
 }

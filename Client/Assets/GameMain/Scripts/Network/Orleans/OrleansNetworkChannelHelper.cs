@@ -113,12 +113,13 @@ namespace GameMain
 
             customErrorData = null;
 
-            var header = ReferencePool.Acquire<OrleansPacketHeader>();
-            header.ProtocolId = BitConverter.ToUInt16(m_PacketHeaderBuffer, 0);
-            header.BodyLength = BitConverter.ToUInt16(m_PacketHeaderBuffer, 2);
-            header.RpcId = BitConverter.ToInt32(m_PacketHeaderBuffer, 4);
-            header.ErrorCode = BitConverter.ToInt32(m_PacketHeaderBuffer, 8);
-            return header;
+            if (!ProtocolHeaderHelper.TryDeserialize(m_PacketHeaderBuffer.AsSpan(), out var header))
+            {
+                customErrorData = new ErrorCodeException(FrameworkErrorCode.NetworkDeserializePacketHeaderError, "Packet header is invalid.");
+                return null;
+            }
+
+            return OrleansPacketHeader.Create(header);
         }
 
         public override void PrepareForConnecting()
@@ -148,31 +149,31 @@ namespace GameMain
                 throw new ErrorCodeException(FrameworkErrorCode.NetworkSerializeError, "Only accept IRemoteRequest Packet.");
             }
 
-            // 写入协议id(ushort)。
-            destination.Write(BitConverter.GetBytes(packet.Id), 0, 2);
-
-            // 偏移包体长度(ushort)。
-            var seekPosition = destination.Position;
-            destination.Seek(2, SeekOrigin.Current);
-
-            // 写入请求id(int)。
-            destination.Write(BitConverter.GetBytes(remoteRequest.RequestId), 0, 4);
-
-            // 写入魔法数字(int)。
-            var magicNumber = 0x12345678 ^ packet.Id ^ remoteRequest.RequestId;
-            destination.Write(BitConverter.GetBytes(magicNumber), 0, 4);
-
             // 序列化包体内容。
             var bytes = MemoryPackSerializer.Serialize(packet.GetType(), packet);
+            if (bytes.Length > OrleansPacketHeader.PacketBodyLengthLimit)
+            {
+                throw new ErrorCodeException(FrameworkErrorCode.NetworkSerializeError, "Packet body length is too long.");
+            }
+
+            var packetId = (ushort)packet.Id;
+            var bodyLength = (ushort)bytes.Length;
+
+            // 计算魔法数字。
+            var magicNumber = 0x12345678 ^ packetId ^ remoteRequest.RequestId;
+            var header = new ProtocolHeader
+            {
+                ProtocolId = packetId,
+                BodyLength = bodyLength,
+                RpcId = remoteRequest.RequestId,
+                Param = magicNumber,
+            };
+            
+            // 写入header。
+            ProtocolHeaderHelper.Serialize(header, destination);
+
+            // 写入包体内容。
             destination.Write(bytes, 0, bytes.Length);
-            var endPosition = destination.Position;
-
-            // 偏移回包体长度写入位置，写入包体长度。
-            destination.Seek(seekPosition, SeekOrigin.Begin);
-            destination.Write(BitConverter.GetBytes(bytes.Length), 0, 2);
-
-            // 偏移回结尾位置。
-            destination.Seek(endPosition, SeekOrigin.Begin);
 
             return true;
         }

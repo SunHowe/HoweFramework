@@ -1,4 +1,5 @@
 using HoweFramework;
+using Protocol;
 
 namespace GameMain
 {
@@ -7,38 +8,50 @@ namespace GameMain
     /// </summary>
     public class OrleansPacketHeader : IPacketHeader, IReference
     {
-        public const int PacketHeaderLength = 12;
+        public const int PacketHeaderLength = ProtocolHeaderHelper.PacketHeaderLength;
 
-        public const int PacketBodyLengthLimit = 65536;
+        public const int PacketBodyLengthLimit = ProtocolHeaderHelper.PacketBodyLengthLimit;
 
-        public int PacketLength => BodyLength;
+        /// <summary>
+        /// 包体长度。
+        /// </summary>
+        public int PacketLength => m_Header.BodyLength;
 
         /// <summary>
         /// 协议ID。
         /// </summary>
-        public ushort ProtocolId { get; set; }
-
-        /// <summary>
-        /// 协议包体长度。
-        /// </summary>
-        public ushort BodyLength { get; set; }
+        public ushort ProtocolId 
+        {
+            get => m_Header.ProtocolId;
+            set => m_Header.ProtocolId = value;
+        }
 
         /// <summary>
         /// 请求ID。
         /// </summary>
-        public int RpcId { get; set; }
-
+        public int RpcId => m_Header.RpcId;
+        
         /// <summary>
         /// 错误码。
         /// </summary>
-        public int ErrorCode { get; set; }
+        public int ErrorCode => m_Header.Param;
+
+        private ProtocolHeader m_Header;
 
         public void Clear()
         {
-            BodyLength = 0;
-            ProtocolId = 0;
-            RpcId = 0;
-            ErrorCode = 0;
+            m_Header = default;
+        }
+
+        /// <summary>
+        /// 创建协议头。
+        /// </summary>
+        /// <param name="header">协议头。</param>
+        public static OrleansPacketHeader Create(in ProtocolHeader header)
+        {
+            var instance = ReferencePool.Acquire<OrleansPacketHeader>();
+            instance.m_Header = header;
+            return instance;
         }
     }
 }
