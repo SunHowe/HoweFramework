@@ -8,6 +8,7 @@ namespace HoweFramework.Editor
     /// </summary>
     public class CollectTexture : IFilterRule
     {
+        public string FindAssetType => "Texture2D";
         public bool IsCollectAsset(FilterRuleData data)
         {
             var textureImporter = AssetImporter.GetAtPath(data.AssetPath) as TextureImporter;

@@ -9,6 +9,7 @@ namespace HoweFramework.Editor
     /// </summary>
     public class CollectTextAsset : IFilterRule
     {
+        public string FindAssetType => "TextAsset";
         public bool IsCollectAsset(FilterRuleData data)
         {
             return AssetDatabase.LoadAssetAtPath<TextAsset>(data.AssetPath) != null;
