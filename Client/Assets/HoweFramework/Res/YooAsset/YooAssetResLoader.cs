@@ -21,7 +21,7 @@ namespace HoweFramework
 
         private readonly Dictionary<string, AssetItemInfo> m_AssetItemDict = new();
         private readonly Dictionary<string, AssetHandle> m_AssetHandlerDict = new();
-        private readonly Dictionary<string, SceneHandle> m_SceneHandlerDict = new();
+        private readonly Dictionary<string, YooAsset.SceneHandle> m_SceneHandlerDict = new();
         private readonly Dictionary<string, UnloadSceneOperation> m_UnloadSceneOperationDict = new();
         private CancellationTokenSource m_CancellationTokenSource;
 
