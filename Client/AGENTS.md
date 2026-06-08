@@ -38,6 +38,6 @@ $CLI editor log --message "Hello" --logType Warning
 - 当前项目 C# 语言版本要求：兼容 C# 9.0，禁止使用更高版本语法。
 
 **当前能力状态**:
-- Harness 能力快照：`.aibridge/harness/capabilities.json`。RootRule 只提供 compact 摘要；工作流任务需要确认能力时先用 `$CLI harness status` compact 输出，仅在缺失、过期或任务需要未确认能力时读取完整 snapshot 或运行完整探测。已选助手：codex。Skill 根目录：.codex/skills。Code Index：enabled。外部 agent/sub-agent 能力：Unity 无法判断，按 unknown 处理。
+- Harness 能力快照：`.aibridge/harness/capabilities.json`。RootRule 只提供 compact 摘要；工作流任务需要确认能力时先用 `$CLI harness status` compact 输出，仅在缺失、过期或任务需要未确认能力时读取完整 snapshot 或运行完整探测。已选助手：codex, cursor。Skill 根目录：.codex/skills, .cursor/skills。Code Index：enabled。外部 agent/sub-agent 能力：Unity 无法判断，按 unknown 处理。
 - Code Index：已启用。C# 代码查找或源码导航中，只要查询可表达为符号、定义、引用、实现、派生类型、调用者或诊断查询，应优先加载 `aibridge-code-index`。Unity 已导入资源或脚本资源的名称/类型查找中，当 AIBridge 和 Editor 可用时使用 `asset search/find --format paths`。字面量内容、模糊文本、非 C# 仓库文件、任意路径正则或 Code Index/AIBridge 不可用时使用 `rg`。
 <!-- AIBRIDGE:END -->

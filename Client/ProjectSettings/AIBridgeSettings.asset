@@ -36,7 +36,7 @@ MonoBehaviour:
   - TargetId: codex
     Selected: 1
   - TargetId: cursor
-    Selected: 0
+    Selected: 1
   - TargetId: cline
     Selected: 0
   assistantSkillRootDirectories: []
