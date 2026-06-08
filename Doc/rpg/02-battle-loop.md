@@ -43,7 +43,7 @@
 ### 1.3 关键约束
 
 - **不要把"应用级流程"放进 Fsm** —— 主城 ↔ 战斗的切换走 `ProcedureModule`。
-- **不要把"单个实体的状态"放进 Fsm** —— 中毒 / 封印走 `StateComponent`。
+- **不要把"单个实体的状态"放进 Fsm** —— 中毒 / 封印 = `StateComponent`(底层"集合机制)+ **Provider**(典型 = buff,自己持有 duration)。详见 [`05-state-component.md`](05-state-component.md) 和 [`06-buff-system.md`](06-buff-system.md)。
 - **Fsm 不持久化** —— `Dispose` 必须归还到引用池。
 
 ---
@@ -163,9 +163,11 @@ ATB(Active Time Battle) / 半即时模式:
 
 ### 5.2 实现位置
 
-- 持续回合数 → 在 `StatusEffectComponent`(业务外置)里维护。
-- Tick 触发 → 在 `RoundStart` / `RoundEnd` 状态里触发。
-- 每秒 tick → 在 `GameTimerManager.AddTimer` 里触发。
+> 详见 [`05-state-component.md`](05-state-component.md) 和 [`06-buff-system.md`](06-buff-system.md) 的完整 Provider 模式。
+
+- 持续回合数 → 在 **Provider**(典型 = `Buff`)上维护,不在 StateComponent 上。
+- Tick 触发 → 业务层"回合开始"事件遍历**所有活跃 Provider**,每个 Provider 自己减计时 + 自己做效果。
+- 每秒 tick → Provider 自己用 `GameTimerManager.AddTimer`(短倒计时)|StateComponent 不持有时间。
 
 ---
 

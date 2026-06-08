@@ -20,19 +20,70 @@
 
 ---
 
-## 坑 2:`StateComponent` 引用计数 vs `Dictionary<int, bool>`
+## 坑 2:`StateComponent` 不是 buff —— 是底层"集合"基础设施
 
-**症状**:用 `Dictionary<int, int>` 存"buff 名 → 持续回合",丢"是谁施加的"信息。
+> **架构澄清**(高优先级):`StateComponent` 是**玩法底层基础设施**,**不**等于 buff。`StateComponent` 只关心"我当下有什么 stateId";持续时间 / 效果 / 驱散 —— 这些是 **Provider 的属性**,不是 StateComponent 的。
 
-**正解**:
-- `StateComponent` 用"状态 id + provider 对象"作为 key,多个 provider 可同时施加同一状态。
-- **只有当一个 stateId 的所有 provider 都被 Remove 后,状态才真正消失**。
-- 天然处理"两个 buff 都加中毒,最后一个被驱散才算驱散"。
+**症状**:把 `StateComponent` 当成 buff 自己 —— 试图给它加 duration / tick / dispellable 字段,试图在它内部"持续 N 回合"。
 
-**常见误用 3 种**:
-1. 用 `Dictionary<int, int>` 存"buff 名 → 持续回合" —— 丢失"施加者是谁"。
-2. 误以为 `RemoveState(stateId)` 不带 provider 参数就够了 —— 会误删其他 provider 加的状态。**应该始终带 provider**。
-3. 把"中毒"用 `bool` 表示 —— 应该用 `int stateId`(普通中毒 / 高级中毒 可合并)。
+**正解架构**:
+```
+StateComponent(底层基础设施)
+   ↑ AddState(stateId, provider)
+   ↑ RemoveState(stateId, provider)
+Provider(状态来源 / 主人)—— 持有 duration / tick / dispellable
+   ↑
+   ├── Buff 实例(中毒 3 回合 / 隐身 5 回合 …)
+   ├── Skill Effect(法术命中后的灼烧)
+   ├── Death Flag(倒地 / 死亡 / 鬼魂)
+   └── 其他业务自定义来源
+```
+
+**`StateComponent` 真正职责**(就 3 条):
+1. **(stateId, provider) 复合键的集合成员关系** —— 当前哪些 stateId 处于活跃
+2. **按 provider 引用计数** —— 多 provider 同时施加 → 全部 Remove 才真正退出
+3. **状态切换通知** —— `Subscribe(stateId, Action<bool>, ...)` 给 UI / AI / 录像
+
+**`StateComponent` 不持有的职责**(全归 Provider):
+- ❌ 持续时间(回合数 / 秒数)—— Provider 自己持有
+- ❌ Tick 逻辑(中毒扣血 / 灼烧伤害)—— Provider 自己实现
+- ❌ 驱散规则(能否被净化)—— Provider 自己属性
+- ❌ owner / source(谁施加的 / 施加在谁身上)—— Provider 自己持有
+- ❌ 等级(普通 / 高级中毒)—— Provider 自己区分,`StateComponent` 不区分
+
+**常见误用 4 种**:
+1. ❌ 用 `Dictionary<int, int>` 存"buff 名 → 持续回合" —— 丢失"施加者是谁"信息,且把 buff 和 state 混为一谈。
+2. ❌ 误以为 `RemoveState(stateId)` 不带 provider 参数就够了 —— 会误删其他 provider 加的状态。**应该始终带 provider**。
+3. ❌ 把"中毒"用 `bool` 表示 —— 应该用 `int stateId`,Provider 区分等级(普通 / 高级中毒 = 两个 Provider + 同一 stateId)。
+4. ❌ **把持续时间塞进 `StateComponent`** —— StateComponent 是集合机制,不持有时间。这**不是 bug**,是设计 —— 时间是 Provider 的属性。详见坑 7。
+
+---
+
+## 坑 2.5(架构澄清):Provider 模式 vs "一切皆状态"反模式
+
+> 这一条是高优先级 —— 框架层设计意图。
+
+**反模式("一切皆状态")**:
+- 把"buff 效果 / 持续时间 / Tick 逻辑"全塞进 `StateComponent`
+- 把"技能命中后的灼烧"也做成 state
+- 把"装备光环"也做成 state
+- 结果:`StateComponent` 膨胀成万能类,失去"集合机制"的纯粹性
+
+**正解模式("Provider 是来源")**:
+- `StateComponent` 只关心"我当下有什么 stateId"
+- 每个 stateId 的来源(buff / skill effect / flag / 光环 / …)都是 **Provider**
+- Provider 自己持有 duration / tick / dispellable / source / level
+- Provider 决定何时调 `AddState / RemoveState`
+- 多 Provider 同时施加同一 stateId → 全部 Remove 才真正退出(底层机制天然处理)
+
+**典型场景对比**:
+
+| 场景 | 反模式 | 正解 |
+|------|--------|------|
+| "中毒 3 回合" | `StateComponent.AddState(PoisonId, this)` 然后在 StateComponent 内置回合倒数 | `BuffPoison(target, source, duration=3)` 初始化时调 `AddState(PoisonId, this)`,自己持有 `RemainingRounds`,到期调 `RemoveState` |
+| "法术命中灼烧" | 在 StateComponent 内挂 "灼烧" 字段 + Tick | `EffectBurn(target, source, damagePerTick, duration=3)` 自己持有 duration + damage,ToString 时调 `AddState(Burning, this)` |
+| "装备光环" | 在 StateComponent 内挂 "光环" 字段 | `EquipmentAura(owner, auraId)` 在 owner 进入 / 离开时对周围实体调 `AddState(AuraId, this)` |
+| "倒地标记" | 在 StateComponent 内挂 "已倒地" 字段 | `DeathFlag(target, deathType)` 自己持有死亡类型,直接调 `AddState(Dead, this)` |
 
 ---
 
@@ -101,14 +152,63 @@
 
 ---
 
-## 坑 7:"持续 N 回合"塞进 `StateComponent` 内部
+## 坑 7:"持续 N 回合"是 Provider 的事,不是 `StateComponent` 的事
 
-**症状**:误以为 `StateComponent` 自带回合倒数,实际上不会。
+**症状**:误以为 `StateComponent` 自带回合倒数,在它内部找持续时间字段,找不到 → 觉得是 bug,自己加字段。
 
-**正解**:
-- `StateComponent` 不知道回合,它的职责是"在 / 不在"。
-- 持续回合需要**业务层外置**(经典 `StatusEffectComponent` 模式,见 [`extension-points.md`](extension-points.md) §7)。
-- 在"回合开始"事件里手动检查 / 减计 / 移除。
+**正解(架构澄清)**:
+- `StateComponent` **是底层基础设施**,不是 buff 自己。**它的职责是"集合(set)成员关系追踪"**,**不**持有持续时间。
+- 持续时间是 **Provider 自己持有**的,不是 StateComponent 的。
+- **典型 Provider = Buff 实例**(典型 Provider 见坑 2.5)。
+- Provider 决定何时调 `StateComponent.AddState / RemoveState` —— 持续时间到 0 时,Provider 自己调 `RemoveState`。
+- 业务层"回合开始"事件遍历**所有活跃 Provider**,每个 Provider 自己减 / 检持续时间,**不**遍历 `StateComponent`。
+
+**典型模式**(参考实现,不是绑定):
+
+```csharp
+public class BuffPoison {
+    public int RemainingRounds;
+    public IGameEntity Target;
+    public object Caster;
+    
+    public void OnApply() {
+        Target.GetComponent<StateComponent>().AddState(StatusId.Poison, this);
+    }
+    
+    public void OnTick(BattleContext ctx) {
+        // 每回合减持续 + 扣血
+        RemainingRounds--;
+        Target.GetComponent<ResourceComponent>().Modify(ResourceId.HP, -10);
+    }
+    
+    public void OnRemove() {
+        // 持续时间到 / 被驱散 / owner 死亡 → Provider 自己决定退出
+        Target.GetComponent<StateComponent>().RemoveState(StatusId.Poison, this);
+    }
+}
+
+// 业务层"回合开始"事件
+foreach (var buff in ctx.AllActiveBuffs) {
+    buff.OnTick(ctx);
+    if (buff.RemainingRounds <= 0) buff.OnRemove();
+}
+```
+
+**关键点**:`StateComponent` 完全不感知持续时间。持续时间是 **BuffPoison 这个 Provider 自己持有的**。
+
+**反模式**(❌):
+```csharp
+// 试图在 StateComponent 内置持续时间字段 → 错误!
+// 错 1:StateComponent.AddState(id, provider, duration) ← 这是设计错位
+// 错 2:在 StateComponent 内置 _durations:Dictionary<int,int> ← 这是把状态机制当成 buff 实现
+```
+
+**正解(✅)**:
+- `StateComponent` 保持纯粹的"集合机制"
+- 持续时间在 Provider(`BuffPoison` 等)上
+- 多 Provider 共享同一 stateId → StateComponent 引用计数天然处理
+
+**详细模式见 [`Doc/rpg/05-state-component.md`](rpg/05-state-component.md) 和 [`Doc/rpg/06-buff-system.md`](rpg/06-buff-system.md)`。
 
 ---
 

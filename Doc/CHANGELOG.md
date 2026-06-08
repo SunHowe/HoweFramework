@@ -4,6 +4,37 @@
 
 ---
 
+## 2026-06-08 (2) · 架构修正:StateComponent ≠ buff,buff = Provider
+
+**触发事件**:用户指出沉淀的 `Doc/primitives.md` 1.5 章节、`Doc/gotchas.md` 坑 2 / 7、`Doc/decision-guide.md` 决策 2、`Doc/rpg/05-status.md` 存在架构层面的概念错误 —— `StateComponent` **不**等于 buff,它是玩法底层的"集合"基础设施;buff 是 **Provider** 的一种,自己持有 duration / tick / dispellable / source / level。
+
+**修正清单**:
+
+| 位置 | 改动 |
+|------|------|
+| `Doc/primitives.md` 1.5 | 重写 StateComponent 描述:从"buff 风格的引用计数布尔状态"改为"底层基础设施 / 集合机制 / 不持有时间效果驱散";新增"Provider 是什么"小节 |
+| `Doc/gotchas.md` 坑 2 | 重写为"`StateComponent` 不是 buff —— 是底层'集合'基础设施";新增坑 2.5(Provider 模式 vs "一切皆状态"反模式)|
+| `Doc/gotchas.md` 坑 7 | 重写理由:从"`StateComponent` 不知道回合"改为"持续时间是 Provider 的事,不是 `StateComponent` 的事" |
+| `Doc/decision-guide.md` 决策 2 | 重构为"`StateComponent` 和'持续回合的 buff'是什么关系",明确 Provider 模式 |
+| `Doc/rpg/05-status.md` | **删除**,替换为两个新文件 |
+| `Doc/rpg/05-state-component.md` | **新增** —— 专门讲 StateComponent 本身的设计骨架 |
+| `Doc/rpg/06-buff-system.md` | **新增** —— 专门讲 buff 作为典型 Provider 的完整实现 |
+| `Doc/rpg/06/07/08` → `07/08/09` | 重编号 + 内容加交叉引用 |
+| `Doc/rpg/README.md` | 更新章节列表、决策原则、映射表 |
+| `Doc/rpg/CHANGELOG.md` | 记录此次架构修正 |
+| `Doc/README.md` | RPG 索引小节维持不变(已经指向 rpg/) |
+
+**沉淀原则强化**(本次修正):
+
+| 沉淀 | 不沉淀 |
+|------|--------|
+| ✅ StateComponent 是底层基础设施(不等于 buff) | ❌ 把 buff 效果塞进 StateComponent |
+| ✅ buff = Provider 的一种(自己持有 duration / tick / dispellable) | ❌ 持续时间塞进 StateComponent |
+| ✅ Provider 自己决定何时 AddState / RemoveState | ❌ StateComponent 自己持有时间 |
+| ✅ 业务层"回合开始"事件遍历所有活跃 Provider | ❌ 遍历 StateComponent 找持续时间 |
+
+---
+
 ## 2026-06-08 · 初始沉淀
 
 **触发事件**:完成"基于 HoweFramework 的回合制 RPG 战斗系统渐进式教程"研究(详见 `20260608-111523-howegame-rpg/turn_001/`),交付 `final.md`(1413 行 / ~13000 字 / 64KB)。沉淀出框架分析层文档。

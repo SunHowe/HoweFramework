@@ -1,6 +1,8 @@
-# 07 · 愤怒、特技与物品
+# 08 · 愤怒、特技与物品
 
 > 本章沉淀回合制 RPG 的愤怒 / 特技 / 药品系统设计 —— 不含具体游戏数值,只沉淀"为什么这样设计"。
+>
+> **架构澄清**:本章涉及的所有"中毒 / 灼烧 / 隐身 / 加血"等持续效果,都是 **Provider**(典型 = buff)。详见 [`06-buff-system.md`](06-buff-system.md) 和 [`05-state-component.md`](05-state-component.md)。
 
 ---
 
@@ -313,23 +315,17 @@ target.GetComponent<ResourceComponent>().Modify(ResourceId.HP, 30);
 | 上限固定(150) | 上限绑定基础属性 |
 | `AngerComponent`(自定义)| `ResourceComponent`(内置)|
 
-### 5.2 愤怒 vs 状态
+### 5.2 愤怒 vs 状态(state / Provider)
 
-| 愤怒 | 状态 |
-|------|------|
-| 累积式(数值) | 在 / 不在(布尔)|
-| 持续整个战斗 | 持续 N 回合 |
-| 跟资源系统关联 | 跟 buff / debuff 关联 |
+> 详见 [`05-state-component.md`](05-state-component.md) 和 [`06-buff-system.md`](06-buff-system.md)。
 
-### 5.3 特技 vs 状态
+| 愤怒 | 状态(state) | buff Provider |
+|------|-------------|--------------|
+| 累积式(数值) | 在 / 不在(集合成员关系) | 业务对象,持有 duration |
+| 持续整个战斗 | 持续 N 回合 | 自己持有 RemainingRounds |
+| 跟资源系统关联 | 跟 StateComponent 关联 | 跟 StateComponent 协作 |
 
-| 特技 | 状态 |
-|------|------|
-| 主动消耗愤怒 | 持续 N 回合 |
-| 释放后清 0 | 自动 Tick |
-| 由技能系统触发 | 由状态系统触发 |
-
-### 5.4 愤怒系统的常见反模式
+### 5.3 愤怒系统的常见反模式
 
 | 反模式 | 问题 |
 |--------|------|

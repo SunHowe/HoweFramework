@@ -1,6 +1,8 @@
-# 08 · 通用规则与边界情况
+# 09 · 通用规则与边界情况
 
 > 本章沉淀回合制 RPG 的通用规则 + 边界情况 —— 不含具体游戏数值,只沉淀"为什么这样处理"。
+>
+> **架构澄清**:本章涉及的"中毒 / 灼烧 / 隐身 / 倒地 / 死亡"等持续状态,都是 **Provider**(典型 = buff)。详见 [`05-state-component.md`](05-state-component.md) 和 [`06-buff-system.md`](06-buff-system.md)。
 
 ---
 
@@ -25,7 +27,7 @@
 | **队伍上限** | 常见 5 人(部分游戏 4-6 人) |
 | **每人有 1 宠** | 玩家可携带 1 只召唤兽参战 |
 | **NPC 队伍上限** | 常见 14 个怪(部分游戏 6-20 个)|
-| **阵法生效条件** | 5 人队才生效(详见 `06-pet-and-formation.md`)|
+| **阵法生效条件** | 5 人队才生效(详见 [`07-pet-and-formation.md`](07-pet-and-formation.md))|
 
 ### 1.3 召唤兽规则
 
@@ -33,9 +35,9 @@
 |------|------|
 | **参战人数** | 玩家每人 1 宠 |
 | **召唤** | 进入战斗时召唤 / 战斗中召唤 |
-| **死亡** | 当回合不可出战 |
+| **死亡** | 当回合不可出战(用 `DeathFlag` Provider,见 [`06-buff-system.md`](06-buff-system.md) §6)|
 | **复活** | 战斗结束 / 复活技能 |
-| **鬼魂系** | 可复活(次数限制)|
+| **鬼魂系** | 可复活(次数限制,也是 Provider)|
 
 ### 1.4 胜负规则
 
@@ -57,12 +59,26 @@
 | **死亡**(NPC / 召唤兽)| NPC HP=0 | 当回合不可再出战 | 一般不可复活 |
 | **鬼魂**(特殊 NPC)| 鬼魂系 HP=0 | 可复活(次数限制)| 战斗结束前复活不算死亡 |
 
-### 2.2 三种状态的实现
+### 2.2 三种状态的实现(典型 Provider 模式)
+
+详见 [`06-buff-system.md`](06-buff-system.md) §6 "特殊 buff(倒地 / 死亡 / 鬼魂)"。
 
 ```csharp
-// 倒地 = StateComponent.AddState(StatusId.Down, "self")
-// 死亡 = StateComponent.AddState(StatusId.Dead, "self")
-// 鬼魂 = StateComponent.AddState(StatusId.Ghost, "self")
+// 典型实现:每个特殊状态都是一个 Provider
+public class DownFlag : IBuffProvider {
+    public int StateId => StatusId.Down;
+    // ... 详见 06-buff-system.md
+}
+
+public class DeathFlag : IBuffProvider {
+    public int StateId => StatusId.Dead;
+    // ... 详见 06-buff-system.md
+}
+
+public class GhostFlag : IBuffProvider {
+    public int StateId => StatusId.Ghost;
+    // ... 详见 06-buff-system.md
+}
 ```
 
 ### 2.3 三种状态的 UI 表现
@@ -83,7 +99,7 @@
 
 | 规则 | 描述 |
 |------|------|
-| **倒地时所有状态失效** | 倒地后,角色此前所有状态(异常 / 临时 / 辅助)失效 |
+| **倒地时所有状态失效** | 倒地后,角色此前所有 buff / Provider 失效(Provider 自己 `OnRemove`)|
 | **战斗结束仍未救起 → 判真死** | 玩家倒地 + 战斗结束未救起 = 真死(扣经验 / 金钱 / 物品) |
 | **NPC 死亡当回合不可出战** | 召唤兽 / NPC 死亡后,本回合仍占位置但不出手 |
 | **鬼魂系复活次数限制** | 部分游戏的鬼魂系有"复活次数"上限,过了就真死 |
@@ -230,10 +246,14 @@ ctx.Dispose();
 
 ### 6.3 保护的实现
 
+保护 = 一个 Provider(典型 = `BuffProtecting`),详见 [`06-buff-system.md`](06-buff-system.md)。
+
 ```csharp
-// 保护 = StateComponent.AddState(StatusId.Protecting, "self")
-// 当目标受到物理攻击时,先检查"是否有队友 Protecting 状态"
-// 如果有,伤害转给 Protecting 者
+// 保护 = 创建一个 BuffProtecting Provider
+var protecting = m_Context.BuffPool.Acquire<BuffProtecting>(protector, caster, duration=1);
+protecting.OnApply(ctx);
+// 当目标受到物理攻击时,先检查"是否有 BuffProtecting Provider 在队友身上"
+// 如果有,伤害转给保护者
 ```
 
 ### 6.4 保护 vs 防御
@@ -270,11 +290,11 @@ ctx.Dispose();
 
 ### 7.3 指令被禁用
 
-某些状态可能禁用某些指令:
-- 被封 → 无法放法术
-- 沉默 → 无法放技能
-- 嘲讽 → 强制只能攻击嘲讽者
-- 混乱 → 随机选择目标
+某些状态(Provider)可能禁用某些指令:
+- 被封(`BuffSeal`)→ 无法放法术
+- 沉默(`BuffSilence`)→ 无法放技能
+- 嘲讽(`BuffTaunt`)→ 强制只能攻击嘲讽者
+- 混乱(`BuffConfusion`)→ 随机选择目标
 
 ### 7.4 指令冲突
 
@@ -291,7 +311,7 @@ ctx.Dispose();
 |------|----------|
 | **HP / MP** | 是(战斗内)|
 | **愤怒** | 是(战斗内)|
-| **buff / debuff** | 持续 N 回合(可能跨回合)|
+| **buff / Provider** | 持续 N 回合(可能跨回合)|
 | **倒计时** | 持续 N 秒(可能跨回合)|
 | **复活标记** | 是(到下次复活时间) |
 
@@ -402,12 +422,12 @@ ctx.Dispose();
 沉淀的不是具体某款 RPG 的通用规则数值,**而是这些规则的"设计骨架"**:
 
 1. **战斗核心规则** —— 每回合 1 次行动 / 按速度排序 / 30s 指令窗口 / 150 回合上限。
-2. **HP=0 三态边界** —— 倒地 / 死亡 / 鬼魂(独立处理)。
+2. **HP=0 三态边界** —— 倒地 / 死亡 / 鬼魂(独立处理,典型用 Provider 模式,见 [`06-buff-system.md`](06-buff-system.md) §6)。
 3. **掉线 / 强退处理** —— 离线托管 AI / 战斗结束才判掉线。
 4. **战斗触发方式** —— 明雷 / 暗雷 / 强制。
 5. **战斗结束清理** —— 销毁实体 / 关 UI / Dispose Context。
-6. **保护机制** —— 仅挡物理 / 1 次挡 1 次。
-7. **半自动指令边界** —— 锁定 / 超时 / 被禁用。
+6. **保护机制** —— 仅挡物理 / 1 次挡 1 次(用 `BuffProtecting` Provider)。
+7. **半自动指令边界** —— 锁定 / 超时 / 被禁用(用 Provider 状态禁用指令)。
 8. **跨回合持久化** —— 安全引用 `GameEntityRef`。
 9. **录像回放** —— 存 seed + 操作序列。
 10. **MMORPG 网络** —— 服务端权威 + 状态同步 + 延迟容忍。

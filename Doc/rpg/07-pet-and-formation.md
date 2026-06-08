@@ -1,4 +1,4 @@
-# 06 · 召唤兽与阵法
+# 07 · 召唤兽与阵法
 
 > 本章沉淀回合制 RPG 的召唤兽 + 阵法系统设计 —— 不含具体游戏数值,只沉淀"为什么这样设计"。
 
@@ -138,7 +138,7 @@ petInstance.Hp = hpLeft;  // 同步回本体
 
 ### 1.5.3 召唤兽死亡
 
-- 召唤兽 HP=0 → 死亡(详见 `08-rules-and-edge-cases.md`)
+召唤兽 HP=0 → **死亡**(典型实现:用 `DeathFlag` Provider,见 [`06-buff-system.md`](06-buff-system.md) §6):
 - 当回合不可再出战
 - 战斗结束 → 复活 / 不可复活
 
@@ -158,7 +158,7 @@ petInstance.Hp = hpLeft;  // 同步回本体
 Root (Selector)
   ├─ Sequence: 残血(HP<30%)
   │     ├─ Condition: HP < 30%
-  │     ├─ Action: 加血技能
+  │     ├─ Action: 加血技能(给自己施 buff Provider,见 06-buff-system.md)
   │     └─ Action: 防御
   ├─ Sequence: 主人危险(主人 HP<50%)
   │     ├─ Condition: 主人 HP < 50%
@@ -168,6 +168,8 @@ Root (Selector)
         ├─ Action: 选血最少敌人
         └─ Action: 选最强技能
 ```
+
+> **重要**:召唤兽身上的 buff / 持续效果**都是 Provider**(典型 = buff),不是 state 本身。详见 [`06-buff-system.md`](06-buff-system.md)。
 
 ## 1.7 召唤兽的"内丹"
 
@@ -192,7 +194,7 @@ Root (Selector)
 | 升级 | 自动(战斗后获经验)| 手动(任务 / 战斗)|
 | 装备 | 召唤兽专用装备 | 玩家装备 |
 | 技能 | 自带 + 学习 | 升级学 |
-| 死亡 | 当回合不可出战 | 倒地(可救起)|
+| 死亡 | 当回合不可出战(用 DeathFlag Provider)| 倒地(可救起,见 [`06-buff-system.md`](06-buff-system.md) §6) |
 | 永久死亡 | 可能(部分游戏)| 不会 |
 
 ### 1.8.2 召唤兽的"稀有度"
@@ -407,7 +409,7 @@ formation.Modify(NumericId.速度, NumericSubType.FinalPercent, +1500);  // +15%
 1. **4 大要素** —— 资质 / 成长 / 技能 / 内丹。
 2. **参战副本模式** —— 本体持久化,战斗副本临时。
 3. **召唤兽 AI** —— 行为树(残血 / 保护主人 / 默认)。
-4. **召唤兽死亡规则** —— 当回合不可出战,战斗结束复活。
+4. **召唤兽死亡规则** —— 当回合不可出战,死亡用 `DeathFlag` Provider(见 [`06-buff-system.md`](06-buff-system.md) §6)。
 
 ### 阵法:
 1. **阵法 = 站位 + 属性加成 + 相克** —— 队伍层级的策略。

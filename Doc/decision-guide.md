@@ -18,24 +18,74 @@
 
 ---
 
-## 决策 2:buff 用 `StateComponent` 还是自写 `Dictionary<int, int>`(持续回合)?
+## 决策 2:`StateComponent` 和"持续回合的 buff"是什么关系?
 
-**答**:`StateComponent` + **自己外置持续回合表**(`StatusEffectComponent`)。
+> **重要架构澄清**(高优先级):`StateComponent` 是**底层基础设施**,**不**等于 buff。**持续时间 / 效果 / 驱散 —— 都是 Provider 的属性,不是 StateComponent 的**。本决策不是"用不用 StateComponent",而是"Provider 怎么设计 + 持续回合放在哪里"。
 
-**理由**:
-- `StateComponent` 本身**不知道回合**,它的职责是"在不在"。持续回合需要业务层维护。
-- 多个 provider 同时施加同一状态(两个 buff 都加中毒),`StateComponent` 天然引用计数处理 —— 自己手写 Dictionary 会丢"施加者是谁"信息,没法分别移除。
-- 不同等级中毒(普通 / 高级)用同一 `stateId` + 不同 provider,自然合并。
+**答**:用 `StateComponent` 做"集合机制",用 **Provider 类**(典型 = `Buff`)持有持续时间。Provider 自己决定何时调 `StateComponent.AddState / RemoveState`。
 
-**典型代码**(伪代码,具体见 `extension-points.md`):
+**为什么"持续回合"不在 StateComponent**:
+- `StateComponent` 是底层"集合成员关系"基础设施,**只**关心"我当下有什么 stateId"
+- 它**不知道**回合、不知道效果、不知道驱散规则 —— 这些**都是 Provider 的职责**
+- Provider(典型 = `Buff` 实例)自己持有 `RemainingRounds`,自己决定何时调 `RemoveState`
+
+**为什么不用 `Dictionary<int, int>`(反例)**:
+- ❌ 用 `Dictionary<int, int>` 存"buff 名 → 持续回合" —— 丢失"施加者是谁"信息
+- ❌ 自己手写 Dictionary 没法处理"两个 buff 同时施加中毒,各自保留持续时间,各自的 provider Remove 时分别清理"
+- ❌ 不知道"buff 来源是技能 A 还是技能 B",没法做"驱散 buffA 的中毒,不影响 buffB 的中毒"
+
+**正解架构**(Provider 模式):
 ```
-public class StatusEffectComponent {
-    private Dictionary<int, StatusInstanceList> m_Active;
-    public void TickAll(BattleContext ctx) {
-        // 每回合减少持续回合 → 到 0 调 StateComponent.RemoveState
+StateComponent
+   ↑ AddState(stateId, provider)       ← provider = Provider 实例
+   ↑ RemoveState(stateId, provider)
+Provider(典型 = BuffPoison 实例)
+   ↑ 自己持有 RemainingRounds / Tick / Dispellable
+```
+
+**典型代码**(伪代码,完整见 [`Doc/rpg/06-buff-system.md`](rpg/06-buff-system.md)):
+
+```csharp
+// ✅ Provider 持有持续时间
+public class BuffPoison {
+    public int RemainingRounds;
+    public IGameEntity Target;
+    public object Caster;
+
+    public void OnApply() {
+        // 初始化时把自己注册到 StateComponent
+        Target.GetComponent<StateComponent>().AddState(StatusId.Poison, this);
+    }
+
+    public void OnTick(BattleContext ctx) {
+        // 自己持有 tick 逻辑
+        RemainingRounds--;
+        Target.GetComponent<ResourceComponent>().Modify(ResourceId.HP, -10);
+    }
+
+    public void OnRemove() {
+        // 自己决定何时退出
+        Target.GetComponent<StateComponent>().RemoveState(StatusId.Poison, this);
     }
 }
+
+// 业务层"回合开始"事件遍历所有活跃 Buff
+foreach (var buff in ctx.AllActiveBuffs) {
+    buff.OnTick(ctx);
+    if (buff.RemainingRounds <= 0) buff.OnRemove();
+}
 ```
+
+**关键决策点**:
+1. **`StateComponent` 用还是不用** —— **几乎永远用**,除非你做极简 Demo(< 100 行)。它是底层基础设施,放着不用是浪费。
+2. **Provider 怎么写** —— 典型 = 继承基类 `BuffBase`(持有 duration / target / caster / level)。常见 4 类:增益 Provider / 减益 Provider / 控制 Provider / 特殊 Provider。
+3. **持续时间放哪** —— 放 Provider,不放 StateComponent,不放 `Dictionary<int, int>`。
+4. **多个 Provider 共享 stateId 时怎么处理** —— 用 Provider 实例区分,StateComponent 引用计数天然处理"两个 Provider 都施加中毒,全部 Remove 才真正退出"。
+5. **不同等级的中毒怎么处理** —— 用**同一 `stateId` + 不同 Provider** 表达(普通中毒 = ProviderA,高级中毒 = ProviderB),自然合并。
+
+**典型 Provider 实现见**:
+- [`Doc/rpg/05-state-component.md`](rpg/05-state-component.md) —— StateComponent 本身的设计
+- [`Doc/rpg/06-buff-system.md`](rpg/06-buff-system.md) —— Provider(典型 = Buff)的完整模式
 
 ---
 
@@ -208,11 +258,14 @@ EventModule.Instance.Fire(BattleEventId.SkillCast, new SkillCastEventArgs { ... 
 │  决策速查表(11 个高频决策)                                  │
 │  ────────────────────────────────────────────────────────  │
 │  HP / 弹药 / 金币         →  ResourceComponent             │
-│  buff / 状态               →  StateComponent (+ 自己外置回合)│
+│  buff / 状态              →  StateComponent (底层"集合机制")│
+│                              + Provider 类(典型 = Buff)      │
+│                              (持续时间在 Provider,不在 State) │
 │  战斗循环 / 角色状态        →  FsmMachine (>3 个状态)       │
 │  应用流程 / 主城 ↔ 战斗    →  ProcedureModule              │
 │  跨实体持有目标            →  GameEntityRef                 │
 │  倒计时 / 冷却 / 持续时间   →  GameTimerManager (绝对时间)   │
+│                              (Provider 的 duration 也是)     │
 │  数值变化通知              →  NumericComponent.Subscribe    │
 │  全局业务事件              →  EventModule                   │
 │  技能 / 升级 / 抽卡公式    →  ExpressionManager             │

@@ -115,31 +115,69 @@ Final = (Basic * (1 + BasicPercent/10000) + BasicConstAdd)
 
 ---
 
-### 1.5 `StateComponent` —— 引用计数的布尔状态(buff 风格)
+### 1.5 `StateComponent` —— 玩法底层"集合"基础设施
 
-**它是什么**:"这个实体有没有某个状态"的开关组件,**带引用计数** —— 多 provider 可同时施加同一状态,全部 Remove 才真正消失。
+> ⚠️ **重要架构澄清**:`StateComponent` **不等于 buff**。它是底层基础设施,只关心"我当下有什么 stateId";持续时间 / 效果 / 驱散 —— 都是 **Provider 的属性**,不是 StateComponent 的。
 
-**关键 API**:
-- `CheckState(stateId) → bool`
-- `AddState(stateId, provider)` / `RemoveState(stateId, provider)` —— **始终带 provider**
-- `Subscribe(stateId, Action<bool>, notifyImmediately)` —— 监听某状态切换
+**它是什么**:实体上"当前哪些 stateId 处于活跃"的**集合(set)成员关系追踪机制**。支持按 `(stateId, provider)` 复合键做引用计数。
+
+```
+StateComponent
+   ↑
+   │ AddState(stateId, provider)   ← Provider 是 "为什么这个 state 处于活跃"
+   │ RemoveState(stateId, provider) ← Provider 是 "为什么这个 state 退出活跃"
+   │
+Provider (状态来源 / 主人)
+   ↑ 一对一 / 一对多
+   │
+   ├── Buff 实例(中毒 3 回合 / 隐身 5 回合 / …)
+   ├── Skill Effect(法术命中后的灼烧效果)
+   ├── Death Mark(倒地 / 死亡 / 鬼魂标记)
+   ├── Equipment Passive(装备触发的"灼烧光环")
+   └── 其他业务自定义状态来源
+```
+
+**关键 API**(只是"集合成员关系" + "切换通知" —— 不持有时间、不持有效果):
+- `CheckState(stateId) → bool` —— 当前是否活跃
+- `AddState(stateId, provider)` / `RemoveState(stateId, provider)` —— **始终带 provider**(引用计数 + 区分施加者)
+- `Subscribe(stateId, Action<bool>, notifyImmediately)` —— 监听切换
 - `Unsubscribe(...)` / `GetAllStates()`
 
-**引用计数语义**:
-- 两个 buff 同时施加"中毒" → 中毒生效。
-- 两个 buff 都 Remove 后 → 中毒消失。
-- 这天然处理"多 buff 叠加 + 各自取消"。
+**引用计数的精确语义**:
+- (stateId, providerA) Add → 引用计数 1,stateId 活跃
+- (stateId, providerB) Add → 引用计数 2,**stateId 仍然活跃**(同一 stateId 可多 provider 共存)
+- (stateId, providerA) Remove → 引用计数 1,**stateId 仍然活跃**(还有 providerB 在)
+- (stateId, providerB) Remove → 引用计数 0,stateId **真正退出活跃**
 
-**典型挂点**(几乎所有游戏都有):
-- RPG:中毒、封印、隐身、金刚护体
-- MOBA:眩晕、沉默、减速、加速
-- 卡牌:冻结、麻痹、护盾、易伤
-- SLG:混乱、鼓舞、怯战
+**Provider 是什么**(关键概念):
+- Provider = "为什么这个 state 处于活跃"的来源 / 主人
+- **典型 Provider = Buff 实例**(有 duration / tick / dispellable)
+- 其他常见 Provider:Skill Effect(法术命中后的灼烧)、Death Flag(倒地标记)、Equipment Passive(装备光环)、Aura Effect(范围光环)、Status From Damage(被击中后的反弹状态)
+- Provider **自己持有**持续时间、效果、是否可驱散、tick 逻辑、owner / source 等"业务属性"
+- StateComponent **只知道**"(stateId, provider) 这个组合目前是否处于活跃"
+- 当一个 Provider 决定退出(持续时间到 / 被驱散 / owner 死亡) → Provider 自己调 `StateComponent.RemoveState(stateId, this)`
 
-**坑**:
-- "持续 N 回合"**不**在 StateComponent 内部 —— 需要"回合开始"事件驱动手动检查 / 减计 / 移除。
-- 不同等级的中毒(普通 / 高级)用**同一 `stateId` + 不同 provider** 表达,自然合并。
-- 永远带 provider 调 `AddState / RemoveState`,否则会误删。
+**典型挂点**(Provider 的典型业务场景,**不是** StateComponent 的"挂点"):
+
+| Provider 类别 | 典型场景 | 是不是 state |
+|--------------|---------|--------------|
+| Buff | 中毒、封印、隐身、金刚护体 | ✅ state |
+| Skill Effect | 灼烧、感电、冰冻(法术附带) | ✅ state |
+| Death Flag | 倒地、死亡、鬼魂标记 | ✅ state |
+| Equipment Passive | 装备光环、套装效果 | ✅ state |
+| Aura Effect | 范围光环(队伍 / 区域)| ✅ state |
+| World Effect | 地形 / 天气 / 时段 | ✅ state |
+| 裸数据 flag | 已攻击过 / 已对话过 | ❌ 不是 state(用普通 bool 字段)|
+
+**坑**(全部围绕"集合机制 vs Provider 职责"):
+- ❌ 把"持续 N 回合"塞进 `StateComponent` —— StateComponent 不知道回合,这**不是 bug**,是设计。持续回合是 **Provider 自己持有**的。
+- ❌ 把 buff 等同于 state —— buff 是 Provider 的**一种**,不是 state 本身。
+- ❌ 把"buff 效果 / Tick / 驱散"塞进 `StateComponent` —— 这些都是 Provider 的职责,不是集合机制的职责。
+- ✅ 在"回合开始"事件里遍历**所有活跃 Provider**,每个 Provider 自己减 / 检持续时间,**自己决定何时调 `RemoveState`**。
+- ✅ 不同等级的中毒(普通 / 高级)用**同一 `stateId` + 不同 Provider** 表达,自然合并(底层机制天然处理)。
+- ✅ 永远带 provider 调 `AddState / RemoveState`,否则会误删。
+
+**详细模式见 [`Doc/rpg/05-state-component.md`](rpg/05-state-component.md) 和 [`Doc/rpg/06-buff-system.md`](rpg/06-buff-system.md)**(典型 Provider 实现)。
 
 ---
 
@@ -431,7 +469,7 @@ Final = (Basic * (1 + BasicPercent/10000) + BasicConstAdd)
 |---------|----------|------|
 | RPG / 卡牌:HP / MP / 法力 | `ResourceComponent` | 上限绑 `NumericComponent` |
 | RPG / 卡牌:等级 / 经验 | `NumericComponent` | 用 `Basic` + `FinalConstAdd` |
-| RPG / 卡牌 / MOBA:中毒 / 封印 / 眩晕 | `StateComponent` | 引用计数天然处理多 buff 叠加 |
+| RPG / 卡牌 / MOBA:中毒 / 封印 / 眩晕 | `StateComponent` + **Provider**(典型 = `Buff`)| 引用计数天然处理多 Provider 叠加;持续时间在 Provider 上,不在 StateComponent 上 |
 | MOBA / FPS:弹药 / 手雷数 | `ResourceComponent` | 多资源 id |
 | 模拟经营 / 卡牌:金币 / 行动点 | `ResourceComponent` | 同上 |
 | RPG / SLG:速度 / 攻击 / 防御 | `NumericComponent` | 百分比加成用 `FinalPercent`,固定加值用 `FinalConstAdd` |
@@ -454,7 +492,8 @@ Final = (Basic * (1 + BasicPercent/10000) + BasicConstAdd)
 │  ──────────────────────────────────────────────────────  │
 │  HP / MP / 弹药 / 法力        →  ResourceComponent        │
 │  等级 / 经验 / 攻击 / 防御    →  NumericComponent         │
-│  中毒 / 封印 / 眩晕 / 隐身    →  StateComponent (buff)    │
+│  中毒 / 封印 / 眩晕 / 隐身    →  StateComponent           │
+│                                 (Provider = Buff / Skill Effect / …)│
 │  战斗内阶段 / 角色状态         →  FsmMachine              │
 │  应用级流程切换                →  ProcedureModule         │
 │  怪物 AI / NPC 决策           →  BehaviorTree             │
