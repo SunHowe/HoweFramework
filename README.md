@@ -6,6 +6,29 @@
 
 Unity3d客户端开发框架，部分模块采用现有的工具或参考现有的框架实现。
 
+## 框架分析文档(沉淀)
+
+> 面向**未来 Agent 开发其他类型游戏**(回合制 RPG / SLG / FPS / 卡牌 / 模拟经营……)。
+> 不含具体游戏的玩法数据(那些跟着各自的业务代码走)。
+
+| 文档 | 用途 |
+|------|------|
+| [`Doc/README.md`](Doc/README.md) | 文档索引、导览、怎么用 |
+| [`Doc/framework-analysis.md`](Doc/framework-analysis.md) | 框架能力总览 —— 4 层架构、20 个模块分类、"Gameplay 是业务层不是框架核心"的关键澄清 |
+| [`Doc/primitives.md`](Doc/primitives.md) | 原语目录 —— 6 内置组件 + 7 内置 Manager + 跨模块工具速查 |
+| [`Doc/decision-guide.md`](Doc/decision-guide.md) | 决策模式 —— 11 个最常碰到的"二选一"决策树 |
+| [`Doc/extension-points.md`](Doc/extension-points.md) | 扩展点 —— 何时新增组件 / Manager / 上下文 |
+| [`Doc/gotchas.md`](Doc/gotchas.md) | 常见坑 —— 13 条概念误读 + 版本冲突 + 未决清单 |
+| [`Doc/naming-conventions.md`](Doc/naming-conventions.md) | 命名规范 —— 强制命名规则(来自 `Client/CLAUDE.md`) |
+| [`Doc/CHANGELOG.md`](Doc/CHANGELOG.md) | 沉淀记录 —— 这些分析是怎么沉淀下来的 |
+
+**新来的 Agent 第一件事**:翻 [`Doc/README.md`](Doc/README.md) 知道哪个文档解决你的问题。
+
+## 其他文档入口
+
+- 完整 API 参考:`Client/Assets/HoweFramework/Doc/README.md`(模块级 + Gameplay 级两个 Doc 目录)
+- 项目内嵌 AI Agent 指引:`Client/CLAUDE.md`
+
 ## 相关框架、工具说明
 
 - GameFramework: [https://github.com/EllanJiang/GameFramework](https://github.com/EllanJiang/GameFramework)
