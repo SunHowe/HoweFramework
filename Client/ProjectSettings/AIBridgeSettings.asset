@@ -32,7 +32,7 @@ MonoBehaviour:
     RegexPattern: 
   assistantSelections:
   - TargetId: claude
-    Selected: 0
+    Selected: 1
   - TargetId: codex
     Selected: 1
   - TargetId: cursor
