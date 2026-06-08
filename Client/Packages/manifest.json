@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cn.lys.aibridge": "https://github.com/SunHowe/AIBridge.git",
     "com.boxqkrtm.ide.cursor": "https://github.com/SunHowe/com.unity.ide.cursor.git",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.howegame.fariygui.dynamic": "https://github.com/SunHowe/FairyGUI-Dynamic.git",

@@ -1,5 +1,17 @@
 {
   "dependencies": {
+    "cn.lys.aibridge": {
+      "version": "https://github.com/SunHowe/AIBridge.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0",
+        "com.unity.test-framework": "1.1.31",
+        "com.unity.modules.imageconversion": "1.0.0",
+        "com.unity.modules.screencapture": "1.0.0"
+      },
+      "hash": "9c84bc5545a1a7f3dbfa44c35398038623123fac"
+    },
     "com.boxqkrtm.ide.cursor": {
       "version": "https://github.com/SunHowe/com.unity.ide.cursor.git",
       "depth": 0,
