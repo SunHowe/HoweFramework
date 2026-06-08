@@ -9,3 +9,6 @@ Client/Build_BackUpThisFolder_ButDontShipItWithYourGame
 DataTable/Datas/.~*.xlsx
 Client/Build
 .opencode
+.aibridge
+.claude
+.codex

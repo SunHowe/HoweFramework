@@ -1,4 +1,4 @@
-# Howe Framework - Claude Code 项目指南
+﻿# Howe Framework - Claude Code 项目指南
 
 本项目是 **HoweFramework** Unity 游戏框架及基于其上的游戏业务实现。
 
