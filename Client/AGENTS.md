@@ -12,7 +12,7 @@
 <!-- AIBRIDGE:START {"assistant":"aibridge","templateId":"unity-integration","version":7,"target":"root-rule"} -->
 ## AIBridge Bootstrap
 
-**CLI Alias**: `$CLI = ./.aibridge/cli/AIBridgeCLI.exe`
+**CLI Alias**: `$CLI = ./.aibridge/cli/AIBridgeCLI`
 
 **常用命令**:
 ```bash
