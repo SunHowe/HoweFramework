@@ -12,19 +12,19 @@ using Cysharp.Threading.Tasks;
 using HoweFramework;
 
 
-namespace GameMain.Game
+namespace GameMain.Demo
 {
-public partial class TbSkillConfig : IDataTable
+public partial class TbDemoConfig : IDataTable
 {
     private readonly string m_DataTableName;
     private readonly LoadDataTableFunc m_LoadDataTableFunc;
     private readonly LoadDataTableAsyncFunc m_LoadDataTableAsyncFunc;
     private readonly GameMainDataTableSource m_Manager;
     
-    public static TbSkillConfig Instance { get; private set; }
+    public static TbDemoConfig Instance { get; private set; }
     public DataTableLoadStatus LoadStatus { get; private set; }
     
-    public TbSkillConfig(GameMainDataTableSource manager, string dataTableName, LoadDataTableFunc loadDataTableFunc, LoadDataTableAsyncFunc loadDataTableAsyncFunc)
+    public TbDemoConfig(GameMainDataTableSource manager, string dataTableName, LoadDataTableFunc loadDataTableFunc, LoadDataTableAsyncFunc loadDataTableAsyncFunc)
     {
         Instance = this;
         m_Manager = manager;
@@ -48,7 +48,7 @@ public partial class TbSkillConfig : IDataTable
         
         if (LoadStatus == DataTableLoadStatus.Loading)
         {
-            Log.Error("DataTable TbSkillConfig is loading");
+            Log.Error("DataTable TbDemoConfig is loading");
             return;
         }
         
@@ -57,7 +57,7 @@ public partial class TbSkillConfig : IDataTable
         if (_buf == null)
         {
             LoadStatus = DataTableLoadStatus.None;
-            Log.Error("DataTable TbSkillConfig load failed");
+            Log.Error("DataTable TbDemoConfig load failed");
             return;
         }
         
@@ -78,7 +78,7 @@ public partial class TbSkillConfig : IDataTable
         
         if (LoadStatus == DataTableLoadStatus.Loading)
         {
-            throw new System.Exception("DataTable TbSkillConfig is loading");
+            throw new System.Exception("DataTable TbDemoConfig is loading");
         }
         
         LoadStatus = DataTableLoadStatus.Loading;
@@ -86,7 +86,7 @@ public partial class TbSkillConfig : IDataTable
         if (_buf == null)
         {
             LoadStatus = DataTableLoadStatus.None;
-            throw new System.Exception("DataTable TbSkillConfig load failed");
+            throw new System.Exception("DataTable TbDemoConfig load failed");
         }
         
         LoadStatus = DataTableLoadStatus.Loaded;
@@ -97,24 +97,24 @@ public partial class TbSkillConfig : IDataTable
         }
     }
 
-    private System.Collections.Generic.Dictionary<int, Game.SkillConfig> _dataMap;
-    private System.Collections.Generic.List<Game.SkillConfig> _dataList;
+    private System.Collections.Generic.Dictionary<int, Demo.DemoConfig> _dataMap;
+    private System.Collections.Generic.List<Demo.DemoConfig> _dataList;
     
     private void OnLoadSuccess(ByteBuf _buf)
     {
-        _dataMap = new System.Collections.Generic.Dictionary<int, Game.SkillConfig>();
-        _dataList = new System.Collections.Generic.List<Game.SkillConfig>();
+        _dataMap = new System.Collections.Generic.Dictionary<int, Demo.DemoConfig>();
+        _dataList = new System.Collections.Generic.List<Demo.DemoConfig>();
         
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
-            Game.SkillConfig _v;
-            _v = Game.SkillConfig.DeserializeSkillConfig(_buf);
+            Demo.DemoConfig _v;
+            _v = Demo.DemoConfig.DeserializeDemoConfig(_buf);
             _dataList.Add(_v);
             _dataMap.Add(_v.Id, _v);
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, Game.SkillConfig> DataMap
+    public System.Collections.Generic.Dictionary<int, Demo.DemoConfig> DataMap
     {
         get
         {
@@ -123,7 +123,7 @@ public partial class TbSkillConfig : IDataTable
         }
     }
     
-    public System.Collections.Generic.List<Game.SkillConfig> DataList
+    public System.Collections.Generic.List<Demo.DemoConfig> DataList
     {
         get
         {
@@ -132,9 +132,9 @@ public partial class TbSkillConfig : IDataTable
         }
     }
 
-    public Game.SkillConfig GetOrDefault(int key) => DataMap.TryGetValue(key, out var v) ? v : null;
-    public Game.SkillConfig Get(int key) => DataMap[key];
-    public Game.SkillConfig this[int key] => DataMap[key];
+    public Demo.DemoConfig GetOrDefault(int key) => DataMap.TryGetValue(key, out var v) ? v : null;
+    public Demo.DemoConfig Get(int key) => DataMap[key];
+    public Demo.DemoConfig this[int key] => DataMap[key];
 
     public void ResolveRef()
     {

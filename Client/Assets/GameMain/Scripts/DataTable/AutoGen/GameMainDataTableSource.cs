@@ -16,9 +16,7 @@ namespace GameMain
 {
     public partial class GameMainDataTableSource : IDataTableSource
     {
-        public Game.TbSkillConfig TbSkillConfig { get; private set; }
-        public Game.TbBuffConfig TbBuffConfig { get; private set; }
-        public Game.TbActionConfig TbActionConfig { get; private set; }
+        public Demo.TbDemoConfig TbDemoConfig { get; private set; }
 
         /// <summary>
         /// 完整的数据表列表。
@@ -33,24 +31,18 @@ namespace GameMain
         public void Init(DataTableLoadMode mode)
         {
             var isPreloadAll = mode == DataTableLoadMode.AsyncLoad || mode == DataTableLoadMode.SyncLoad;
-            TbSkillConfig = new Game.TbSkillConfig(this, "game_tbskillconfig", LoadDataTable, LoadDataTableAsync);
-            TbBuffConfig = new Game.TbBuffConfig(this, "game_tbbuffconfig", LoadDataTable, LoadDataTableAsync);
-            TbActionConfig = new Game.TbActionConfig(this, "game_tbactionconfig", LoadDataTable, LoadDataTableAsync);
+            TbDemoConfig = new Demo.TbDemoConfig(this, "demo_tbdemoconfig", LoadDataTable, LoadDataTableAsync);
 
             m_DataTableList = new List<IDataTable>()
             {
-                TbSkillConfig,
-                TbBuffConfig,
-                TbActionConfig,
+                TbDemoConfig,
             };
             
             if (isPreloadAll)
             {
                 m_PreloadDataTableList = new List<IDataTable> 
                 {
-                    TbSkillConfig,
-                    TbBuffConfig,
-                    TbActionConfig,
+                    TbDemoConfig,
                 };
             }
             else

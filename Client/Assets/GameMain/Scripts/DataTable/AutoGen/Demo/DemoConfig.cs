@@ -10,21 +10,21 @@
 using Luban;
 
 
-namespace GameMain.Game
+namespace GameMain.Demo
 {
-public sealed partial class ActionConfig : Luban.BeanBase
+public sealed partial class DemoConfig : Luban.BeanBase
 {
-    public ActionConfig(ByteBuf _buf) 
+    public DemoConfig(ByteBuf _buf) 
     {
         Id = _buf.ReadInt();
-        Category = (Game.ActionCategoryType)_buf.ReadInt();
+        Type = (Demo.DemoType)_buf.ReadInt();
+        Name = _buf.ReadString();
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);ParamList = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); ParamList.Add(_e0);}}
-        ParamStr = _buf.ReadString();
     }
 
-    public static ActionConfig DeserializeActionConfig(ByteBuf _buf)
+    public static DemoConfig DeserializeDemoConfig(ByteBuf _buf)
     {
-        return new Game.ActionConfig(_buf);
+        return new Demo.DemoConfig(_buf);
     }
 
     /// <summary>
@@ -32,19 +32,19 @@ public sealed partial class ActionConfig : Luban.BeanBase
     /// </summary>
     public readonly int Id;
     /// <summary>
-    /// 动作类型
+    /// 类型
     /// </summary>
-    public readonly Game.ActionCategoryType Category;
+    public readonly Demo.DemoType Type;
+    /// <summary>
+    /// 名字
+    /// </summary>
+    public readonly string Name;
     /// <summary>
     /// 参数列表
     /// </summary>
     public readonly System.Collections.Generic.List<int> ParamList;
-    /// <summary>
-    /// 参数字符串
-    /// </summary>
-    public readonly string ParamStr;
    
-    public const int __ID__ = 1509087636;
+    public const int __ID__ = -1517588496;
     public override int GetTypeId() => __ID__;
 
     public  void ResolveRef(GameMainDataTableSource tables)
@@ -55,9 +55,9 @@ public sealed partial class ActionConfig : Luban.BeanBase
     {
         return "{ "
         + "id:" + Id + ","
-        + "category:" + Category + ","
+        + "type:" + Type + ","
+        + "name:" + Name + ","
         + "paramList:" + Luban.StringUtil.CollectionToString(ParamList) + ","
-        + "paramStr:" + ParamStr + ","
         + "}";
     }
 }

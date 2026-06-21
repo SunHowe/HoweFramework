@@ -9,17 +9,21 @@
 
 
 
-namespace GameMain.Game
+namespace GameMain.Demo
 { 
     /// <summary>
-    /// 技能类型定义。
+    /// Demo类型定义。
     /// </summary>
-    public enum SkillCategoryType
+    public enum DemoType
     {
         /// <summary>
-        /// 火球
+        /// 一
         /// </summary>
-        FireBall = 1,
+        First = 1,
+        /// <summary>
+        /// 二
+        /// </summary>
+        Second = 2,
     }
 
 } 
