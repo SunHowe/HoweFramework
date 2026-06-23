@@ -37,6 +37,11 @@ namespace GameMain
         /// </summary>
         Resource = 6,
 
+        /// <summary>
+        /// Buff组件。
+        /// </summary>
+        Buff = 7,
+
         #endregion
     }
 }
