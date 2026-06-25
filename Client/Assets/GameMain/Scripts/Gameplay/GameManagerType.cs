@@ -12,6 +12,5 @@ namespace GameMain
         Timer = 5,
         Expression = 6,
         Entity = 100,
-        Buff = 101,
     }
 }
