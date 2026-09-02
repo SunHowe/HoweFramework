@@ -25,10 +25,10 @@ namespace HoweFramework
         /// </summary>
         public static UniTask InitYooAssetEditorSimulateMode(this ResModule module)
         {
-            var buildResult = EditorSimulateModeHelper.SimulateBuild(YooAssetResLoader.DefaultPackageName);
+            var buildResult = EditorSimulateBuildInvoker.Build(YooAssetResLoader.DefaultPackageName, (int)EBundleType.VirtualAssetBundle);
             var packageRoot = buildResult.PackageRootDirectory;
             var editorFileSystemParams = FileSystemParameters.CreateDefaultEditorFileSystemParameters(packageRoot);
-            var initParameters = new EditorSimulateModeParameters();
+            var initParameters = new EditorSimulateModeOptions();
             initParameters.EditorFileSystemParameters = editorFileSystemParams;
 
             return s_YooAssetResLoader.InitResourcePackageAsync(initParameters);
@@ -39,12 +39,12 @@ namespace HoweFramework
         /// </summary>
         public static UniTask InitYooAssetHostPlayMode(this ResModule module, string hostServer, string fallbackHostServer)
         {
-            IRemoteServices remoteServices = new YooAssetRemoteServices(hostServer, fallbackHostServer);
-            var cacheFileSystemParams = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices);
-            var buildinFileSystemParams = FileSystemParameters.CreateDefaultBuildinFileSystemParameters();
+            IRemoteService remoteServices = new YooAssetRemoteServices(hostServer, fallbackHostServer);
+            var cacheFileSystemParams = FileSystemParameters.CreateDefaultSandboxFileSystemParameters(remoteServices);
+            var buildinFileSystemParams = FileSystemParameters.CreateDefaultBuiltinFileSystemParameters();
 
-            var initParameters = new HostPlayModeParameters();
-            initParameters.BuildinFileSystemParameters = buildinFileSystemParams;
+            var initParameters = new HostPlayModeOptions();
+            initParameters.BuiltinFileSystemParameters = buildinFileSystemParams;
             initParameters.CacheFileSystemParameters = cacheFileSystemParams;
 
             return s_YooAssetResLoader.InitResourcePackageAsync(initParameters);
@@ -57,8 +57,8 @@ namespace HoweFramework
         {
             var remoteServices = new YooAssetRemoteServices(hostServer, fallbackHostServer);
     
-            var initParameters = new WebPlayModeParameters();
-            initParameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices);
+            var initParameters = new WebPlayModeOptions();
+            initParameters.WebNetworkFileSystemParameters = FileSystemParameters.CreateDefaultWebNetworkFileSystemParameters(remoteServices);
             initParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters();
 
             return s_YooAssetResLoader.InitResourcePackageAsync(initParameters);
@@ -69,9 +69,9 @@ namespace HoweFramework
         /// </summary>
         public static UniTask InitYooAssetOfflineMode(this ResModule module)
         {
-            var buildinFileSystemParams = FileSystemParameters.CreateDefaultBuildinFileSystemParameters();
-            var initParameters = new OfflinePlayModeParameters();
-            initParameters.BuildinFileSystemParameters = buildinFileSystemParams;
+            var buildinFileSystemParams = FileSystemParameters.CreateDefaultBuiltinFileSystemParameters();
+            var initParameters = new OfflinePlayModeOptions();
+            initParameters.BuiltinFileSystemParameters = buildinFileSystemParams;
 
             return s_YooAssetResLoader.InitResourcePackageAsync(initParameters);
         }
@@ -92,7 +92,7 @@ namespace HoweFramework
 
                 await requestVersionOperation.ToUniTask();
 
-                if (requestVersionOperation.Status != EOperationStatus.Succeed)
+                if (requestVersionOperation.Status != EOperationStatus.Succeeded)
                 {
                     return false;
                 }
@@ -100,11 +100,12 @@ namespace HoweFramework
                 packageVersion = requestVersionOperation.PackageVersion;
             }
 
-            var updateOperation = package.UpdatePackageManifestAsync(packageVersion);
+            var options = new LoadPackageManifestOptions(packageVersion, 10000);
+            var updateOperation = package.LoadPackageManifestAsync(options);
 
             await updateOperation.ToUniTask();
 
-            return updateOperation.Status == EOperationStatus.Succeed;
+            return updateOperation.Status == EOperationStatus.Succeeded;
         }
     }
 }

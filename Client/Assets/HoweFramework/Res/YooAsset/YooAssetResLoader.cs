@@ -33,7 +33,7 @@ namespace HoweFramework
         /// <summary>
         /// 初始化资源包。
         /// </summary>
-        public async UniTask InitResourcePackageAsync(InitializeParameters parameters)
+        public async UniTask InitResourcePackageAsync(InitializePackageOptions parameters)
         {
             if (s_DestroyTcs != null)
             {
@@ -43,9 +43,8 @@ namespace HoweFramework
             YooAssets.Initialize();
 
             var resourcePackage = YooAssets.CreatePackage(DefaultPackageName);
-            YooAssets.SetDefaultPackage(resourcePackage);
 
-            await resourcePackage.InitializeAsync(parameters).ToUniTask();
+            await resourcePackage.InitializePackageAsync(parameters).ToUniTask();
 
             m_ResourcePackage = resourcePackage;
         }
@@ -58,7 +57,7 @@ namespace HoweFramework
             var tcs = AutoResetUniTaskCompletionSource.Create();
             s_DestroyTcs = tcs;
 
-            await m_ResourcePackage.DestroyAsync().ToUniTask();
+            await m_ResourcePackage.DestroyPackageAsync().ToUniTask();
 
             YooAssets.RemovePackage(DefaultPackageName);
 
@@ -80,22 +79,25 @@ namespace HoweFramework
 
             m_AssetItemDict.Clear();
 
-            foreach (var handle in m_AssetHandlerDict.Values)
+            // 停止 Play Mode 时 YooAssetsDriver 会先 Destroy，此时句柄与包裹已失效。
+            if (YooAssets.IsInitialized)
             {
-                handle.Release();
+                foreach (var handle in m_AssetHandlerDict.Values)
+                {
+                    handle.Release();
+                }
+
+                foreach (var handle in m_SceneHandlerDict.Values)
+                {
+                    handle.Release();
+                }
+
+                DisposeResourcePackageAsync().Forget();
             }
 
             m_AssetHandlerDict.Clear();
-
-            foreach (var handle in m_SceneHandlerDict.Values)
-            {
-                handle.Release();
-            }
-
             m_SceneHandlerDict.Clear();
             m_UnloadSceneOperationDict.Clear();
-
-            DisposeResourcePackageAsync().Forget();
         }
 
         public async UniTask<UnityEngine.Object> LoadAssetAsync(string assetKey, Type assetType, CancellationToken token = default)
@@ -201,7 +203,10 @@ namespace HoweFramework
                 m_AssetItemDict.Remove(item);
             }
 
-            m_ResourcePackage.UnloadUnusedAssetsAsync();
+            if (YooAssets.IsInitialized && m_ResourcePackage != null)
+            {
+                m_ResourcePackage.UnloadUnusedAssetsAsync();
+            }
         }
 
         /// <summary>
@@ -214,7 +219,7 @@ namespace HoweFramework
         {
             if (m_SceneHandlerDict.TryGetValue(sceneAssetName, out var operation))
             {
-                if (operation.Status == EOperationStatus.Succeed)
+                if (operation.Status == EOperationStatus.Succeeded)
                 {
                     throw new ErrorCodeException(FrameworkErrorCode.ResSceneAlreadyLoaded);
                 }
@@ -227,7 +232,7 @@ namespace HoweFramework
 
             await operation.ToUniTask();
 
-            if (operation.Status != EOperationStatus.Succeed)
+            if (operation.Status != EOperationStatus.Succeeded)
             {
                 operation.Release();
                 m_SceneHandlerDict.Remove(sceneAssetName);
@@ -244,6 +249,15 @@ namespace HoweFramework
         /// <exception cref="ErrorCodeException"></exception>
         public async UniTask UnloadScene(string sceneAssetName)
         {
+            // 编辑器停止运行时 YooAssetsDriver.OnApplicationQuit 会先关闭 AsyncOperationSystem，
+            // 此时不能再提交 UnloadSceneAsync，否则会抛出 YooInternalException。
+            if (!YooAssets.IsInitialized)
+            {
+                m_SceneHandlerDict.Remove(sceneAssetName);
+                m_UnloadSceneOperationDict.Remove(sceneAssetName);
+                return;
+            }
+
             if (m_UnloadSceneOperationDict.ContainsKey(sceneAssetName))
             {
                 throw new ErrorCodeException(FrameworkErrorCode.ResSceneUnloading);
@@ -254,19 +268,21 @@ namespace HoweFramework
                 throw new ErrorCodeException(FrameworkErrorCode.ResSceneNotLoad);
             }
 
-            if (operation.Status != EOperationStatus.Succeed)
+            if (operation.Status != EOperationStatus.Succeeded)
             {
                 throw new ErrorCodeException(FrameworkErrorCode.ResSceneLoading);
             }
 
             m_SceneHandlerDict.Remove(sceneAssetName);
 
-            var unloadOperation = operation.UnloadAsync();
+            var unloadOperation = operation.UnloadSceneAsync();
             m_UnloadSceneOperationDict[sceneAssetName] = unloadOperation;
 
             await unloadOperation;
 
-            if (unloadOperation.Status != EOperationStatus.Succeed)
+            m_UnloadSceneOperationDict.Remove(sceneAssetName);
+
+            if (unloadOperation.Status != EOperationStatus.Succeeded)
             {
                 throw new ErrorCodeException(FrameworkErrorCode.ResSceneUnloadFailed);
             }
@@ -283,7 +299,7 @@ namespace HoweFramework
         {
             if (m_SceneHandlerDict.TryGetValue(sceneAssetName, out var operation))
             {
-                return operation.Status == EOperationStatus.Succeed;
+                return operation.Status == EOperationStatus.Succeeded;
             }
 
             return false;

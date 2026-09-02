@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using YooAsset;
 
 namespace HoweFramework
@@ -5,7 +6,7 @@ namespace HoweFramework
     /// <summary>
     /// YooAsset资源管线远程路径服务.
     /// </summary>
-    public sealed class YooAssetRemoteServices : IRemoteServices
+    public sealed class YooAssetRemoteServices : IRemoteService
     {
         private readonly string m_DefaultHostServer;
         private readonly string m_FallbackHostServer;
@@ -15,15 +16,13 @@ namespace HoweFramework
             m_DefaultHostServer = defaultHostServer;
             m_FallbackHostServer = fallbackHostServer;
         }
-        
-        string IRemoteServices.GetRemoteMainURL(string fileName)
-        {
-            return $"{m_DefaultHostServer}/{fileName}";
-        }
 
-        string IRemoteServices.GetRemoteFallbackURL(string fileName)
+        public IReadOnlyList<string> GetRemoteUrls(string fileName)
         {
-            return $"{m_FallbackHostServer}/{fileName}";
+            return new List<string>{
+                $"{m_DefaultHostServer}/{fileName}",
+                $"{m_FallbackHostServer}/{fileName}"
+            };
         }
     }
 }

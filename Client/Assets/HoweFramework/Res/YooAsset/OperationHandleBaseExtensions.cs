@@ -95,7 +95,7 @@ namespace Cysharp.Threading.Tasks
                     case SubAssetsHandle sub_asset_handle:
                         sub_asset_handle.Completed += result.SubContinuation;
                         break;
-                    case RawFileHandle raw_file_handle:
+                    case BundleFileHandle raw_file_handle:
                         raw_file_handle.Completed += result.RawFileContinuation;
                         break;
                     case AllAssetsHandle all_assets_handle:
@@ -145,7 +145,7 @@ namespace Cysharp.Threading.Tasks
                 BaseContinuation();
             }
 
-            private void RawFileContinuation(RawFileHandle handle)
+            private void RawFileContinuation(BundleFileHandle handle)
             {
                 handle.Completed -= RawFileContinuation;
                 BaseContinuation();
@@ -169,7 +169,7 @@ namespace Cysharp.Threading.Tasks
                     completed = true;
                     if(handle.Status == EOperationStatus.Failed)
                     {
-                        core.TrySetException(new Exception(handle.LastError));
+                        core.TrySetException(new Exception(handle.Error));
                     }
                     else
                     {
@@ -191,7 +191,7 @@ namespace Cysharp.Threading.Tasks
                     case SubAssetsHandle sub_asset_handle:
                         sub_asset_handle.Completed -= continuationAction;
                         break;
-                    case RawFileHandle raw_file_handle:
+                    case BundleFileHandle raw_file_handle:
                         raw_file_handle.Completed -= continuationAction;
                         break;
                     case AllAssetsHandle all_assets_handle:
