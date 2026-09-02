@@ -1,198 +1,31 @@
 # HoweFramework
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/SunHowe/HoweFramework)
+Unity 客户端开发框架，模块拼装 GameFramework / YooAsset / Luban / UniTask / FairyGUI 等能力。
 
-## 介绍
+## 文档
 
-Unity3d客户端开发框架，部分模块采用现有的工具或参考现有的框架实现。
+完整知识在 **[Doc/](Doc/README.md)**。Agent 开工与任务结束沉淀见 **[AGENTS.md](AGENTS.md)**。
 
-## 框架分析文档(沉淀)
+| 想了解 | 去读 |
+|--------|------|
+| 仓库怎么分层、怎么启动 | [Doc/architecture/](Doc/architecture/README.md) |
+| 某个框架模块怎么用 | [Doc/framework/modules/](Doc/framework/modules/README.md) |
+| 玩法 EC | [Doc/gameplay/](Doc/gameplay/README.md) |
+| 配表 / UI / 资源管线 | [Doc/pipeline/](Doc/pipeline/README.md) |
 
-> 面向**未来 Agent 开发其他类型游戏**(回合制 RPG / SLG / FPS / 卡牌 / 模拟经营……)。
-> 不含具体游戏的玩法数据(那些跟着各自的业务代码走)。
+`Client/Assets/**/Doc` 只是指向上述目录的指针。
 
-| 文档 | 用途 |
-|------|------|
-| [`Doc/README.md`](Doc/README.md) | 文档索引、导览、怎么用 |
-| [`Doc/framework-analysis.md`](Doc/framework-analysis.md) | 框架能力总览 —— 4 层架构、20 个模块分类、"Gameplay 是业务层不是框架核心"的关键澄清 |
-| [`Doc/primitives.md`](Doc/primitives.md) | 原语目录 —— 6 内置组件 + 7 内置 Manager + 跨模块工具速查 |
-| [`Doc/decision-guide.md`](Doc/decision-guide.md) | 决策模式 —— 11 个最常碰到的"二选一"决策树 |
-| [`Doc/extension-points.md`](Doc/extension-points.md) | 扩展点 —— 何时新增组件 / Manager / 上下文 |
-| [`Doc/gotchas.md`](Doc/gotchas.md) | 常见坑 —— 13 条概念误读 + 版本冲突 + 未决清单 |
-| [`Doc/naming-conventions.md`](Doc/naming-conventions.md) | 命名规范 —— 强制命名规则(来自 `Client/CLAUDE.md`) |
-| [`Doc/CHANGELOG.md`](Doc/CHANGELOG.md) | 沉淀记录 —— 这些分析是怎么沉淀下来的 |
+## 工程位置
 
-**新来的 Agent 第一件事**:翻 [`Doc/README.md`](Doc/README.md) 知道哪个文档解决你的问题。
+- 客户端：`Client/`（Unity）
+- 表：`DataTable/`，工具：`Tools/`
+- FairyGUI：`FGUIProject/`
+- 服务端现状：[Doc/server/](Doc/server/README.md)
 
-## 其他文档入口
+## 依赖（概述）
 
-- 完整 API 参考:`Client/Assets/HoweFramework/Doc/README.md`(模块级 + Gameplay 级两个 Doc 目录)
-- 项目内嵌 AI Agent 指引:`Client/CLAUDE.md`
-
-## 相关框架、工具说明
-
-- GameFramework: [https://github.com/EllanJiang/GameFramework](https://github.com/EllanJiang/GameFramework)
-- UnityGameFramework: [https://github.com/EllanJiang/UnityGameFramework](https://github.com/EllanJiang/UnityGameFramework)
-- FairyGUI: [https://www.fairygui.com](https://www.fairygui.com)
-- FairyGUI-Dynamic: [https://github.com/SunHowe/FairyGUI-Dynamic](https://github.com/SunHowe/FairyGUI-Dynamic)
-- FairyGUI-CodeGenerator: [https://github.com/SunHowe/FairyGUI-CodeGenerator](https://github.com/SunHowe/FairyGUI-CodeGenerator)
-- YooAsset: [https://github.com/tuyoogame/YooAsset](https://github.com/tuyoogame/YooAsset)
-- Luban: [https://github.com/focus-creative-games/luban](https://github.com/focus-creative-games/luban)
-- UniTask: [https://github.com/Cysharp/UniTask.git](https://github.com/Cysharp/UniTask.git)
-- CustomToolbar: [https://github.com/smkplus/CustomToolbar.git](https://github.com/smkplus/CustomToolbar.git)
-
-## 现有模块
-
-- BaseModule
-
-    基础模块，主要为一些基础工具提供注册服务。
-    
-    通过`IJsonHelper`、`ITextTemplateHelper`为使用者自定义拓展需求提供支持。
-
-- DataTable
-
-    配置表模块，基于Luban实现，提供了多种加载模式:
-    - 启动时异步加载配置表
-    - 启动时同步加载配置表
-    - 懒加载模式。使用时同步加载配置表
-    - 在懒加载模式的基础上，使用异步的方式异步预加载特定的配置表
-    - 在懒加载模式的基础上，使用同步的方式同步预加载特定的配置表
-    
-    通过`IDataTableSource`为使用者自定义拓展需求提供支持。
-
-- Event
-
-    事件管线模块，参考GameFramework实现，为项目全局与局部提供事件调度器的相关功能。
-    
-    局部事件调度器不使用后需要调用`Dispose()`进行销毁。
-
-- GameObjectPool
-
-    游戏对象池模块，为项目全局与局部提供游戏对象池的相关功能，并提供预实例化指定资源对象、限制池内对象数量的功能。
-    
-    局部游戏对象池不使用后需要调用`Dispose()`进行销毁，以保证及时回收资源。
-
-- Gameplay
-
-    玩法模块，为项目提供基础的玩法抽象，基于EC(实体-组件)模式设计，可将其当做不依赖于Unity的GameObject-Component模式。
-
-- Localization
-
-    本地化模块，为项目提供本地化文本管理的功能。
-    
-    通过`ILocalizationSource`为使用者自定义拓展需求提供支持。
-
-- Network
-
-    网络模块，参考GameFramework实现，为项目提供通用的网络通信功能，并基于项目的请求模块实现异步请求封装。
-
-    通过`INetworkChannel`、`INetworkChannelHelper`、`IPacketHandler`、`IPacketHeader`为使用者自定义拓展需求提供支持。
-
-    ```csharp
-    var code = await NetworkModule.Instance.ConnectAsync("127.0.0.1", 9000).GetErrorCode();
-    using var response = await LoginRequest.Create(account, password).SendPacketAsync<LoginResponse>();
-    ```
-
-- Procedure
-
-    流程模块，参考GameFramework实现，为项目提供全局的流程管理功能。
-
-- Reference
-
-    引用池模块，参考GameFramework实现，用于管理项目的引用对象的创建与回收。
-
-- Request
-
-    异步请求模块，基于UniTask实现，为项目的异步交互进行统一的抽象，并提供一些拓展方法方便功能开发。
-    
-    诸如`打开UI界面并等待UI交互`、`发送HTTP请求并等待返回`、`发送协议给服务端并等待返回`这样的异步交互流程都可以基于异步请求实现，统一的抽象中会确保必定会返回一个带错误码的响应包实例，方便业务开发(例如后续可以基于这个相应包做错误码提示功能)。
-
-- Res
-
-    资源模块，基于YooAsset实现，为项目提供局部的资源加载器功能(不直接提供全局资源加载器的原因是为了确保资源的及时回收，防止内存泄漏)。
-    
-    当资源加载器不使用后需要调用`Dispose()`进行销毁，以保证及时回收资源。
-
-    通过`IResLoader`为使用者自定义拓展需求提供支持。
-
-- SafeArea
-
-    安全区域模块，为项目提供获取和监听屏幕安全区域范围的功能，用于做屏幕适配使用。在Editor提供了可支持调试的工具。
-
-    通过`ISafeAreaHelper`为使用者自定义拓展需求提供支持。
-
-    运行时一般使用默认的实现接口即可(基于Unity的接口实现)，若存在旧版本Unity接口获取新款设备失败的情况，也可以自己实现安全区域辅助器，通过native的代码进行安全区域的获取。
-
-- Scene
-
-    场景模块，基于项目的资源模块实现，为项目提供加载场景、卸载场景的功能，项目内加载场景统一采用Additive模式，加载完成后会统一设置ActiveScene，若有多个场景，会根据设置的场景优先级进行设置。
-
-- Setting
-
-    设置模块，为项目提供基于键值对形式的用户设置功能，支持基础类型与复杂对象类型(基于Json序列化器实现)。
-    
-    通过`ISettingHelper`为使用者自定义拓展需求提供支持。
-
-- Sound
-
-    声音模块，基于项目的资源模块实现，为项目提供音频管理的功能。
-    
-    通过`ISoundHelper`和`ISoundGroupHelper`为使用者自定义拓展需求提供支持。
-
-- Timer
-
-    定时器模块，为项目全局与局部提供帧定时器与时间定时器的功能支持。
-    
-    当资源加载器不使用后需要调用`Dispose()`进行销毁。
-
-- UI
-
-    UI模块，为项目提供通用的UI管理服务，并基于项目的请求模块实现UI交互的异步请求封装。
-    
-    通过`IUIFormGroupHelper`、`IUIFormHelper`、`IUIFormLogic`为使用者自定义拓展需求提供支持。
-
-    项目内已基于FairyGUI实现了一套UI界面的逻辑，并通过编辑器工具实现了界面代码与组件代码的自动生成功能。
-
-- WebRequest
-
-    Web请求模块，为项目提供通用的HTTP交互功能，并基于项目的请求模块实现异步请求封装。
-
-    通过`IWebRequestHelper`为使用者自定义拓展需求提供支持。
-
-    项目内已基于UnityWebRequest实现了一套HTTP交互的逻辑。
-
-- 小工具支持
-
-    - DisposableSemaphoreSlim
-
-        基于信号量，实现了一套简单的异步锁功能，并提供全局指定键值的异步锁。
-
-        ```csharp
-        private readonly DisposableSemaphoreSlim m_DisposableSemaphoreSlim = new();
-
-        private async UniTask DisposableSemaphoreSlimTest(int id)
-        {
-            using var _ = await m_DisposableSemaphoreSlim.WaitAsync();
-            Log.Info($"DisposableSemaphoreSlimTest: {id}");
-            await UniTask.Delay(1000);
-        }
-
-        private async UniTask GlobalDisposableSemaphoreSlimTest(int id)
-        {
-            using var _ = await DisposableSemaphoreSlim.WaitAsync(id);
-            Log.Info($"GlobalDisposableSemaphoreSlimTest: {id}");
-            await UniTask.Delay(1000);
-        }
-        ```
-
-    - 文本模板
-
-        参考FairyGUI的文本模板实现，实现了一套项目公用的文本模板功能，并整合FairyGUI的接口，允许添加全局变量和局部变量。
-
-        ```chsarp
-        TextUtility.ParseTemplate(string template, Dictionary<string, string> dictionary)
-        ```
-        
-        例如文本内容为"我的名字是{name=李雷}, 我今年{age=10}岁"
-        若传入参数为{"name": "韩梅梅"}
-        则文本模板处理结果为"我的名字是韩梅梅, 我今年10岁"
+- [GameFramework](https://github.com/EllanJiang/GameFramework) / [UnityGameFramework](https://github.com/EllanJiang/UnityGameFramework)
+- [FairyGUI](https://www.fairygui.com)
+- [YooAsset](https://github.com/tuyoogame/YooAsset)
+- [Luban](https://github.com/focus-creative-games/luban)
+- [UniTask](https://github.com/Cysharp/UniTask.git)
