@@ -6,7 +6,6 @@ namespace GameMain
     /// <summary>
     /// 数值组件。
     /// </summary>
-    [GameComponent(GameComponentType.Numeric)]
     public sealed class NumericComponent : GameComponentBase, INumeric
     {
         /// <summary>

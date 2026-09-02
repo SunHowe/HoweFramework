@@ -9,7 +9,6 @@ namespace GameMain
     /// <summary>
     /// 视图组件.
     /// </summary>
-    [GameComponent(GameComponentType.View)]
     public sealed class ViewComponent : GameComponentBase
     {
         /// <summary>

@@ -3,7 +3,6 @@ namespace GameMain
     /// <summary>
     /// 游戏实体管理器.
     /// </summary>
-    [GameManager(GameManagerType.Entity)]
     public interface IGameEntityManager : IGameManager
     {
         /// <summary>

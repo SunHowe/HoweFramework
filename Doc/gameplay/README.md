@@ -12,7 +12,7 @@
 |------|--------|
 | [`overview.md`](overview.md) | 目录、命名空间、和框架的边界 |
 | [`context-and-managers.md`](context-and-managers.md) | Context 生命周期与内置 Manager |
-| [`entity-component.md`](entity-component.md) | 实体、组件、枚举与 Attribute |
+| [`entity-component.md`](entity-component.md) | 实体、组件与 TypeId |
 | [`numeric.md`](numeric.md) | 数值分层，禁止直接写 Final |
 | [`state.md`](state.md) | 状态 = id + provider 集合 |
 | [`view.md`](view.md) | 视图加载与 Transform 同步 |

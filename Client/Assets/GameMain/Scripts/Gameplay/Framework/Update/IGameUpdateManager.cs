@@ -5,7 +5,6 @@ namespace GameMain
     /// <summary>
     /// 游戏更新管理器。
     /// </summary>
-    [GameManager(GameManagerType.Update)]
     public interface IGameUpdateManager : IGameManager
     {
         /// <summary>

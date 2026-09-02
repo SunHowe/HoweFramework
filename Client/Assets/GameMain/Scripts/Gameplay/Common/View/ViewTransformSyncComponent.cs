@@ -6,7 +6,6 @@ namespace GameMain
     /// <summary>
     /// 视图Transform同步组件。
     /// </summary>
-    [GameComponent(GameComponentType.ViewTransformSync)]
     public sealed class ViewTransformSyncComponent : GameComponentBase
     {
         private TransformComponent m_TransformComponent;

@@ -8,11 +8,11 @@
 
 - `IGameContext`：`EventDispatcher`、`GameObjectPool`、`ResLoader`、`GameStatus`、`Awake`/`StartGame`/`PauseGame`/`ResumeGame`/`StopGame`、`GetManager`
 - `GameContextBase`：`AddManager` / `AddManager<T>`；未赋值时 `Awake` 会创建托管 dispatcher/loader/pool
-- `IGameManager` / `GameManagerBase`：`ManagerType` 来自接口上的 `GameManagerAttribute`
+- `IGameManager` / `GameManagerBase`：`ManagerType` 为对外接口的 `TypeId`（实现类会归约到继承 `IGameManager` 的最根基接口）
 - `GameManagerHelper.GetManager<T>(context)`
 - `GameStatus`：None、Initialize、Running、Pause、Stopped
 
-内置 `GameManagerType`：Update=1、Random=2、Scene=3、View=4、Timer=5、Expression=6、Entity=100。
+内置 Manager 接口：`IGameUpdateManager`、`IGameRandomManager`、`IGameSceneManager`、`IGameViewManager`、`IGameTimerManager`、`IExpressionManager`、`IGameEntityManager`。
 
 对应实现：`GameUpdateManager`、`GameRandomManager`、`GameSceneManager`、`GameViewManager`、`GameTimerManager`、`ExpressionManager`、`GameEntityManager`。
 
@@ -26,18 +26,19 @@
 
 ## 扩展点
 
-新 Manager：接口标 `[GameManager(GameManagerType.Xxx)]`（先在枚举占用空闲值，避开 1–6 与 100），类继承 `GameManagerBase`，Context 里 `AddManager`。同一 `ManagerType` 不能加两次。
+新 Manager：新增 `IXxxManager : IGameManager`，类继承 `GameManagerBase` 并实现该接口，Context 里 `AddManager`。对外用 `GetManager<IXxxManager>()`。同一接口 TypeId 不能加两次。
 
 ## 约束与坑
 
-- Attribute 打在**接口**上（`AttributeTargets.Interface`），Helper 用 `GetCustomAttribute(..., inherit: true)`。
+- `ManagerType` 不以实现类 TypeId 为准，否则 `GetManager<IXxxManager>()` 对不上。
+- 一个实现类不要同时实现两个互不继承的 `IGameManager` 接口。
 - `GetManager` 找不到返回 null。
+- TypeId 是运行时分配，不要当协议号持久化。
 - 托管 ResLoader 必须在托管对象池之前（`UseManagedGameObjectPool` 会确保 loader）。
 
 ## 相关源码
 
 - `Client/Assets/GameMain/Scripts/Gameplay/Framework/GameContextBase.cs`
 - `Client/Assets/GameMain/Scripts/Gameplay/Framework/GameManagerBase.cs`
-- `Client/Assets/GameMain/Scripts/Gameplay/Framework/GameManagerAttribute.cs`
-- `Client/Assets/GameMain/Scripts/Gameplay/GameManagerType.cs`
 - `Client/Assets/GameMain/Scripts/Gameplay/Framework/Helper/GameManagerHelper.cs`
+- `Client/Assets/HoweFramework/Base/TypeId.cs`

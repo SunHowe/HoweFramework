@@ -3,7 +3,6 @@ namespace GameMain
     /// <summary>
     /// 表达式管理器。
     /// </summary>
-    [GameManager(GameManagerType.Expression)]
     public interface IExpressionManager : IGameManager
     {
         /// <summary>

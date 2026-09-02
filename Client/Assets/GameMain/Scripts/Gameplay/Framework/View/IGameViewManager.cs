@@ -5,7 +5,6 @@ namespace GameMain
     /// <summary>
     /// 游戏视图管理器。
     /// </summary>
-    [GameManager(GameManagerType.View)]
     public interface IGameViewManager : IGameManager
     {
         /// <summary>

@@ -6,7 +6,6 @@ namespace GameMain
     /// <summary>
     /// 状态组件。
     /// </summary>
-    [GameComponent(GameComponentType.State)]
     public sealed class StateComponent : GameComponentBase
     {
         /// <summary>

@@ -7,7 +7,6 @@ namespace GameMain
     /// <summary>
     /// 资源组件。用于管理血量、魔法值等资源数值。
     /// </summary>
-    [GameComponent(GameComponentType.Resource)]
     public sealed class ResourceComponent : GameComponentBase
     {
         /// <summary>

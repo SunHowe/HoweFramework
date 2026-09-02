@@ -17,8 +17,8 @@
 
 ## 约定
 
-- 组件：`*Component`，继承 `GameComponentBase`（以源码基类名为准），在 `GameComponentType` 占用业务区间，不要改内置枚举值。
-- 管理器：`*Manager`，实现现有 Manager 基类/接口，在 `GameManagerType` 占用业务区间。
+- 组件：`*Component`，继承 `GameComponentBase`（以源码基类名为准）。`ComponentType` 用 `TypeId`，不要再加 Attribute 或组件枚举。
+- 管理器：`*Manager`，实现现有 Manager 基类与 `I*Manager : IGameManager`。`ManagerType` 用接口的 `TypeId`，不要再加 Attribute 或 Manager 枚举。
 - 实体与组件通过 Context / EntityManager 创建，不要绕过管理器直接 new 长期存活对象却不走回收。
 - 数值、状态、视图的职责拆分见 `Doc/gameplay/` 各篇，不要用一个组件包办。
 

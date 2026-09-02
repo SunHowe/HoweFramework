@@ -8,7 +8,6 @@ namespace GameMain
     /// <summary>
     /// Transform组件。
     /// </summary>
-    [GameComponent(GameComponentType.Transform)]
     public class TransformComponent : GameComponentBase
     {
         public event TransformVector3UpdatedDelegate OnPositionUpdated;

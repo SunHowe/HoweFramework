@@ -8,11 +8,10 @@
 
 - `IGameEntity` / `GameEntity`（`GameEntityManager` 嵌套实现）
 - `IGameEntityManager`：`CreateEntity`、`GetEntity`、`DestroyEntity`、`SpawnComponentId`
-- `IGameComponent` / `GameComponentBase`：`ComponentType` 来自类上 `GameComponentAttribute`
+- `IGameComponent` / `GameComponentBase`：`ComponentType` 为 `TypeId.GetIdByType` 分配的运行时 id（具体组件类）
 - `GameEntityHelper`：`AddComponent<T>`、`GetComponent<T>`、`RemoveComponent<T>`
-- `GameComponentType` 通用区注释为 **1–1000**：Transform=1、View=2、ViewTransformSync=3、Numeric=4、State=5、Resource=6
 
-组件类必须 `[GameComponent(GameComponentType.Xxx)]`，否则 `GetComponentType` 抛异常。
+`GetComponentType` 只接受 `GameComponentBase` 的非抽象派生类。id 随进程分配，不要当协议号或表字段持久化。
 
 ## 用法
 
@@ -27,7 +26,7 @@ entity.Dispose(); // 或 DestroyEntity
 
 ## 扩展点
 
-业务组件：枚举从 **1001** 起（避开通用 1–1000），新类 + Attribute，需要场景摆放再写 Converter。
+业务组件：继承 `GameComponentBase`，不必再标 Attribute 或占枚举。需要场景摆放再写 Converter。
 
 ## 约束与坑
 
@@ -40,6 +39,5 @@ entity.Dispose(); // 或 DestroyEntity
 
 - `Client/Assets/GameMain/Scripts/Gameplay/Framework/Entity/GameEntityManager.cs`
 - `Client/Assets/GameMain/Scripts/Gameplay/Framework/Entity/GameComponentBase.cs`
-- `Client/Assets/GameMain/Scripts/Gameplay/Framework/Entity/GameComponentAttribute.cs`
-- `Client/Assets/GameMain/Scripts/Gameplay/GameComponentType.cs`
 - `Client/Assets/GameMain/Scripts/Gameplay/Framework/Helper/GameEntityHelper.cs`
+- `Client/Assets/HoweFramework/Base/TypeId.cs`

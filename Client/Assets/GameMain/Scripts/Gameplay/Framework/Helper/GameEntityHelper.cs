@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using HoweFramework;
 using UnityEngine;
 
@@ -11,33 +10,17 @@ namespace GameMain
     /// </summary>
     public static class GameEntityHelper
     {
-        private static readonly Dictionary<Type, int> s_ComponentTypeDict = new();
-
-        public static void Clear()
-        {
-            s_ComponentTypeDict.Clear();
-        }
-
         /// <summary>
         /// 获取组件类型.
         /// </summary>
         public static int GetComponentType(Type type)
         {
-            if (s_ComponentTypeDict.TryGetValue(type, out var componentType))
+            if (type == null || type.IsAbstract || !typeof(GameComponentBase).IsAssignableFrom(type))
             {
-                return componentType;
+                throw new Exception(string.Format("Type '{0}' is not a game component type.", type?.FullName));
             }
 
-            var attribute = type.GetCustomAttribute<GameComponentAttribute>();
-            if (attribute == null)
-            {
-                throw new Exception(string.Format("Type '{0}' is not a game component type.", type.FullName));
-            }
-
-            componentType = attribute.ComponentType;
-            s_ComponentTypeDict.Add(type, componentType);
-
-            return componentType;
+            return TypeId.GetIdByType(type);
         }
 
         /// <summary>
@@ -45,7 +28,12 @@ namespace GameMain
         /// </summary>
         public static int GetComponentType<T>() where T : GameComponentBase
         {
-            return GetComponentType(typeof(T));
+            if (typeof(T).IsAbstract)
+            {
+                throw new Exception(string.Format("Type '{0}' is not a game component type.", typeof(T).FullName));
+            }
+
+            return TypeId<T>.Id;
         }
 
         /// <summary>

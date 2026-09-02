@@ -5,7 +5,6 @@ namespace GameMain
     /// <summary>
     /// 玩法场景管理器。
     /// </summary>
-    [GameManager(GameManagerType.Scene)]
     public interface IGameSceneManager : IGameManager
     {
         /// <summary>

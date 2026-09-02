@@ -6,7 +6,7 @@
 
 ## 关键类型
 
-- `NumericComponent`：`INumeric`，`[GameComponent(Numeric)]`
+- `NumericComponent`：`INumeric`，`ComponentType` 为该类 `TypeId`
 - `NumericSubType`：Final、Basic、BasicPercent、BasicConstAdd、FinalPercent、FinalConstAdd
 - 公式（枚举注释）：`Final = (Basic * (1 + BasicPercent) + BasicConstAdd) * (1 + FinalPercent) + FinalConstAdd`
 - `NumericHelper.EncodeNumericKey` / `DecodeNumericKey`

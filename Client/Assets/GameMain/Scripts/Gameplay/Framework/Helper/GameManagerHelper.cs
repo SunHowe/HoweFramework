@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using HoweFramework;
 
 namespace GameMain
@@ -10,33 +8,12 @@ namespace GameMain
     /// </summary>
     public static class GameManagerHelper
     {
-        private static readonly Dictionary<Type, int> s_ManagerTypeDict = new();
-
-        public static void Clear()
-        {
-            s_ManagerTypeDict.Clear();
-        }
-
         /// <summary>
         /// 获取管理器类型.
         /// </summary>
         public static int GetManagerType(Type type)
         {
-            if (s_ManagerTypeDict.TryGetValue(type, out var managerType))
-            {
-                return managerType;
-            }
-
-            var attribute = AssemblyUtility.GetCustomAttribute<GameManagerAttribute>(type, true);
-            if (attribute == null)
-            {
-                throw new Exception(string.Format("Type '{0}' is not a game manager type.", type.FullName));
-            }
-            
-            managerType = attribute.ManagerType;
-            s_ManagerTypeDict.Add(type, managerType);
-
-            return managerType;
+            return TypeId.GetIdByType(ResolveManagerIdentityType(type));
         }
 
         /// <summary>
@@ -44,7 +21,65 @@ namespace GameMain
         /// </summary>
         public static int GetManagerType<T>() where T : IGameManager
         {
-            return GetManagerType(typeof(T));
+            var type = typeof(T);
+            if (type.IsInterface)
+            {
+                if (type == typeof(IGameManager))
+                {
+                    throw new Exception(string.Format("Type '{0}' is not a game manager type.", type.FullName));
+                }
+
+                return TypeId<T>.Id;
+            }
+
+            return GetManagerType(type);
+        }
+
+        /// <summary>
+        /// 管理器运行时 id 以对外接口为准：实现类映射到继承 <see cref="IGameManager"/> 的最根基接口，
+        /// 以便 <c>AddManager</c> 与 <c>GetManager&lt;IXxxManager&gt;</c> 使用同一 TypeId。
+        /// </summary>
+        private static Type ResolveManagerIdentityType(Type type)
+        {
+            if (type == null)
+            {
+                throw new Exception("Type is not a game manager type.");
+            }
+
+            if (type.IsInterface)
+            {
+                if (type == typeof(IGameManager) || !typeof(IGameManager).IsAssignableFrom(type))
+                {
+                    throw new Exception(string.Format("Type '{0}' is not a game manager type.", type.FullName));
+                }
+
+                return type;
+            }
+
+            Type identity = null;
+            foreach (var iface in type.GetInterfaces())
+            {
+                if (iface == typeof(IGameManager) || !typeof(IGameManager).IsAssignableFrom(iface))
+                {
+                    continue;
+                }
+
+                if (identity == null || iface.IsAssignableFrom(identity))
+                {
+                    identity = iface;
+                }
+                else if (!identity.IsAssignableFrom(iface))
+                {
+                    throw new Exception(string.Format("Type '{0}' implements multiple unrelated game manager interfaces.", type.FullName));
+                }
+            }
+
+            if (identity == null)
+            {
+                throw new Exception(string.Format("Type '{0}' is not a game manager type.", type.FullName));
+            }
+
+            return identity;
         }
 
         /// <summary>

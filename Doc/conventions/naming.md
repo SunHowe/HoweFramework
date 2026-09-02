@@ -8,8 +8,8 @@
 |------|------|------|
 | 框架模块 | `*Module` | `UIModule`、`ResModule` |
 | 界面逻辑 | `*FormLogic` / `*FormLogicBase` | `FullScreenFormLogicBase` |
-| 玩法组件 | `*Component` + `[GameComponent]` | `NumericComponent` |
-| 玩法管理器 | `*Manager` + 接口 `[GameManager]` | `GameEntityManager` / `IGameEntityManager` |
+| 玩法组件 | `*Component` : `GameComponentBase` | `NumericComponent` |
+| 玩法管理器 | `*Manager` + `I*Manager` : `IGameManager` | `GameEntityManager` / `IGameEntityManager` |
 | 事件 | `*EventArgs` : `GameEventArgs` | `GameStartEventArgs` |
 | 流程 | `Procedure*` | `ProcedureLogin`、`ProcedureId` |
 | 系统 | `*System` / `I*System` | `ILoginSystem` |
@@ -27,8 +27,7 @@ C# 文件名与主类型名一致。业务代码在 `Client/Assets/GameMain/Scri
 
 ## 枚举占用
 
-- `GameComponentType`：通用组件注释区间 **1–1000**，已用 1–6。业务从 **1001** 起。
-- `GameManagerType`：已用 1–6 与 **100**。业务避开这些值。
+- 玩法组件 / Manager 不再用枚举占号，运行时 id 用 `TypeId` / `TypeId<T>.Id`。
 - `ProcedureId`：从 1 起且 `ChangeNextProcedure` 依赖连续 +1。
 
 ## 不要
@@ -38,5 +37,6 @@ C# 文件名与主类型名一致。业务代码在 `Client/Assets/GameMain/Scri
 
 ## 相关源码
 
-- `Client/Assets/GameMain/Scripts/Gameplay/GameComponentType.cs`
-- `Client/Assets/GameMain/Scripts/Gameplay/GameManagerType.cs`
+- `Client/Assets/HoweFramework/Base/TypeId.cs`
+- `Client/Assets/GameMain/Scripts/Gameplay/Framework/Helper/GameEntityHelper.cs`
+- `Client/Assets/GameMain/Scripts/Gameplay/Framework/Helper/GameManagerHelper.cs`
