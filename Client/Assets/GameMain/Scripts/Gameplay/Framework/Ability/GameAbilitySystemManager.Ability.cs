@@ -147,21 +147,21 @@ namespace GameMain
 
             if (def.ActivationRequiredTags != null &&
                 def.ActivationRequiredTags.Count > 0 &&
-                !asc.OwnedTags.HasAll(def.ActivationRequiredTags, Tags))
+                !asc.OwnedTags.HasAll(def.ActivationRequiredTags, TagRegistry))
             {
                 return AbilityActivationResult.Fail(AbilityActivationFailReason.MissingRequiredTags);
             }
 
             if (def.ActivationBlockedTags != null &&
                 def.ActivationBlockedTags.Count > 0 &&
-                asc.OwnedTags.HasAny(def.ActivationBlockedTags, Tags))
+                asc.OwnedTags.HasAny(def.ActivationBlockedTags, TagRegistry))
             {
                 return AbilityActivationResult.Fail(AbilityActivationFailReason.BlockedByTags);
             }
 
             if (def.AbilityTags != null &&
                 def.AbilityTags.Count > 0 &&
-                asc.BlockedAbilityTags.HasAny(def.AbilityTags, Tags))
+                asc.BlockedAbilityTags.HasAny(def.AbilityTags, TagRegistry))
             {
                 return AbilityActivationResult.Fail(AbilityActivationFailReason.BlockedByTags);
             }
@@ -302,8 +302,8 @@ namespace GameMain
                     var matches = false;
                     for (var t = 0; t < def.InterruptTags.Count && !matches; t++)
                     {
-                        matches = Tags.Matches(interruptTag, def.InterruptTags[t])
-                                  || Tags.Matches(def.InterruptTags[t], interruptTag);
+                        matches = TagRegistry.Matches(interruptTag, def.InterruptTags[t])
+                                  || TagRegistry.Matches(def.InterruptTags[t], interruptTag);
                     }
 
                     if (!matches)
@@ -466,7 +466,7 @@ namespace GameMain
             var targetAsc = GetAsc(target);
             if (def.TargetRequiredTags != null && def.TargetRequiredTags.Count > 0)
             {
-                if (targetAsc == null || !targetAsc.OwnedTags.HasAll(def.TargetRequiredTags, Tags))
+                if (targetAsc == null || !targetAsc.OwnedTags.HasAll(def.TargetRequiredTags, TagRegistry))
                 {
                     return false;
                 }
@@ -474,7 +474,7 @@ namespace GameMain
 
             if (def.TargetBlockedTags != null && def.TargetBlockedTags.Count > 0)
             {
-                if (targetAsc != null && targetAsc.OwnedTags.HasAny(def.TargetBlockedTags, Tags))
+                if (targetAsc != null && targetAsc.OwnedTags.HasAny(def.TargetBlockedTags, TagRegistry))
                 {
                     return false;
                 }
@@ -558,7 +558,7 @@ namespace GameMain
                 {
                     for (var a = 0; a < def.AbilityTags.Count; a++)
                     {
-                        if (Tags.Matches(def.AbilityTags[a], tags[t]) || def.AbilityTags[a] == tags[t])
+                        if (TagRegistry.Matches(def.AbilityTags[a], tags[t]) || def.AbilityTags[a] == tags[t])
                         {
                             shouldCancel = true;
                             break;

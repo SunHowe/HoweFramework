@@ -49,9 +49,21 @@ namespace GameMain
             Manager?.GrantAbility(Entity, abilityDefId, level);
         }
 
+        /// <summary>
+        /// 是否拥有该标签。层次匹配：拥有子孙即视为拥有父标签。
+        /// 精确匹配用 <see cref="HasExactTag"/>。
+        /// </summary>
         public bool HasTag(GameplayTag tag)
         {
-            return Manager != null && Manager.HasTag(Entity, tag);
+            return Manager != null && OwnedTags.HasTag(tag, Manager.TagRegistry);
+        }
+
+        /// <summary>
+        /// 是否精确拥有该标签（不含子孙）。冷却组等必须对号入座的门闩用这个。
+        /// </summary>
+        public bool HasExactTag(GameplayTag tag)
+        {
+            return OwnedTags.HasExact(tag);
         }
 
         internal void ShutdownRuntime()

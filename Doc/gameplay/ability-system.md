@@ -29,7 +29,7 @@ Context `OnAwake` 里在 `GameUpdateManager` 之后 `AddManager<GameAbilitySyste
 
 ```csharp
 var gas = context.GetManager<IGameAbilitySystemManager>();
-var stun = gas.Tags.Request("State.Debuff.Stun");
+var stun = gas.TagRegistry.Request("State.Debuff.Stun");
 gas.RegisterEffect(new GameplayEffectDef { /* Duration + GrantedTags + Overlay modifiers */ });
 gas.RegisterAbility(new GameplayAbilityDef { AbilityLogicType = typeof(MyInstantAbility) });
 
@@ -57,6 +57,7 @@ gas.ApplyEffect(target, new EffectSpec(effectId, entity));
 - Overlay 以 ASC 实例为 Numeric 来源；实体销毁会 `RemoveFromSource`。
 - TypeId / Tag id / Def id 都不要当跨进程协议号，除非 Def id 由你自己稳定分配。
 - 效果时长走 GAS Tick，不要再挂一份 `IGameTimerManager`，避免双通道。
+- `AbilitySystemComponent.HasTag` 与 `IGameAbilitySystemManager.HasTag` 都是层次匹配（拥有 `State.Debuff.Stun` 时查询 `State.Debuff` 为 true）。精确匹配用 `HasExactTag` / `GameplayTagContainer.HasExact`。冷却组检查刻意走 `HasExact`，避免父标签误伤同组兄弟技能。
 
 ## 相关源码
 

@@ -9,7 +9,7 @@ namespace GameMain
     /// </summary>
     public sealed partial class GameAbilitySystemManager : GameManagerBase, IGameAbilitySystemManager
     {
-        public GameplayTagRegistry Tags { get; } = new GameplayTagRegistry();
+        public GameplayTagRegistry TagRegistry { get; } = new GameplayTagRegistry();
 
         private readonly Dictionary<int, GameplayEffectDef> m_Effects = new Dictionary<int, GameplayEffectDef>();
         private readonly Dictionary<int, GameplayAbilityDef> m_Abilities = new Dictionary<int, GameplayAbilityDef>();
@@ -118,7 +118,7 @@ namespace GameMain
         public bool HasTag(IGameEntity entity, GameplayTag tag)
         {
             var asc = GetAsc(entity);
-            return asc != null && asc.OwnedTags.HasTag(tag, Tags);
+            return asc != null && asc.OwnedTags.HasTag(tag, TagRegistry);
         }
 
         protected override void OnAwake()
@@ -146,7 +146,7 @@ namespace GameMain
             m_Effects.Clear();
             m_Abilities.Clear();
             m_AbilityLogicCache.Clear();
-            Tags.Clear();
+            TagRegistry.Clear();
             m_ScratchModifiers.Clear();
             m_ScratchAdd.Clear();
             m_ScratchMul.Clear();

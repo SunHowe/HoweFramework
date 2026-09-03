@@ -8,9 +8,9 @@ namespace GameMain
     public interface IGameAbilitySystemManager : IGameManager
     {
         /// <summary>
-        /// 层次化标签注册表。
+        /// 层次化标签注册表（名字实习与父子关系），不是实体拥有的标签。
         /// </summary>
-        GameplayTagRegistry Tags { get; }
+        GameplayTagRegistry TagRegistry { get; }
 
         GameplayEffectDef RegisterEffect(GameplayEffectDef def);
 
@@ -56,6 +56,9 @@ namespace GameMain
 
         void AddAbilityTasks(IGameEntity entity, int activeHandle, IReadOnlyList<AbilityTask> tasks);
 
+        /// <summary>
+        /// 实体是否拥有该标签（层次匹配，与 <see cref="AbilitySystemComponent.HasTag"/> 一致）。
+        /// </summary>
         bool HasTag(IGameEntity entity, GameplayTag tag);
 
         bool CanAffordCost(IGameEntity entity, int costEffectId);

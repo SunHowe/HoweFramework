@@ -20,14 +20,14 @@ namespace GameMain
 
             if (def.ApplicationRequiredTags != null &&
                 def.ApplicationRequiredTags.Count > 0 &&
-                !asc.OwnedTags.HasAll(def.ApplicationRequiredTags, Tags))
+                !asc.OwnedTags.HasAll(def.ApplicationRequiredTags, TagRegistry))
             {
                 return ApplyEffectResult.Failed(ApplyEffectFailReason.MissingApplicationRequiredTags);
             }
 
             if (def.ApplicationImmunityTags != null &&
                 def.ApplicationImmunityTags.Count > 0 &&
-                asc.OwnedTags.HasAny(def.ApplicationImmunityTags, Tags))
+                asc.OwnedTags.HasAny(def.ApplicationImmunityTags, TagRegistry))
             {
                 return ApplyEffectResult.Failed(ApplyEffectFailReason.BlockedByImmunityTags);
             }
@@ -576,7 +576,7 @@ namespace GameMain
         {
             for (var g = 0; g < effect.GrantedTags.Count; g++)
             {
-                if (Tags.Matches(effect.GrantedTags[g], tag))
+                if (TagRegistry.Matches(effect.GrantedTags[g], tag))
                 {
                     return true;
                 }
