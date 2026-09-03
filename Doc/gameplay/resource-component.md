@@ -20,7 +20,7 @@ bool ok = resource.Cost(mpId, 20);
 
 ## 扩展点
 
-资源 id 由业务常量定义。上限用 `SetMax`，回满用 `RecoverToMax`，上限跟 Numeric 走时用 `BindNumericMax`。不要另写一套平行组件。
+资源 id 由业务常量定义。上限用 `SetMax`，回满用 `RecoverToMax`，上限跟 Numeric 走时用 `BindNumericMax`。不要另写一套平行组件。GAS Instant/Period/Cost 默认 Execute 到本组件，见 [`ability-system.md`](ability-system.md)。
 
 ## 约束与坑
 

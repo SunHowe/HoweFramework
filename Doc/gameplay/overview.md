@@ -4,8 +4,8 @@
 
 ```
 Gameplay/
-├── Framework/     Context、Entity、Managers、Event、Expression、Helper
-├── Common/        Transform、View、Numeric、State、Resource
+├── Framework/     Context、Entity、Managers（含 Ability）、Event、Expression、Helper
+├── Common/        Transform、View、Numeric、State、Resource、Ability
 ├── Mono/          GameEntityConverter 与各 ComponentConverter
 └── Doc/           仅指针，正文在仓库根 Doc/
 ```

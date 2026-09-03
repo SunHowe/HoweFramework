@@ -12,9 +12,11 @@
 - `GameManagerHelper.GetManager<T>(context)`
 - `GameStatus`：None、Initialize、Running、Pause、Stopped
 
-内置 Manager 接口：`IGameUpdateManager`、`IGameRandomManager`、`IGameSceneManager`、`IGameViewManager`、`IGameTimerManager`、`IExpressionManager`、`IGameEntityManager`。
+内置 Manager 接口：`IGameUpdateManager`、`IGameRandomManager`、`IGameSceneManager`、`IGameViewManager`、`IGameTimerManager`、`IExpressionManager`、`IGameEntityManager`、`IGameAbilitySystemManager`。
 
-对应实现：`GameUpdateManager`、`GameRandomManager`、`GameSceneManager`、`GameViewManager`、`GameTimerManager`、`ExpressionManager`、`GameEntityManager`。
+对应实现：`GameUpdateManager`、`GameRandomManager`、`GameSceneManager`、`GameViewManager`、`GameTimerManager`、`ExpressionManager`、`GameEntityManager`、`GameAbilitySystemManager`。
+
+技能系统见 [`ability-system.md`](ability-system.md)。需要 Tick 的玩法应先 `AddManager<GameUpdateManager>()`。
 
 `StartGame` 派发 `GameStartEventArgs` 与 `GameStatusChangeEventArgs`；`StopGame` 派发 `GameStopEventArgs`。
 

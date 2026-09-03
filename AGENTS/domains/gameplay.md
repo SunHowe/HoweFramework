@@ -9,7 +9,7 @@
 | 位置 | 用途 |
 |------|------|
 | `Gameplay/Framework/` | Context、Entity、内置 Manager、事件、表达式 |
-| `Gameplay/Common/` | 通用组件（Transform / View / Numeric / State / Resource） |
+| `Gameplay/Common/` | 通用组件（Transform / View / Numeric / State / Resource / Ability） |
 | `Gameplay/Mono/` | 场景物体 → 实体的转换器 |
 | `GameMain/Scripts/` 下业务目录 | 具体玩法组件与 Manager |
 
