@@ -1,0 +1,28 @@
+{
+  "name": "howe-fgui",
+  "private": true,
+  "version": "1.0.0",
+  "description": "HoweFramework FairyGUI CLI and MCP wrapper over OpenFairyGUI.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "howe-fgui": "./bin/fgui.mjs"
+  },
+  "scripts": {
+    "inspect": "node bin/fgui.mjs inspect",
+    "validate": "node bin/fgui.mjs validate",
+    "publish": "node bin/fgui.mjs publish",
+    "mcp": "node bin/fgui.mjs mcp"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@openfairygui/cli": "0.3.1",
+    "@openfairygui/core": "0.3.1",
+    "@openfairygui/functions": "0.3.1",
+    "@openfairygui/mcp": "0.3.1",
+    "sharp": "^0.34.0",
+    "zod": "^4.3.6"
+  }
+}

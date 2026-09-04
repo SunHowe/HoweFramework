@@ -1,2 +1,4 @@
 .DS_Store
 .objs/
+.openfairygui.backend.lock
+.*.openfairygui.backend.lock

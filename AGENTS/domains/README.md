@@ -14,7 +14,7 @@
 |------|--------|
 | [`client.md`](client.md) | Unity 工程边界、模块与业务分层 |
 | [`gameplay.md`](gameplay.md) | EC 框架改动约定（源码在 GameMain） |
-| [`pipeline.md`](pipeline.md) | Luban / FairyGUI / YooAsset 改哪里 |
+| [`pipeline.md`](pipeline.md) | Luban / FairyGUI（OpenFairyGUI）/ YooAsset 改哪里 |
 | [`server.md`](server.md) | 服务端以仓库实际内容为准 |
 
 ## 子目录

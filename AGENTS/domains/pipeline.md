@@ -15,7 +15,7 @@
 
 ## FairyGUI
 
-界面源工程在 `FGUIProject/`。运行时与代码生成在 `HoweFramework/UI/` 与 `HoweFramework.Editor/FairyGUI/`。改包体与组件在 FairyGUI 工程里做，业务逻辑在 `GameMain/Scripts/UI/`。详见 [`Doc/pipeline/fairygui.md`](../../Doc/pipeline/fairygui.md)。
+界面源工程只在 `FGUIProject/`。创建 / 编辑 / 发布走 `Tools/fgui`（OpenFairyGUI CLI 与组合 MCP）或官方 FairyGUI 编辑器；不要另建 `.fairy`。C# 绑定仍由 Unity `HoweFramework.Editor/FairyGUI/` 生成。业务逻辑只进 `GameMain/Scripts/UI/`。详见 [`Doc/pipeline/fairygui.md`](../../Doc/pipeline/fairygui.md)。
 
 ## YooAsset
 

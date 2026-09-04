@@ -13,3 +13,6 @@ Client/Build
 .claude
 .codex
 .cursor
+Tools/fgui/node_modules/
+*.openfairygui.backend.lock
+.openfairygui.backend.lock

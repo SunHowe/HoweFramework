@@ -11,7 +11,7 @@
 | 文件 | 一句话 |
 |------|--------|
 | [`luban.md`](luban.md) | DataTable 生成客户端表 |
-| [`fairygui.md`](fairygui.md) | FGUIProject 与编辑器生成 |
+| [`fairygui.md`](fairygui.md) | FGUIProject、OpenFairyGUI 发布与 Unity 绑定 |
 | [`yooasset.md`](yooasset.md) | ResModule + 收集器 |
 
 ## 子目录

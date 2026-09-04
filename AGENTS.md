@@ -42,7 +42,7 @@ Unity 改代码时在 `Client/` 上下文工作。不要改 `HoweFramework` / `H
 | `Client/Assets/HoweFramework.Editor/` | 编辑器扩展 |
 | `Client/Assets/GameMain/` | 业务层（含 Gameplay EC 框架） |
 | `DataTable/` | Luban 表源 |
-| `Tools/` | Luban 工具链 |
+| `Tools/` | Luban 工具链、OpenFairyGUI（`Tools/fgui`） |
 | `FGUIProject/` | FairyGUI 工程 |
 | `Server/` | 自研服务端（按仓库实际内容为准） |
 | `GeekServer/` | 参考服务端 |

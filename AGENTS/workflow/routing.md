@@ -11,7 +11,7 @@
 | 流程、登录、业务 UI、业务 System | 客户端业务 | `Client/Assets/GameMain/` | [`domains/client.md`](../domains/client.md) |
 | 实体、组件、Manager、数值/状态/视图 | Gameplay | `Client/Assets/GameMain/Scripts/Gameplay/` | [`domains/gameplay.md`](../domains/gameplay.md)、[`Doc/gameplay/`](../../Doc/gameplay/README.md) |
 | 配表、Luban、生成代码 | 管线 | `DataTable/`、`Tools/` | [`domains/pipeline.md`](../domains/pipeline.md)、[`Doc/pipeline/luban.md`](../../Doc/pipeline/luban.md) |
-| FairyGUI 包、界面资源 | 管线 | `FGUIProject/` | [`Doc/pipeline/fairygui.md`](../../Doc/pipeline/fairygui.md) |
+| FairyGUI 包、界面资源 | 管线 | `FGUIProject/`、`Tools/fgui/` | [`domains/pipeline.md`](../domains/pipeline.md)、[`Doc/pipeline/fairygui.md`](../../Doc/pipeline/fairygui.md) |
 | 资源打包、加载器 | 管线 | YooAsset + `ResModule` | [`Doc/pipeline/yooasset.md`](../../Doc/pipeline/yooasset.md) |
 | 网关、玩法服、协议 | 服务端 | `Server/`、参考 `GeekServer/` | [`domains/server.md`](../domains/server.md)、[`Doc/server/`](../../Doc/server/README.md) |
 | Agent 流程、索引、沉淀规则 | 本目录 | `AGENTS/` | 改完更新 AGENTS 索引 |

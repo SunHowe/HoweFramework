@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "howe-fgui": {
+      "command": "node",
+      "args": ["Tools/fgui/bin/fgui.mjs", "mcp"]
+    }
+  }
+}

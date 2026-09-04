@@ -1,0 +1,27 @@
+import { paths } from './paths.mjs';
+
+export const PIPELINE_GUIDANCE = [
+  'HoweFramework FairyGUI pipeline. Only edit the existing project; do not create a second .fairy.',
+  `Open session path: ${paths.fairyPath}`,
+  `Allowed root: ${paths.fguiProjectDir}`,
+  `Publish output: ${paths.publishOutputDir}`,
+  '',
+  'Authoring (OpenFairyGUI UAM, via openfairygui_backend_* tools):',
+  '1. openfairygui_backend_get_capabilities, then openfairygui_backend_open_session with the fairy path above.',
+  '2. openfairygui_backend_get_project_outline / get_session, then apply_transaction with expectedRevision.',
+  '3. save_session to write XML back to FGUIProject/. If save returns uam_fidelity_unsupported, stop; do not force-overwrite.',
+  '4. UAM covers packages, components, common display props, attach/detach, controllers, transitions, and modeled gears. It is not the official FairyGUI editor.',
+  '5. Close the session when finished.',
+  '',
+  'HoweFramework naming:',
+  '- Put packages and components in this one FGUIProject only.',
+  '- Screen components must be named *Form and exported; reusable widgets *Component.',
+  '- Do not rename HoweFramework types or write logic into HoweFramework / HoweFramework.Editor.',
+  '',
+  'Publish and Unity (howe_fgui_* tools, or Tools/fgui/bin/fgui.mjs):',
+  '1. howe_fgui_validate_project, then howe_fgui_publish_project.',
+  '2. Publish writes *_fui.bytes into Client/Assets/GameMain/UI. Runtime path format is Assets/GameMain/UI/{0}_fui.bytes.',
+  '3. Unity Editor AssetPostprocessor generates UIFormId, *.Designer.cs, and missing *.cs logic stubs under GameMain/Scripts/UI/{Package}/{Name}.cs. Menu: Game Framework/FairyGUI/Generate Code.',
+  '4. Fill OnOpen / events in the GameMain logic stub only. Open with UIModule.OpenUIForm(UIFormId.Xxx). Do not touch UIPackage directly.',
+  '5. Do not use OpenFairyGUI codegen or restore as the regular authoring path. Official FairyGUI Editor can still edit the same FGUIProject.',
+].join('\n');
