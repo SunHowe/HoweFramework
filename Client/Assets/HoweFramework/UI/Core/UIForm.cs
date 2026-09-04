@@ -73,6 +73,11 @@ namespace HoweFramework
         public OpenFormRequest Request { get; private set; }
 
         /// <summary>
+        /// 是否已绑定界面逻辑。缓存命中时为 true，此时不可再创建新的逻辑实例。
+        /// </summary>
+        internal bool HasFormLogic => m_FormLogic != null;
+
+        /// <summary>
         /// 加载任务id。
         /// </summary>
         private int m_LoadId;
@@ -105,6 +110,15 @@ namespace HoweFramework
             FormGroup = group;
             m_UIFormHelper = uiFormHelper;
             m_FormLogic = uiFormLogic;
+        }
+
+        /// <summary>
+        /// 为缓存复用的界面分配新的序列编号。
+        /// </summary>
+        /// <param name="serialId">界面序列编号。</param>
+        internal void AssignSerialId(int serialId)
+        {
+            FormSerialId = serialId;
         }
 
         /// <summary>

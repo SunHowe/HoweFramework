@@ -211,14 +211,22 @@ namespace HoweFramework
                         throw new ErrorCodeException(FrameworkErrorCode.UIFormHelperNotSet);
                     }
 
-                    var uiFormLogic = m_UIFormHelper.CreateUIFormLogic(request.FormId);
-                    if (uiFormLogic == null)
-                    {
-                        throw new ErrorCodeException(FrameworkErrorCode.UIFormLogicNotFound);
-                    }
-
                     uiForm = CreateUIForm(request.FormId);
-                    uiForm.Init(++m_UIFormSerialId, GetUIFormGroup(uiFormLogic.FormGroupId), m_UIFormHelper, uiFormLogic);
+                    if (uiForm.HasFormLogic)
+                    {
+                        // 缓存命中：复用已 OnInit 的逻辑，只换序列号。新建逻辑会导致 OnOpen 时 UIForm 仍为 null。
+                        uiForm.AssignSerialId(++m_UIFormSerialId);
+                    }
+                    else
+                    {
+                        var uiFormLogic = m_UIFormHelper.CreateUIFormLogic(request.FormId);
+                        if (uiFormLogic == null)
+                        {
+                            throw new ErrorCodeException(FrameworkErrorCode.UIFormLogicNotFound);
+                        }
+
+                        uiForm.Init(++m_UIFormSerialId, GetUIFormGroup(uiFormLogic.FormGroupId), m_UIFormHelper, uiFormLogic);
+                    }
                 }
 
                 // 处理界面打开前逻辑。

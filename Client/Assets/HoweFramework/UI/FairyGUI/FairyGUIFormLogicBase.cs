@@ -65,7 +65,7 @@ namespace HoweFramework
         /// <summary>
         /// 当前处理的打开请求。
         /// </summary>
-        public OpenFormRequest Request => UIForm.Request;
+        public OpenFormRequest Request => UIForm?.Request;
 
         /// <summary>
         /// 当前处理的打开请求的业务透传数据。

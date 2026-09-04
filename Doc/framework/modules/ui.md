@@ -32,11 +32,13 @@ await UIModule.Instance.CloseUIForm(UIFormId.Xxx);
 
 - 打开是请求队列，不要绕过模块直接 `UIPackage`。
 - `OpenUIForm` 默认等到界面交互结束才完成；只要打开完成用 `OpenUIFormOnlyCareAboutFormOpen`。
+- 关闭后的界面会进 `UIForm` 缓存。再次打开必须复用已 `OnInit` 的 `IUIFormLogic`，只换 `FormSerialId`。若对缓存实例再 `CreateUIFormLogic` + `Init`，新逻辑的 `UIForm` 仍为 null，已加载路径上的 `OnOpen` 访问 `Request` / `RequestUserData` 会空引用。
 - 错误码 100–112 见 `FrameworkErrorCode` UI 段。
 
 ## 相关源码
 
 - `Client/Assets/HoweFramework/UI/UIModule.cs`
+- `Client/Assets/HoweFramework/UI/Core/UIForm.cs`
 - `Client/Assets/HoweFramework/UI/OpenFormRequest.cs`
 - `Client/Assets/HoweFramework/Extensions/UIModuleExtensions.cs`
 - `Client/Assets/HoweFramework/UI/FairyGUI/FairyGUIFormLogicBase.cs`
