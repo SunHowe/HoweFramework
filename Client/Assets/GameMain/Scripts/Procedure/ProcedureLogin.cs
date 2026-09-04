@@ -10,7 +10,6 @@ namespace GameMain
     public sealed class ProcedureLogin : ProcedureBase
     {
         private const string LoginSceneAssetName = "Assets/GameMain/Scene/Login.unity";
-        public override int Id => (int)ProcedureId.Login;
 
         protected override void OnEnter()
         {

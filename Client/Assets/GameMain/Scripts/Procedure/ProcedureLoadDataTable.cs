@@ -9,8 +9,6 @@ namespace GameMain
     /// </summary>
     public sealed class ProcedureLoadDataTable : ProcedureBase
     {
-        public override int Id => (int)ProcedureId.LoadDataTable;
-        
         private bool m_IsComplete;
 
         protected override void OnEnter()

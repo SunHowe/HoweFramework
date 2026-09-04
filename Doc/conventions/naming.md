@@ -11,7 +11,7 @@
 | 玩法组件 | `*Component` : `GameComponentBase` | `NumericComponent` |
 | 玩法管理器 | `*Manager` + `I*Manager` : `IGameManager` | `GameEntityManager` / `IGameEntityManager` |
 | 事件 | `*EventArgs` : `GameEventArgs` | `GameStartEventArgs` |
-| 流程 | `Procedure*` | `ProcedureLogin`、`ProcedureId` |
+| 流程 | `Procedure*` | `ProcedureLogin` |
 | 系统 | `*System` / `I*System` | `ILoginSystem` |
 | 请求 | `*Request` : `RequestBase` | `OpenFormRequest` |
 | 工具 | `*Utility` / `*Helper` | `TextUtility`、`GameEntityHelper` |
@@ -27,8 +27,8 @@ C# 文件名与主类型名一致。业务代码在 `Client/Assets/GameMain/Scri
 
 ## 枚举占用
 
-- 玩法组件 / Manager 不再用枚举占号，运行时 id 用 `TypeId` / `TypeId<T>.Id`。
-- `ProcedureId`：从 1 起且 `ChangeNextProcedure` 依赖连续 +1。
+- 玩法组件 / Manager / 流程不再用枚举占号，运行时 id 用 `TypeId` / `TypeId<T>.Id`。
+- `ChangeNextProcedure` 按 Launch 数组顺序前进，不要用 TypeId 数值加减。
 
 ## 不要
 

@@ -5,7 +5,7 @@
 `GameEntry`（`Client/Assets/GameMain/Scripts/GameEntry.cs`）挂在启动场景：
 
 1. `Awake`：把序列化的 `GameConfig` 赋给 `GameConfig.Instance`，`new GameApp()`。
-2. `Start`：组装 `ProcedureBase[]`，调用 `ProcedureModule.Instance.Launch((int)ProcedureId.Splash, procedures)`。
+2. `Start`：组装 `ProcedureBase[]`，调用 `ProcedureModule.Instance.Launch<ProcedureSplash>(procedures)`。
 3. `Update`：`m_GameApp.Update(Time.deltaTime, Time.unscaledDeltaTime)`，驱动所有模块 `OnUpdate`。
 4. `OnDestroy`：`m_GameApp.Destroy()`，模块按注册**逆序**销毁。
 
@@ -40,15 +40,15 @@
 
 ## 业务流程
 
-`ProcedureId`（`Client/Assets/GameMain/Scripts/Procedure/ProcedureId.cs`）：
+`GameEntry` 里 Launch 数组的顺序就是启动链（id 为各具体类型的运行时 `TypeId`）：
 
-1. `Splash`
-2. `LoadDataTable`
-3. `LoadLocalization`
-4. `InitSystem`
-5. `Login`
+1. `ProcedureSplash`
+2. `ProcedureLoadDataTable`
+3. `ProcedureLoadLocalization`
+4. `ProcedureInitSystem`
+5. `ProcedureLogin`
 
-`ProcedureBase.ChangeNextProcedure()` 依赖 **Id 连续 +1**。新增流程要同时改枚举、`GameEntry` 数组和切换逻辑。
+`ProcedureBase.ChangeNextProcedure()` 按 **Launch 数组顺序** 前进，与 TypeId 数值无关。跳到指定流程用 `ChangeProcedure<T>()`。新增流程只改 `GameEntry` 数组（以及需要时的 `ChangeProcedure<T>`），不要再写流程枚举。
 
 流程只能 `Launch` 一次；重复启动抛 `ProcedureAlreadyLaunch`。切换必须从流程实例走 `ChangeProcedure`。
 

@@ -17,7 +17,7 @@ Unity 工程在 `Client/`。薄入口：[`../../Client/AGENTS.md`](../../Client/
 ## 改业务时
 
 - 新界面：业务放 `GameMain/Scripts/UI/`，逻辑类命名 `*FormLogic`，走 `UIModule`，不要直接操作 FairyGUI 全局单例绕过模块。
-- 新流程：`ProcedureBase` 子类，挂到 `GameEntry` 的 procedures 列表，并分配 `ProcedureId`。
+- 新流程：`ProcedureBase` 子类，挂到 `GameEntry` 的 procedures 列表。`Id` 用类型的 `TypeId`，不要再写流程枚举。
 - 新系统：`SystemBase` + `SystemModule`，见 [`Doc/framework/modules/system.md`](../../Doc/framework/modules/system.md)。
 - 需要框架能力时先查 `Doc/framework/modules/`，用现有 Module / 扩展方法；不要在业务里再实现一套事件、资源加载或对象池。
 

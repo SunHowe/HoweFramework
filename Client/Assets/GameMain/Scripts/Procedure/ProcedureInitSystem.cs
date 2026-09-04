@@ -7,8 +7,6 @@ namespace GameMain
     /// </summary>
     public sealed class ProcedureInitSystem : ProcedureBase
     {
-        public override int Id => (int)ProcedureId.InitSystem;
-
         protected override void OnEnter()
         {
             SystemModule.Instance.RegisterSystem<ILoginSystem, OfflineLoginSystem>();

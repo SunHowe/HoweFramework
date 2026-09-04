@@ -10,8 +10,6 @@ namespace GameMain
     /// </summary>
     public sealed class ProcedureSplash : ProcedureBase
     {
-        public override int Id => (int)ProcedureId.Splash;
-
         private bool m_IsInited = false;
 
         protected override void OnEnter()

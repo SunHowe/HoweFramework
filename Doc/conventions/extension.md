@@ -17,4 +17,4 @@
 | 属性计算公式 | `NumericComponent` | 用 Resource 存攻击力面板；GAS 不要另做 AttributeSet |
 | 当前血量/蓝量 | `ResourceComponent` | 用 Numeric Final 当血条 |
 
-加组件 / Manager 用 `TypeId` 作运行时 id，见 [`naming.md`](naming.md) 与 gameplay 文档。加完若形成可重复步骤，按沉淀协议更新本页或 gameplay 文档。
+加组件 / Manager / 流程用 `TypeId` 作运行时 id，见 [`naming.md`](naming.md) 与 gameplay / procedure 文档。加完若形成可重复步骤，按沉淀协议更新本页或对应文档。

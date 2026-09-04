@@ -29,7 +29,7 @@ namespace GameMain
                 new ProcedureLogin(),
             };
             
-            ProcedureModule.Instance.Launch((int)ProcedureId.Splash, procedures);
+            ProcedureModule.Instance.Launch<ProcedureSplash>(procedures);
         }
 
         private void OnDestroy()

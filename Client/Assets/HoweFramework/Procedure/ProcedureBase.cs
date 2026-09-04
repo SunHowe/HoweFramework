@@ -8,9 +8,9 @@ namespace HoweFramework
     public abstract class ProcedureBase
     {
         /// <summary>
-        /// 流程id。
+        /// 流程 id（具体类型的运行时 TypeId）。
         /// </summary>
-        public abstract int Id { get; }
+        public int Id => TypeId.GetIdByType(GetType());
 
         /// <summary>
         /// 流程控制器列表。
@@ -89,15 +89,27 @@ namespace HoweFramework
         /// <summary>
         /// 切换流程。
         /// </summary>
-        /// <param name="procedureId">流程id。</param>
+        /// <param name="procedureId">流程 id（类型 TypeId）。</param>
         protected void ChangeProcedure(int procedureId)
         {
             ProcedureModule.Instance.ChangeProcedure(procedureId);
         }
 
         /// <summary>
-        /// 切换到下一个流程(依赖于Id的顺序)。
+        /// 切换到指定类型的流程。
         /// </summary>
-        protected void ChangeNextProcedure() => ChangeProcedure(Id + 1);
+        /// <typeparam name="T">目标流程类型。</typeparam>
+        protected void ChangeProcedure<T>() where T : ProcedureBase
+        {
+            ChangeProcedure(TypeId<T>.Id);
+        }
+
+        /// <summary>
+        /// 切换到下一个流程（按 Launch 时的数组顺序）。
+        /// </summary>
+        protected void ChangeNextProcedure()
+        {
+            ProcedureModule.Instance.ChangeNextProcedure();
+        }
     }
 }

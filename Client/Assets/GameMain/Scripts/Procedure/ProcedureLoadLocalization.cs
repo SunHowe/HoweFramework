@@ -8,8 +8,6 @@ namespace GameMain
     /// </summary>
     public sealed class ProcedureLoadLocalization : ProcedureBase
     {
-        public override int Id => (int)ProcedureId.LoadLocalization;
-
         private bool m_IsComplete;
 
         protected override void OnEnter()
