@@ -17,6 +17,7 @@
 | 加实体 / 组件 / Manager | [`gameplay/README.md`](gameplay/README.md)、[`conventions/extension.md`](conventions/extension.md) |
 | 起名、错误码 | [`conventions/README.md`](conventions/README.md) |
 | 改表 / FairyGUI / 资源包 | [`pipeline/README.md`](pipeline/README.md) |
+| 给 Cursor 接 Unity Editor | [`pipeline/unity-mcp.md`](pipeline/unity-mcp.md) |
 | 服务端 | [`server/README.md`](server/README.md) |
 
 ## 子文件
@@ -31,5 +32,5 @@
 | [`framework/`](framework/README.md) | HoweFramework 模块与编辑器 |
 | [`gameplay/`](gameplay/README.md) | GameMain 内 EC 玩法框架 |
 | [`conventions/`](conventions/README.md) | 命名、错误码、扩展边界 |
-| [`pipeline/`](pipeline/README.md) | Luban / FairyGUI / YooAsset |
+| [`pipeline/`](pipeline/README.md) | Luban / FairyGUI / YooAsset / Unity MCP |
 | [`server/`](server/README.md) | 服务端现状 |

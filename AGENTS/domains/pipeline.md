@@ -21,6 +21,10 @@
 
 运行时入口是 `ResModule.UseYooAsset()`（`GameApp` 已接）。收集器与编辑器扩展在 `HoweFramework.Editor/YooAsset/`。加载必须经 `IResLoader` / 模块 API，用完释放加载器。详见 [`Doc/pipeline/yooasset.md`](../../Doc/pipeline/yooasset.md)。
 
+## Unity MCP
+
+Cursor 连 Unity Editor 的步骤、本机端口与坑见 [`Doc/pipeline/unity-mcp.md`](../../Doc/pipeline/unity-mcp.md)。不要把 MCP 配置或 `~/.ai-game-dev/` 凭证写进仓库。
+
 ## 沉淀
 
 管线步骤（命令、目录、生成物位置）变了，更新 `Doc/pipeline/` 对应篇，不要只写在聊天里。
