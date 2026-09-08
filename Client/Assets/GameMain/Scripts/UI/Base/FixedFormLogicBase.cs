@@ -23,6 +23,16 @@ namespace GameMain.UI
         public override bool IsAllowMutiple => true;
 
         /// <summary>
+        /// 固定界面不受栈显隐控制。
+        /// </summary>
+        public override bool IsAllowControlVisibleByFramework => false;
+
+        /// <summary>
+        /// 固定界面不受主界面打开时的批量关闭影响。
+        /// </summary>
+        public override bool IsAllowControlCloseByFramework => false;
+
+        /// <summary>
         /// 屏幕适配器类型。
         /// </summary>
         public override FairyGUIScreenAdaptorType ScreenAdaptorType => FairyGUIScreenAdaptorType.None;

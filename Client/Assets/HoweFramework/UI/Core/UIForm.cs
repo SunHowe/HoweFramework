@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace HoweFramework
 {
@@ -78,6 +79,11 @@ namespace HoweFramework
         internal bool HasFormLogic => m_FormLogic != null;
 
         /// <summary>
+        /// 是否可以进入缓存。加载失败的空壳不可缓存。
+        /// </summary>
+        internal bool CanCache => IsLoaded || m_LoadId != 0;
+
+        /// <summary>
         /// 加载任务id。
         /// </summary>
         private int m_LoadId;
@@ -96,6 +102,11 @@ namespace HoweFramework
         /// 排序顺序。
         /// </summary>
         private int m_SortingOrder;
+
+        /// <summary>
+        /// 打开请求取消令牌注册。请求会回池，结束时必须解绑。
+        /// </summary>
+        private CancellationTokenRegistration m_CancelRegistration;
 
         /// <summary>
         /// 初始化界面。
@@ -126,6 +137,8 @@ namespace HoweFramework
         /// </summary>
         public void Destroy()
         {
+            DisposeCancelRegistration();
+
             if (IsLoaded)
             {
                 m_FormLogic.OnDestroy();
@@ -196,11 +209,16 @@ namespace HoweFramework
         /// <param name="request">打开界面请求。</param>
         public void HandleOpenRequest(OpenFormRequest request)
         {
+            DisposeCancelRegistration();
+
             // 使用错误码处理旧的请求。
             InnerSetRequestResponse(CommonResponse.Create(FrameworkErrorCode.UIFormNewOpenRequest));
             Request = request;
             request.OnSetResponse += OnRequestSetResponse;
-            request.CancellationToken.Register(OnRequestCancel, request);
+            if (request.CancellationToken.CanBeCanceled)
+            {
+                m_CancelRegistration = request.CancellationToken.Register(OnRequestCancel, request);
+            }
 
             if (!IsLoaded)
             {
@@ -215,19 +233,20 @@ namespace HoweFramework
             }
             else
             {
+                var requestRef = request.AsRef();
+
                 // 已加载完成，则根据状态进行打开。
                 if (IsOpen)
                 {
-                    // 已打开，触发更新回调。
+                    // 已打开：刷新数据。仍需完成 OnlyCareAboutFormOpen，否则调用方会永久等待。
                     m_FormLogic.OnUpdate();
+                    requestRef.Reference?.OnFormOpenSuccess();
                 }
                 else
                 {
                     // 未打开，触发打开回调。
                     IsOpen = true;
                     m_UIFormHelper.SetUIFormInstanceIsOpen(FormInstance, FormGroup.GroupInstance, true);
-
-                    var requestRef = request.AsRef();
 
                     m_FormLogic.OnOpen();
                     m_FormLogic.OnUpdate(); // 打开时也触发更新回调。
@@ -278,6 +297,18 @@ namespace HoweFramework
         /// <param name="formInstance">界面实例。</param>
         private void OnLoadUIFormSuccess(object formInstance)
         {
+            if (formInstance == null)
+            {
+                m_LoadId = 0;
+                InnerSetRequestResponse(CommonResponse.Create(FrameworkErrorCode.UIFormInstantiateFailed));
+                if (IsOpen)
+                {
+                    CloseForm();
+                }
+
+                return;
+            }
+
             FormInstance = formInstance;
             IsLoaded = true;
 
@@ -290,7 +321,7 @@ namespace HoweFramework
                 return;
             }
 
-            var requestRef = Request.AsRef();
+            var requestRef = Request != null ? Request.AsRef() : default;
 
             // 触发逻辑打开回调。
             m_UIFormHelper.SetUIFormInstanceSortingOrder(FormInstance, m_SortingOrder);
@@ -322,6 +353,8 @@ namespace HoweFramework
                 return;
             }
 
+            DisposeCancelRegistration();
+
             // 清空请求引用。
             Request = null;
 
@@ -345,6 +378,8 @@ namespace HoweFramework
         /// </summary>
         private void InnerSetRequestResponse(ResponseBase response)
         {
+            DisposeCancelRegistration();
+
             if (Request == null)
             {
                 response.Dispose();
@@ -357,11 +392,20 @@ namespace HoweFramework
         }
 
         /// <summary>
-        /// 关闭界面。
+        /// 关闭界面。必须带序列号，避免多开时关掉别的实例。
         /// </summary>
         public void CloseForm()
         {
-            UIModule.Instance.CloseUIForm(FormId);
+            UIModule.Instance.CloseUIForm(FormId, FormSerialId);
+        }
+
+        /// <summary>
+        /// 解绑打开请求的取消令牌。请求对象会回池复用。
+        /// </summary>
+        private void DisposeCancelRegistration()
+        {
+            m_CancelRegistration.Dispose();
+            m_CancelRegistration = default;
         }
 
         /// <summary>

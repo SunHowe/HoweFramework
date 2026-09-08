@@ -90,8 +90,35 @@ namespace HoweFramework
         /// <returns>关闭界面响应。</returns>
         public static UniTask<IResponse> CloseUIForm(this UIModule module, int uiFormId)
         {
+            return CloseUIForm(module, uiFormId, 0);
+        }
+
+        /// <summary>
+        /// 关闭指定序列号的界面。序列号为 0 时关闭该 Id 最先打开的实例。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="uiFormId">界面Id。</param>
+        /// <param name="formSerialId">界面序列编号。</param>
+        /// <returns>关闭界面响应。</returns>
+        public static UniTask<IResponse> CloseUIForm(this UIModule module, int uiFormId, int formSerialId)
+        {
             var request = ReferencePool.Acquire<CloseFormRequest>();
             request.FormId = uiFormId;
+            request.FormSerialId = formSerialId;
+            return request.Execute();
+        }
+
+        /// <summary>
+        /// 关闭指定 Id 的全部界面实例。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="uiFormId">界面Id。</param>
+        /// <returns>关闭界面响应。</returns>
+        public static UniTask<IResponse> CloseAllUIForm(this UIModule module, int uiFormId)
+        {
+            var request = ReferencePool.Acquire<CloseFormRequest>();
+            request.FormId = uiFormId;
+            request.CloseMutiple = true;
             return request.Execute();
         }
     }

@@ -84,6 +84,14 @@ namespace HoweFramework
 
         public void Dispose()
         {
+            foreach (var cancellationTokenSource in m_LoadCancellationTokenDict.Values)
+            {
+                cancellationTokenSource.Cancel();
+                cancellationTokenSource.Dispose();
+            }
+
+            m_LoadCancellationTokenDict.Clear();
+
             m_UIAssetManager.Dispose();
             m_ResLoader.Dispose();
 
@@ -201,10 +209,9 @@ namespace HoweFramework
         /// <param name="loadId">加载任务id。</param>
         public void CancelLoadUIFormInstance(int loadId)
         {
-            if (m_LoadCancellationTokenDict.Remove(loadId, out var cancellationTokenSource))
+            if (m_LoadCancellationTokenDict.TryGetValue(loadId, out var cancellationTokenSource))
             {
                 cancellationTokenSource.Cancel();
-                cancellationTokenSource.Dispose();
             }
         }
 
@@ -229,22 +236,50 @@ namespace HoweFramework
 
             UIPackage.CreateObjectFromURLAsync(formBinding.FormURL, (obj) =>
             {
-                if (obj == null)
+                try
                 {
-                    throw new ErrorCodeException(FrameworkErrorCode.UIFormInstantiateFailed, $"界面[{uiFormId}]实例化失败。");
-                }
+                    if (token.IsCancellationRequested)
+                    {
+                        obj?.Dispose();
+                        return;
+                    }
 
-                if (token.IsCancellationRequested)
+                    if (obj == null)
+                    {
+                        Log.Error($"界面[{uiFormId}]实例化失败。");
+                        onLoadSuccess(null);
+                        return;
+                    }
+
+                    onLoadSuccess(obj);
+                }
+                catch (Exception e)
                 {
-                    // 取消加载，销毁界面实例。
-                    obj.Dispose();
-                    return;
+                    Log.Error($"界面[{uiFormId}]加载回调异常：{e.Message}\n{e.StackTrace}");
+                    obj?.Dispose();
+                    if (!token.IsCancellationRequested)
+                    {
+                        onLoadSuccess(null);
+                    }
                 }
-
-                onLoadSuccess(obj);
+                finally
+                {
+                    CompleteLoadTask(loadId);
+                }
             });
 
             return loadId;
+        }
+
+        /// <summary>
+        /// 结束一次加载任务并释放取消源。
+        /// </summary>
+        private void CompleteLoadTask(int loadId)
+        {
+            if (m_LoadCancellationTokenDict.Remove(loadId, out var cancellationTokenSource))
+            {
+                cancellationTokenSource.Dispose();
+            }
         }
 
         /// <summary>
@@ -341,7 +376,21 @@ namespace HoweFramework
                 return;
             }
 
-            LoadUIPackageBytesAsync(packageName).ContinueWith(bytes => callback(bytes, string.Empty));
+            LoadUIPackageBytesAsyncInternal(packageName, callback).Forget();
+        }
+
+        private async UniTask LoadUIPackageBytesAsyncInternal(string packageName, LoadUIPackageBytesCallback callback)
+        {
+            try
+            {
+                var bytes = await LoadUIPackageBytesAsync(packageName);
+                callback(bytes, string.Empty);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"加载UI包失败：{packageName}\n{e}");
+                callback(null, string.Empty);
+            }
         }
 
         public void LoadUIPackageBytes(string packageName, out byte[] bytes, out string assetNamePrefix)

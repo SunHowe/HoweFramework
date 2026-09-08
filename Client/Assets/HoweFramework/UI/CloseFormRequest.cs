@@ -39,7 +39,15 @@ namespace HoweFramework
         /// <param name="response">响应。</param>
         public void SetResponse(IResponse response)
         {
-            m_Tcs?.TrySetResult(response);
+            if (m_Tcs == null)
+            {
+                response.Dispose();
+                return;
+            }
+
+            var tcs = m_Tcs;
+            m_Tcs = null;
+            tcs.TrySetResult(response);
         }
 
         /// <summary>

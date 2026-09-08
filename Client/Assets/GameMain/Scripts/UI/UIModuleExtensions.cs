@@ -71,6 +71,22 @@ namespace GameMain.UI
         }
 
         /// <summary>
+        /// 关闭指定序列号的界面。
+        /// </summary>
+        public static UniTask<IResponse> CloseUIForm(this UIModule module, UIFormId uiFormId, int formSerialId)
+        {
+            return module.CloseUIForm((int)uiFormId, formSerialId);
+        }
+
+        /// <summary>
+        /// 关闭指定 Id 的全部界面实例。
+        /// </summary>
+        public static UniTask<IResponse> CloseAllUIForm(this UIModule module, UIFormId uiFormId)
+        {
+            return module.CloseAllUIForm((int)uiFormId);
+        }
+
+        /// <summary>
         /// 打开错误提示。
         /// </summary>
         /// <param name="uniTask">异步任务。</param>

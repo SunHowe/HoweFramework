@@ -53,11 +53,15 @@ namespace HoweFramework
                 return;
             }
 
+            var tcs = m_Tcs;
+            m_Tcs = null;
             var errorCode = response.ErrorCode;
+            var formOpenTcs = m_TcsFormOpen;
+            m_TcsFormOpen = null;
 
             OnSetResponse?.Invoke(this);
-            m_Tcs.TrySetResult(response);
-            m_TcsFormOpen?.TrySetResult(errorCode);
+            tcs.TrySetResult(response);
+            formOpenTcs?.TrySetResult(errorCode);
         }
 
         /// <summary>

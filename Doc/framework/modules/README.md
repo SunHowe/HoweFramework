@@ -13,7 +13,7 @@
 | [`ioc.md`](ioc.md) | 注册/获取/注入，不管生命周期 |
 | [`event.md`](event.md) | 全局与局部事件调度器 |
 | [`procedure.md`](procedure.md) | 应用级流程状态机 |
-| [`ui.md`](ui.md) | FairyGUI 界面打开/关闭请求 |
+| [`ui.md`](ui.md) | FairyGUI 界面打开/关闭、缓存与请求队列 |
 | [`res.md`](res.md) | 局部 `IResLoader`，核心为 YooAsset |
 | [`network.md`](network.md) | 频道、Packet、异步收发 |
 | [`request.md`](request.md) | `RequestBase` 与错误码响应 |
