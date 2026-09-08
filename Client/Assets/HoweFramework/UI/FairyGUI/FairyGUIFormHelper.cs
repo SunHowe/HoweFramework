@@ -84,6 +84,14 @@ namespace HoweFramework
 
         public void Dispose()
         {
+            foreach (var cancellationTokenSource in m_LoadCancellationTokenDict.Values)
+            {
+                cancellationTokenSource.Cancel();
+                cancellationTokenSource.Dispose();
+            }
+
+            m_LoadCancellationTokenDict.Clear();
+
             m_UIAssetManager.Dispose();
             m_ResLoader.Dispose();
 
@@ -213,8 +221,9 @@ namespace HoweFramework
         /// </summary>
         /// <param name="uiFormId">界面编号。</param>
         /// <param name="onLoadSuccess">加载成功回调。</param>
+        /// <param name="onLoadFailure">加载失败回调，参数为错误码。</param>
         /// <returns>加载任务id。</returns>
-        public int LoadUIFormInstance(int uiFormId, Action<object> onLoadSuccess)
+        public int LoadUIFormInstance(int uiFormId, Action<object> onLoadSuccess, Action<int> onLoadFailure)
         {
             if (!m_FormBindingDict.TryGetValue(uiFormId, out var formBinding))
             {
@@ -225,19 +234,21 @@ namespace HoweFramework
 
             var cancellationTokenSource = new CancellationTokenSource();
             m_LoadCancellationTokenDict[loadId] = cancellationTokenSource;
-            var token = cancellationTokenSource.Token;
 
             UIPackage.CreateObjectFromURLAsync(formBinding.FormURL, (obj) =>
             {
-                if (obj == null)
+                if (!m_LoadCancellationTokenDict.Remove(loadId, out var cts))
                 {
-                    throw new ErrorCodeException(FrameworkErrorCode.UIFormInstantiateFailed, $"界面[{uiFormId}]实例化失败。");
+                    // 已取消或已完成，丢弃迟到的实例。
+                    obj?.Dispose();
+                    return;
                 }
 
-                if (token.IsCancellationRequested)
+                cts.Dispose();
+
+                if (obj == null)
                 {
-                    // 取消加载，销毁界面实例。
-                    obj.Dispose();
+                    onLoadFailure?.Invoke(FrameworkErrorCode.UIFormInstantiateFailed);
                     return;
                 }
 
@@ -285,6 +296,11 @@ namespace HoweFramework
         /// <param name="uiFormInstance">界面实例。</param>
         public void UnloadUIFormInstance(object uiFormInstance)
         {
+            if (uiFormInstance == null)
+            {
+                return;
+            }
+
             var gFormComponent = (GComponent)uiFormInstance;
             gFormComponent.Dispose();
         }

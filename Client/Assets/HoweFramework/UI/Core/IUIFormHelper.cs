@@ -19,8 +19,9 @@ namespace HoweFramework
         /// </summary>
         /// <param name="uiFormId">界面编号。</param>
         /// <param name="onLoadSuccess">加载成功回调。</param>
+        /// <param name="onLoadFailure">加载失败回调，参数为错误码。</param>
         /// <returns>加载任务id。</returns>
-        int LoadUIFormInstance(int uiFormId, Action<object> onLoadSuccess);
+        int LoadUIFormInstance(int uiFormId, Action<object> onLoadSuccess, Action<int> onLoadFailure);
 
         /// <summary>
         /// 卸载界面实例。

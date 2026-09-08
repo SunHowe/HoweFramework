@@ -83,15 +83,54 @@ namespace HoweFramework
         }
 
         /// <summary>
-        /// 关闭界面。
+        /// 关闭界面。不指定序列号时关闭该 FormId 最旧的一个实例。
         /// </summary>
         /// <param name="module">UI模块。</param>
         /// <param name="uiFormId">界面Id。</param>
         /// <returns>关闭界面响应。</returns>
         public static UniTask<IResponse> CloseUIForm(this UIModule module, int uiFormId)
         {
+            return CloseUIForm(module, uiFormId, 0, false);
+        }
+
+        /// <summary>
+        /// 关闭指定序列号的界面实例。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="uiFormId">界面Id。</param>
+        /// <param name="formSerialId">界面序列编号。</param>
+        /// <returns>关闭界面响应。</returns>
+        public static UniTask<IResponse> CloseUIForm(this UIModule module, int uiFormId, int formSerialId)
+        {
+            return CloseUIForm(module, uiFormId, formSerialId, false);
+        }
+
+        /// <summary>
+        /// 关闭界面。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="uiFormId">界面Id。</param>
+        /// <param name="closeMultiple">为 true 时关闭该 FormId 的全部打开实例。</param>
+        /// <returns>关闭界面响应。</returns>
+        public static UniTask<IResponse> CloseUIForm(this UIModule module, int uiFormId, bool closeMultiple)
+        {
+            return CloseUIForm(module, uiFormId, 0, closeMultiple);
+        }
+
+        /// <summary>
+        /// 关闭界面。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="uiFormId">界面Id。</param>
+        /// <param name="formSerialId">界面序列编号。为 0 且 closeMultiple 为 false 时关闭最旧实例。</param>
+        /// <param name="closeMultiple">为 true 时关闭该 FormId 的全部打开实例。</param>
+        /// <returns>关闭界面响应。</returns>
+        public static UniTask<IResponse> CloseUIForm(this UIModule module, int uiFormId, int formSerialId, bool closeMultiple)
+        {
             var request = ReferencePool.Acquire<CloseFormRequest>();
             request.FormId = uiFormId;
+            request.FormSerialId = formSerialId;
+            request.CloseMutiple = closeMultiple;
             return request.Execute();
         }
     }

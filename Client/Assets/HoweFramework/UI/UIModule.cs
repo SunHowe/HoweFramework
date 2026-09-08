@@ -151,6 +151,32 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 界面加载失败时从打开列表移除并销毁，避免幽灵界面。
+        /// </summary>
+        internal void HandleUIFormLoadFailure(UIForm uiForm)
+        {
+            if (uiForm == null)
+            {
+                return;
+            }
+
+            if (uiForm.FormGroup != null)
+            {
+                ((UIFormGroup)uiForm.FormGroup).RemoveUIForm(uiForm);
+            }
+
+            m_UIFormOpenedList.Remove(uiForm);
+
+            if (uiForm.IsOpen)
+            {
+                uiForm.CloseImmediate();
+            }
+
+            UpdateUIStack();
+            uiForm.Destroy();
+        }
+
+        /// <summary>
         /// 处理请求队列。
         /// </summary>
         private void ProcessRequestQueue()
@@ -167,25 +193,35 @@ namespace HoweFramework
 
             m_IsProcessingRequest = true;
 
-            while (m_RequestQueue.Count > 0)
+            try
             {
-                var request = m_RequestQueue.Dequeue();
-
-                switch (request)
+                while (m_RequestQueue.Count > 0)
                 {
-                    case OpenFormRequest openFormRequest:
-                        if (!openFormRequest.CancellationToken.IsCancellationRequested)
-                        {
-                            RealHandleOpenFormRequest(openFormRequest);
-                        }
-                        break;
-                    case CloseFormRequest closeFormRequest:
-                        RealHandleCloseFormRequest(closeFormRequest);
-                        break;
+                    var request = m_RequestQueue.Dequeue();
+
+                    switch (request)
+                    {
+                        case OpenFormRequest openFormRequest:
+                            if (openFormRequest.CancellationToken.IsCancellationRequested)
+                            {
+                                openFormRequest.SetResponse(CommonResponse.Create(FrameworkErrorCode.RequestCanceled));
+                            }
+                            else
+                            {
+                                RealHandleOpenFormRequest(openFormRequest);
+                            }
+
+                            break;
+                        case CloseFormRequest closeFormRequest:
+                            RealHandleCloseFormRequest(closeFormRequest);
+                            break;
+                    }
                 }
             }
-
-            m_IsProcessingRequest = false;
+            finally
+            {
+                m_IsProcessingRequest = false;
+            }
         }
 
         /// <summary>
@@ -199,9 +235,10 @@ namespace HoweFramework
                 var uiForm = FindOpenedUIForm(request.FormId);
                 if (uiForm != null && !uiForm.IsAllowMutiple)
                 {
-                    // 若界面已存在，且不允许存在多个实例，则将旧界面从分组上移除。
+                    // 若界面已存在，且不允许存在多个实例，则将旧界面从分组上移除并换新序列号。
                     ((UIFormGroup)uiForm.FormGroup).RemoveUIForm(uiForm);
                     m_UIFormOpenedList.Remove(uiForm);
+                    uiForm.AssignSerialId(++m_UIFormSerialId);
                 }
                 else
                 {
@@ -264,6 +301,32 @@ namespace HoweFramework
         {
             try
             {
+                if (request.CloseMutiple)
+                {
+                    var closed = false;
+                    while (true)
+                    {
+                        var form = FindOpenedUIForm(request.FormId);
+                        if (form == null)
+                        {
+                            break;
+                        }
+
+                        CloseAndCacheUIForm(form);
+                        closed = true;
+                    }
+
+                    if (!closed)
+                    {
+                        request.SetResponse(CommonResponse.Create(FrameworkErrorCode.UIFormNotOpen));
+                        return;
+                    }
+
+                    UpdateUIStack();
+                    request.SetResponse(CommonResponse.Create(FrameworkErrorCode.Success));
+                    return;
+                }
+
                 var uiForm = FindOpenedUIForm(request.FormId, request.FormSerialId);
                 if (uiForm == null)
                 {
@@ -272,22 +335,8 @@ namespace HoweFramework
                     return;
                 }
 
-                // 触发界面关闭。
-                uiForm.CloseImmediate();
-
-                // 将界面从分组移除。
-                ((UIFormGroup)uiForm.FormGroup).RemoveUIForm(uiForm);
-
-                // 将界面从已打开界面列表移除。
-                m_UIFormOpenedList.Remove(uiForm);
-
-                // 更新UI栈。
+                CloseAndCacheUIForm(uiForm);
                 UpdateUIStack();
-
-                // 将界面加入缓存。
-                CacheUIForm(uiForm);
-
-                // 设置请求成功。
                 request.SetResponse(CommonResponse.Create(FrameworkErrorCode.Success));
             }
             catch (ErrorCodeException e)
@@ -300,6 +349,17 @@ namespace HoweFramework
                 Log.Error($"处理UI关闭请求时发生异常：{e.Message}\n{e.StackTrace}");
                 request.SetResponse(CommonResponse.Create(FrameworkErrorCode.Exception));
             }
+        }
+
+        /// <summary>
+        /// 立即关闭界面并放入缓存。不更新 UI 栈，由调用方在批量操作结束后更新。
+        /// </summary>
+        private void CloseAndCacheUIForm(UIForm uiForm)
+        {
+            uiForm.CloseImmediate();
+            ((UIFormGroup)uiForm.FormGroup).RemoveUIForm(uiForm);
+            m_UIFormOpenedList.Remove(uiForm);
+            CacheUIForm(uiForm);
         }
 
         /// <summary>
@@ -325,8 +385,7 @@ namespace HoweFramework
                                 continue;
                             }
 
-                            form.CloseImmediate();
-                            m_UIFormOpenedList.Remove(node);
+                            CloseAndCacheUIForm(form);
                             node = nextNode;
                         }
                     }
@@ -356,7 +415,7 @@ namespace HoweFramework
                     // 不处理固定界面。
                     continue;
                 }
-                
+
                 uiForm.SetSortingOrder(sortingOrder);
                 --sortingOrder;
 
@@ -420,6 +479,7 @@ namespace HoweFramework
                 if (cache.Count == 0)
                 {
                     m_UIFormCacheDict.Remove(uiFormId);
+                    cache.Dispose();
                 }
 
                 return uiForm;
@@ -436,11 +496,31 @@ namespace HoweFramework
         {
             if (!m_UIFormCacheDict.TryGetValue(uiForm.FormId, out var cache))
             {
-                cache = new ReusableQueue<UIForm>();
+                cache = ReusableQueue<UIForm>.Create();
                 m_UIFormCacheDict[uiForm.FormId] = cache;
             }
 
             cache.Enqueue(uiForm);
+        }
+
+        /// <summary>
+        /// 完成队列中尚未处理的请求，避免外部 await 挂起。
+        /// </summary>
+        private void CompletePendingRequests(int errorCode)
+        {
+            while (m_RequestQueue.Count > 0)
+            {
+                var request = m_RequestQueue.Dequeue();
+                switch (request)
+                {
+                    case OpenFormRequest openFormRequest:
+                        openFormRequest.SetResponse(CommonResponse.Create(errorCode));
+                        break;
+                    case CloseFormRequest closeFormRequest:
+                        closeFormRequest.SetResponse(CommonResponse.Create(errorCode));
+                        break;
+                }
+            }
         }
 
         protected override void OnInit()
@@ -449,6 +529,8 @@ namespace HoweFramework
 
         protected override void OnDestroy()
         {
+            CompletePendingRequests(FrameworkErrorCode.UIFormWhileDestroying);
+
             // 销毁所有已打开的界面。
             var node = m_UIFormOpenedList.First;
             while (node != null)
@@ -456,9 +538,17 @@ namespace HoweFramework
                 var form = node.Value;
                 node = node.Next;
 
-                form.CloseImmediate();
+                if (form.IsOpen)
+                {
+                    form.CloseImmediate();
+                }
+
                 form.Destroy();
             }
+
+            m_UIFormOpenedList.Clear();
+            m_UIFormGroupDict.Clear();
+            m_UIFormGroupList.Clear();
 
             // 清空缓存。
             DestroyCacheForms();

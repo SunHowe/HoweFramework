@@ -60,7 +60,7 @@ namespace GameMain.UI
         }
 
         /// <summary>
-        /// 关闭界面。
+        /// 关闭界面。不指定序列号时关闭该 FormId 最旧的一个实例。
         /// </summary>
         /// <param name="module">UI模块。</param>
         /// <param name="uiFormId">界面Id。</param>
@@ -68,6 +68,43 @@ namespace GameMain.UI
         public static UniTask<IResponse> CloseUIForm(this UIModule module, UIFormId uiFormId)
         {
             return module.CloseUIForm((int)uiFormId);
+        }
+
+        /// <summary>
+        /// 关闭指定序列号的界面实例。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="uiFormId">界面Id。</param>
+        /// <param name="formSerialId">界面序列编号。</param>
+        /// <returns>关闭界面响应。</returns>
+        public static UniTask<IResponse> CloseUIForm(this UIModule module, UIFormId uiFormId, int formSerialId)
+        {
+            return module.CloseUIForm((int)uiFormId, formSerialId);
+        }
+
+        /// <summary>
+        /// 关闭界面。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="uiFormId">界面Id。</param>
+        /// <param name="closeMultiple">为 true 时关闭该 FormId 的全部打开实例。</param>
+        /// <returns>关闭界面响应。</returns>
+        public static UniTask<IResponse> CloseUIForm(this UIModule module, UIFormId uiFormId, bool closeMultiple)
+        {
+            return module.CloseUIForm((int)uiFormId, closeMultiple);
+        }
+
+        /// <summary>
+        /// 关闭界面。
+        /// </summary>
+        /// <param name="module">UI模块。</param>
+        /// <param name="uiFormId">界面Id。</param>
+        /// <param name="formSerialId">界面序列编号。为 0 且 closeMultiple 为 false 时关闭最旧实例。</param>
+        /// <param name="closeMultiple">为 true 时关闭该 FormId 的全部打开实例。</param>
+        /// <returns>关闭界面响应。</returns>
+        public static UniTask<IResponse> CloseUIForm(this UIModule module, UIFormId uiFormId, int formSerialId, bool closeMultiple)
+        {
+            return module.CloseUIForm((int)uiFormId, formSerialId, closeMultiple);
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace HoweFramework
 {
@@ -98,6 +99,21 @@ namespace HoweFramework
         private int m_SortingOrder;
 
         /// <summary>
+        /// 打开请求取消回调注册。
+        /// </summary>
+        private CancellationTokenRegistration m_CancelRegistration;
+
+        /// <summary>
+        /// 取消回调对应的请求实例 id，用于对象池复用后过滤过期回调。
+        /// </summary>
+        private int m_CancelRequestInstanceId;
+
+        /// <summary>
+        /// 是否已处理加载失败，避免回调异常路径重入。
+        /// </summary>
+        private bool m_LoadFailureHandled;
+
+        /// <summary>
         /// 初始化界面。
         /// </summary>
         /// <param name="serialId">界面序列编号。</param>
@@ -126,17 +142,24 @@ namespace HoweFramework
         /// </summary>
         public void Destroy()
         {
+            UnregisterCancelCallback();
+
             if (IsLoaded)
             {
-                m_FormLogic.OnDestroy();
+                m_FormLogic?.OnDestroy();
 
                 // 卸载界面。
-                m_UIFormHelper.UnloadUIFormInstance(FormInstance);
+                m_UIFormHelper?.UnloadUIFormInstance(FormInstance);
             }
-            else if (m_LoadId != 0)
+            else
             {
-                // 卸载界面。
-                m_UIFormHelper.CancelLoadUIFormInstance(m_LoadId);
+                if (m_LoadId != 0)
+                {
+                    // 卸载界面。
+                    m_UIFormHelper?.CancelLoadUIFormInstance(m_LoadId);
+                }
+
+                m_FormLogic?.OnDestroy();
             }
 
             FormSerialId = 0;
@@ -200,7 +223,7 @@ namespace HoweFramework
             InnerSetRequestResponse(CommonResponse.Create(FrameworkErrorCode.UIFormNewOpenRequest));
             Request = request;
             request.OnSetResponse += OnRequestSetResponse;
-            request.CancellationToken.Register(OnRequestCancel, request);
+            RegisterCancelCallback(request);
 
             if (!IsLoaded)
             {
@@ -210,7 +233,7 @@ namespace HoweFramework
                 if (m_LoadId == 0)
                 {
                     // 加载界面。
-                    m_LoadId = m_UIFormHelper.LoadUIFormInstance(FormId, OnLoadUIFormSuccess);
+                    m_LoadId = m_UIFormHelper.LoadUIFormInstance(FormId, OnLoadUIFormSuccess, OnLoadUIFormFailure);
                 }
             }
             else
@@ -218,8 +241,9 @@ namespace HoweFramework
                 // 已加载完成，则根据状态进行打开。
                 if (IsOpen)
                 {
-                    // 已打开，触发更新回调。
+                    // 已打开，触发更新回调，并完成「只关心打开」的等待。
                     m_FormLogic.OnUpdate();
+                    request.AsRef().Reference?.OnFormOpenSuccess();
                 }
                 else
                 {
@@ -278,37 +302,65 @@ namespace HoweFramework
         /// <param name="formInstance">界面实例。</param>
         private void OnLoadUIFormSuccess(object formInstance)
         {
-            FormInstance = formInstance;
-            IsLoaded = true;
+            m_LoadId = 0;
 
-            // 触发逻辑初始化回调。
-            m_FormLogic.OnInit(this);
-
-            if (!IsOpen)
+            try
             {
-                // 未打开，则不处理。
+                FormInstance = formInstance;
+                IsLoaded = true;
+
+                // 触发逻辑初始化回调。
+                m_FormLogic.OnInit(this);
+
+                if (!IsOpen)
+                {
+                    // 未打开，则不处理。
+                    return;
+                }
+
+                var requestRef = Request.AsRef();
+
+                // 触发逻辑打开回调。
+                m_UIFormHelper.SetUIFormInstanceSortingOrder(FormInstance, m_SortingOrder);
+                m_UIFormHelper.SetUIFormInstanceIsOpen(FormInstance, FormGroup.GroupInstance, true);
+                m_FormLogic.OnOpen();
+
+                requestRef.Reference?.OnFormOpenSuccess();
+
+                if (!IsVisible)
+                {
+                    // 界面不可见，设置实例状态并通知逻辑。
+                    m_UIFormHelper.SetUIFormInstanceIsVisible(FormInstance, false);
+                    m_FormLogic.OnInvisible();
+                    return;
+                }
+
+                // 触发逻辑显示回调。
+                m_UIFormHelper.SetUIFormInstanceIsVisible(FormInstance, true);
+                m_FormLogic.OnVisible();
+            }
+            catch (Exception e)
+            {
+                Log.Error($"加载界面成功回调异常：{e.Message}\n{e.StackTrace}");
+                OnLoadUIFormFailure(FrameworkErrorCode.Exception);
+            }
+        }
+
+        /// <summary>
+        /// 加载界面失败。
+        /// </summary>
+        /// <param name="errorCode">错误码。</param>
+        private void OnLoadUIFormFailure(int errorCode)
+        {
+            if (m_LoadFailureHandled)
+            {
                 return;
             }
 
-            var requestRef = Request.AsRef();
-
-            // 触发逻辑打开回调。
-            m_UIFormHelper.SetUIFormInstanceSortingOrder(FormInstance, m_SortingOrder);
-            m_UIFormHelper.SetUIFormInstanceIsOpen(FormInstance, FormGroup.GroupInstance, true);
-            m_FormLogic.OnOpen();
-
-            requestRef.Reference?.OnFormOpenSuccess();
-
-            if (!IsVisible)
-            {
-                // 界面不可见，设置实例状态。
-                m_UIFormHelper.SetUIFormInstanceIsVisible(FormInstance, false);
-                return;
-            }
-
-            // 触发逻辑显示回调。
-            m_UIFormHelper.SetUIFormInstanceIsVisible(FormInstance, true);
-            m_FormLogic.OnVisible();
+            m_LoadFailureHandled = true;
+            m_LoadId = 0;
+            InnerSetRequestResponse(CommonResponse.Create(errorCode));
+            UIModule.Instance.HandleUIFormLoadFailure(this);
         }
 
         /// <summary>
@@ -322,6 +374,8 @@ namespace HoweFramework
                 return;
             }
 
+            UnregisterCancelCallback();
+
             // 清空请求引用。
             Request = null;
 
@@ -334,10 +388,37 @@ namespace HoweFramework
         /// </summary>
         private void OnRequestCancel(object param)
         {
-            if (param is OpenFormRequest request && Request == request)
+            if (param is not OpenFormRequest request)
             {
-                request.SetResponse(CommonResponse.Create(FrameworkErrorCode.RequestCanceled));
+                return;
             }
+
+            if (Request != request || request.InstanceId != m_CancelRequestInstanceId)
+            {
+                return;
+            }
+
+            request.SetResponse(CommonResponse.Create(FrameworkErrorCode.RequestCanceled));
+        }
+
+        /// <summary>
+        /// 注册打开请求的取消回调。
+        /// </summary>
+        private void RegisterCancelCallback(OpenFormRequest request)
+        {
+            UnregisterCancelCallback();
+            m_CancelRequestInstanceId = request.InstanceId;
+            m_CancelRegistration = request.CancellationToken.Register(OnRequestCancel, request);
+        }
+
+        /// <summary>
+        /// 注销打开请求的取消回调。
+        /// </summary>
+        private void UnregisterCancelCallback()
+        {
+            m_CancelRegistration.Dispose();
+            m_CancelRegistration = default;
+            m_CancelRequestInstanceId = 0;
         }
 
         /// <summary>
@@ -345,6 +426,8 @@ namespace HoweFramework
         /// </summary>
         private void InnerSetRequestResponse(ResponseBase response)
         {
+            UnregisterCancelCallback();
+
             if (Request == null)
             {
                 response.Dispose();
@@ -361,7 +444,7 @@ namespace HoweFramework
         /// </summary>
         public void CloseForm()
         {
-            UIModule.Instance.CloseUIForm(FormId);
+            UIModule.Instance.CloseUIForm(FormId, FormSerialId);
         }
 
         /// <summary>
@@ -379,4 +462,3 @@ namespace HoweFramework
         }
     }
 }
-
