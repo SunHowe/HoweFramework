@@ -8,9 +8,7 @@
         /// <summary>
         /// 事件Id。
         /// </summary>
-        public static readonly int EventId = typeof(NetworkMissHeartBeatEventArgs).GetHashCode();
-
-        public override int Id => EventId;
+        public static readonly int EventId = TypeId<NetworkMissHeartBeatEventArgs>.Id;
 
         /// <summary>
         /// 初始化网络心跳包丢失事件的新实例。

@@ -23,9 +23,14 @@ namespace HoweFramework
     public abstract class GameEventArgs : EventArgs, IReference
     {
         /// <summary>
-        /// 事件类型。
+        /// 事件类型（具体类型的运行时 TypeId）。
         /// </summary>
-        public abstract int Id { get; }
+        public int Id { get; }
+
+        protected GameEventArgs()
+        {
+            Id = TypeId.GetIdByType(GetType());
+        }
 
         /// <summary>
         /// 在事件处理后是否回收事件实例。

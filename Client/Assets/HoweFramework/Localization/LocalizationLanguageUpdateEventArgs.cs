@@ -8,12 +8,7 @@
         /// <summary>
         /// 事件编号。
         /// </summary>
-        public static readonly int EventId = typeof(LocalizationLanguageUpdateEventArgs).GetHashCode();
-
-        /// <summary>
-        /// 获取事件编号。
-        /// </summary>
-        public override int Id => EventId;
+        public static readonly int EventId = TypeId<LocalizationLanguageUpdateEventArgs>.Id;
 
         /// <summary>
         /// 新设置的语言。

@@ -29,7 +29,7 @@ var id = TypeId<MyType>.Id;
 ## 约束与坑
 
 - 模块销毁会 Dispose Json/文本 Helper 并 `AssemblyUtility.Clear`。
-- `GameEventArgs.Id` 在业务里常用 `GetHashCode()`，与 `TypeId<T>` 不是同一套。
+- `GameEventArgs.Id` 与静态 `EventId` 都走 `TypeId`，订阅用 `TypeId<T>.Id` 或 `T.EventId`，不要再用 `GetHashCode()`。
 
 ## 相关源码
 

@@ -10,13 +10,8 @@ namespace HoweFramework
         /// <summary>
         /// 事件编号。
         /// </summary>
-        public static readonly int EventId = typeof(SafeAreaChangeEventArgs).GetHashCode();
+        public static readonly int EventId = TypeId<SafeAreaChangeEventArgs>.Id;
 
-        /// <summary>
-        /// 获取事件编号。
-        /// </summary>
-        public override int Id => EventId;
-        
         /// <summary>
         /// 屏幕安全区域范围。
         /// </summary>

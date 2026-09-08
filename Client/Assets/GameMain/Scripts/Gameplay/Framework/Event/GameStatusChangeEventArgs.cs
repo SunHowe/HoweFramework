@@ -7,12 +7,7 @@ namespace GameMain
     /// </summary>
     public sealed class GameStatusChangeEventArgs : GameEventArgs
     {
-        public static readonly int EventId = typeof(GameStatusChangeEventArgs).GetHashCode();
-
-        /// <summary>
-        /// 事件编号。
-        /// </summary>
-        public override int Id => EventId;
+        public static readonly int EventId = TypeId<GameStatusChangeEventArgs>.Id;
 
         /// <summary>
         /// 游戏状态。

@@ -10,9 +10,7 @@ namespace HoweFramework
         /// <summary>
         /// 事件Id。
         /// </summary>
-        public static readonly int EventId = typeof(NetworkErrorEventArgs).GetHashCode();
-
-        public override int Id => EventId;
+        public static readonly int EventId = TypeId<NetworkErrorEventArgs>.Id;
 
         /// <summary>
         /// 初始化网络错误事件的新实例。

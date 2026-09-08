@@ -10,7 +10,7 @@ namespace HoweFramework
         /// <summary>
         /// 激活场景被改变事件编号。
         /// </summary>
-        public static readonly int EventId = typeof(ActiveSceneChangedEventArgs).GetHashCode();
+        public static readonly int EventId = TypeId<ActiveSceneChangedEventArgs>.Id;
 
         /// <summary>
         /// 初始化激活场景被改变事件的新实例。
@@ -19,17 +19,6 @@ namespace HoweFramework
         {
             LastActiveScene = default(Scene);
             ActiveScene = default(Scene);
-        }
-
-        /// <summary>
-        /// 获取激活场景被改变事件编号。
-        /// </summary>
-        public override int Id
-        {
-            get
-            {
-                return EventId;
-            }
         }
 
         /// <summary>

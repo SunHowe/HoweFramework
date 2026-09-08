@@ -7,9 +7,7 @@ namespace GameMain
     /// </summary>
     public sealed class GameplayCueEventArgs : GameEventArgs
     {
-        public static readonly int EventId = typeof(GameplayCueEventArgs).GetHashCode();
-
-        public override int Id => EventId;
+        public static readonly int EventId = TypeId<GameplayCueEventArgs>.Id;
 
         public IGameEntity Target { get; private set; }
 

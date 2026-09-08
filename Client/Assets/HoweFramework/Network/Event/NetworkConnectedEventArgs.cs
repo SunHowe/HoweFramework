@@ -8,9 +8,7 @@
         /// <summary>
         /// 事件Id。
         /// </summary>
-        public static readonly int EventId = typeof(NetworkConnectedEventArgs).GetHashCode();
-
-        public override int Id => EventId;
+        public static readonly int EventId = TypeId<NetworkConnectedEventArgs>.Id;
 
         /// <summary>
         /// 初始化网络连接成功事件的新实例。

@@ -29,6 +29,7 @@ using var response = await somePacket.SendPacketAsync<LoginResponse>();
 - 错误码 401–413。
 - 发包走 Request 抽象，Execute 结束会 `ReferencePool.Release` 请求对象。
 - 无默认频道时发送会 `NetworkChannelNotExist`。
+- `Packet.Id` 继承 `GameEventArgs` 的运行时 TypeId，不是跨进程协议号。收包池按 `IPacketHandler.Id` 订阅、按 `packet.Id` 派发，Handler 的 `Id` 须与对应 Packet 类型的 TypeId 一致（例如 `TypeId<T>.Id`）。
 
 ## 相关源码
 

@@ -27,7 +27,7 @@ C# 文件名与主类型名一致。业务代码在 `Client/Assets/GameMain/Scri
 
 ## 枚举占用
 
-- 玩法组件 / Manager / 流程不再用枚举占号，运行时 id 用 `TypeId` / `TypeId<T>.Id`。
+- 玩法组件 / Manager / 流程 / 事件不再用枚举占号，运行时 id 用 `TypeId` / `TypeId<T>.Id`。事件订阅用 `TypeId<MyEventArgs>.Id` 或该类静态 `EventId`（同样指向 TypeId）。
 - `ChangeNextProcedure` 按 Launch 数组顺序前进，不要用 TypeId 数值加减。
 
 ## 不要

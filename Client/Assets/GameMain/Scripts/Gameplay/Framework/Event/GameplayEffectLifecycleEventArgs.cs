@@ -7,9 +7,7 @@ namespace GameMain
     /// </summary>
     public sealed class GameplayEffectLifecycleEventArgs : GameEventArgs
     {
-        public static readonly int EventId = typeof(GameplayEffectLifecycleEventArgs).GetHashCode();
-
-        public override int Id => EventId;
+        public static readonly int EventId = TypeId<GameplayEffectLifecycleEventArgs>.Id;
 
         public IGameEntity Target { get; private set; }
 
