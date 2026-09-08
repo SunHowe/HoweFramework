@@ -23,7 +23,7 @@ namespace GameMain
 
         public bool WasInstant { get; private set; }
 
-        public override void Clear()
+        protected override void OnClear()
         {
             Target = null;
             EffectDefId = 0;

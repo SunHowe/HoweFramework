@@ -43,7 +43,7 @@ namespace HoweFramework
         /// <summary>
         /// 清理事件。
         /// </summary>
-        public override void Clear()
+        protected override void OnClear()
         {
             SafeArea = Rect.zero;
         }

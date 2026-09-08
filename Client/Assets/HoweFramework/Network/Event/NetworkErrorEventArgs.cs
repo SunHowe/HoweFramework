@@ -98,7 +98,7 @@ namespace HoweFramework
         /// <summary>
         /// 清理网络错误事件。
         /// </summary>
-        public override void Clear()
+        protected override void OnClear()
         {
             NetworkChannel = null;
             ErrorCode = 0;

@@ -7,7 +7,7 @@
 ## 关键类型
 
 - `EventModule`：`Subscribe` / `Unsubscribe` / `Dispatch` / `ThreadSafeDispatch`；`CreateEventDispatcher`、`CreateThreadSafeEventDispatcher`、`CreatePriorityEventDispatcher`
-- `GameEventArgs`：`Id`、`Clear`、`IsReleaseAfterFire`（默认 true），实现 `IReference`
+- `GameEventArgs`：`Id`、`Clear`（复位 `IsReleaseAfterFire` 后调 `OnClear`）、`SetIsReleaseAfterFire` / `IsReleaseAfterFire`（默认 true），实现 `IReference`
 - `GameEventHandler`
 
 全局调度器在 `OnInit` 设为 `AllowMultiHandler | AllowNoHandler`。`OnUpdate` 调用 `UpdateEvents`。
@@ -24,7 +24,7 @@ var local = EventModule.Instance.CreateEventDispatcher();
 local.Dispose();
 ```
 
-事件类通常 `ReferencePool.Acquire` + 静态 `EventId`。Gameplay 示例：`GameStartEventArgs` 用 `typeof(GameStartEventArgs).GetHashCode()` 作为 `EventId`。
+事件类通常 `ReferencePool.Acquire` + 静态 `EventId`。Gameplay 示例：`GameStartEventArgs` 用 `typeof(GameStartEventArgs).GetHashCode()` 作为 `EventId`。派生类重写 `OnClear` 清字段，不要重写 `Clear`。
 
 ## 扩展点
 
@@ -33,7 +33,7 @@ local.Dispose();
 ## 约束与坑
 
 - 局部调度器必须 `Dispose`。
-- `IsReleaseAfterFire` 为 true 时派发后回收，持有事件引用会变成已 Clear 的对象。
+- `IsReleaseAfterFire` 为 true 时派发后回收，持有事件引用会变成已 Clear 的对象。需要在 Handler 之后继续持有实例时（例如 Packet 当远程响应），调用 `SetIsReleaseAfterFire(false)`；`Clear` 会把该标记复位为 true。
 - `Packet` 继承 `GameEventArgs`，可用同一套调度。
 
 ## 相关源码

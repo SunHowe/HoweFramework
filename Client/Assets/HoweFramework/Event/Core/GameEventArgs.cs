@@ -30,8 +30,31 @@ namespace HoweFramework
         /// <summary>
         /// 在事件处理后是否回收事件实例。
         /// </summary>
-        public virtual bool IsReleaseAfterFire => true;
+        public bool IsReleaseAfterFire => m_IsReleaseAfterFire;
 
-        public abstract void Clear();
+        private bool m_IsReleaseAfterFire = true;
+
+        /// <summary>
+        /// 设置在事件处理后是否回收事件实例。
+        /// </summary>
+        /// <param name="isReleaseAfterFire">是否回收事件实例。</param>
+        public void SetIsReleaseAfterFire(bool isReleaseAfterFire)
+        {
+            m_IsReleaseAfterFire = isReleaseAfterFire;
+        }
+
+        /// <summary>
+        /// 清理引用。
+        /// </summary>
+        public void Clear()
+        {
+            m_IsReleaseAfterFire = true;
+            OnClear();
+        }
+
+        /// <summary>
+        /// 清理派生类字段。
+        /// </summary>
+        protected abstract void OnClear();
     }
 }

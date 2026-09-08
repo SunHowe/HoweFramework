@@ -72,7 +72,7 @@
         /// <summary>
         /// 清理用户自定义网络错误事件。
         /// </summary>
-        public override void Clear()
+        protected override void OnClear()
         {
             NetworkChannel = null;
             CustomErrorData = null;

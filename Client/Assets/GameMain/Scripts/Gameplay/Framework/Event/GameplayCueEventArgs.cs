@@ -19,7 +19,7 @@ namespace GameMain
 
         public int EffectDefId { get; private set; }
 
-        public override void Clear()
+        protected override void OnClear()
         {
             Target = null;
             CueTag = default;

@@ -72,7 +72,7 @@
         /// <summary>
         /// 清理网络心跳包丢失事件。
         /// </summary>
-        public override void Clear()
+        protected override void OnClear()
         {
             NetworkChannel = null;
             MissCount = 0;

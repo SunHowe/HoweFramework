@@ -60,7 +60,7 @@
         /// <summary>
         /// 清理网络连接关闭事件。
         /// </summary>
-        public override void Clear()
+        protected override void OnClear()
         {
             NetworkChannel = null;
         }

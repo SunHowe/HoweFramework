@@ -17,7 +17,7 @@ namespace GameMain
         /// <summary>
         /// 清理。
         /// </summary>
-        public override void Clear()
+        protected override void OnClear()
         {
         }
 

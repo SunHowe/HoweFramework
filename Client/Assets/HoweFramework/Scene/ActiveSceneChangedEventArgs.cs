@@ -67,7 +67,7 @@ namespace HoweFramework
         /// <summary>
         /// 清理激活场景被改变事件。
         /// </summary>
-        public override void Clear()
+        protected override void OnClear()
         {
             LastActiveScene = default(Scene);
             ActiveScene = default(Scene);

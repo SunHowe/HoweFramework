@@ -40,7 +40,7 @@
         /// <summary>
         /// 清理事件。
         /// </summary>
-        public override void Clear()
+        protected override void OnClear()
         {
             Language = Language.Unspecified;
         }

@@ -72,7 +72,7 @@
         /// <summary>
         /// 清理网络连接成功事件。
         /// </summary>
-        public override void Clear()
+        protected override void OnClear()
         {
             NetworkChannel = null;
             UserData = null;
