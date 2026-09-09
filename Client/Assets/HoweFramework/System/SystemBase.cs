@@ -12,8 +12,16 @@ namespace HoweFramework
 
         public void Destroy()
         {
-            OnDestroy();
-            m_DisposableEventSubscribe?.Dispose();
+            try
+            {
+                OnDestroy();
+            }
+            finally
+            {
+                // 保证事件退订一定执行，避免订阅残留导致事件派发到已销毁对象。
+                m_DisposableEventSubscribe?.Dispose();
+                m_DisposableEventSubscribe = null;
+            }
         }
 
         protected abstract void OnInit();

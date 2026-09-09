@@ -27,6 +27,10 @@
 - 装饰节点只能有一个子节点（902/903）。
 - Running 用错误码 901 表达「下次从这里继续」，不是崩溃。
 - 局部 loader 必须 Dispose。
+- **Context 注入**：配置路径（`BehaviorTreeConfig.CreateBehaviorTree`）创建树时会自动把根节点设为全树 Context（`AddChild` 逐层传播），节点可直接访问黑板。旧版本配置路径不注入 Context，访问黑板必 NRE，已修复。
+- `BehaviorRepeat` 每次迭代前会重置子节点状态，带记忆的子树（如 Sequence）每次迭代都从头执行。
+- 配置错误路径只释放根节点（根 `Dispose` 递归整棵子树），不会二次释放污染引用池。
+- 节点配置中的属性名与节点类不匹配时会打 `Log.Warning` 并忽略该项（旧版本静默忽略）。
 
 ## 相关源码
 

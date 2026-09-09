@@ -38,8 +38,18 @@ namespace HoweFramework
             // 设置请求id。
             remoteRequest.RequestId = requestId;
 
-            // 发送协议包。
-            NetworkChannel.Send(packet);
+            try
+            {
+                // 发送协议包。
+                NetworkChannel.Send(packet);
+            }
+            catch
+            {
+                // 发送失败：注销请求注册项并归还协议包，避免注册项残留与包泄漏。
+                NetworkChannel.Helper.RequestDispatcher.Remove(requestId);
+                ReferencePool.Release(packet);
+                throw;
+            }
 
             return task;
         }

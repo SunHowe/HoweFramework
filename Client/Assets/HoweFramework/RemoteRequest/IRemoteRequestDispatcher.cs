@@ -22,6 +22,12 @@ namespace HoweFramework
         void SetResponse(int requestId, IResponse response);
 
         /// <summary>
+        /// 移除一个远程请求，并以取消结果完成其等待任务。用于发送失败等需要回收注册项的场景。
+        /// </summary>
+        /// <param name="requestId">请求id。</param>
+        void Remove(int requestId);
+
+        /// <summary>
         /// 中断所有请求。
         /// </summary>
         /// <param name="errorCode">错误码。</param>

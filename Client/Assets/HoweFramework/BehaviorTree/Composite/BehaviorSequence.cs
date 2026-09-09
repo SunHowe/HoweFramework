@@ -36,6 +36,7 @@ namespace HoweFramework
         public override void ResetState()
         {
             m_CurrentIndex = 0;
+            base.ResetState();
         }
 
         /// <summary>
@@ -53,7 +54,7 @@ namespace HoweFramework
         /// <returns>返回行为树顺序节点。</returns>
         public static BehaviorSequence Create()
         {
-            return ReferencePool.Acquire<BehaviorSequence>();;
+            return ReferencePool.Acquire<BehaviorSequence>();
         }
     }
 }

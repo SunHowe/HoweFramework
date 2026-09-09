@@ -23,6 +23,7 @@
 
 - `RegisterCamera` 是 internal，从 `GameCamera` 生命周期调用。
 - 与玩法 `GameViewManager` 不是同一层。
+- 相机访问有 Unity fake-null 防护：场景卸载销毁相机后模块不会 NRE；模块销毁后 `GameCamera.OnEnable` 也不再注册（Instance 判空）。
 
 ## 相关源码
 

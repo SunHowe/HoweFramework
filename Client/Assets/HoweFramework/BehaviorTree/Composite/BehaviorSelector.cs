@@ -41,6 +41,7 @@ namespace HoweFramework
         public override void ResetState()
         {
             m_CurrentIndex = 0;
+            base.ResetState();
         }
 
         /// <summary>

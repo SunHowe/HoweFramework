@@ -89,11 +89,11 @@ namespace HoweFramework
                 loadableTask.WeightRate = (float)loadableTask.Weight / m_TotalWeight;
             }
 
-            // 执行加载任务。
+            // 执行加载任务。走 LoadableTask.LoadAsync 以按权重加权进度。
             using var uniTask = ReusableList<UniTask>.Create();
             foreach (var loadableTask in m_LoadableTasks)
             {
-                uniTask.Add(loadableTask.Loadable.LoadAsync(onProgress, cancellationToken));
+                uniTask.Add(loadableTask.LoadAsync(onProgress, cancellationToken));
             }
 
             await UniTask.WhenAll(uniTask);

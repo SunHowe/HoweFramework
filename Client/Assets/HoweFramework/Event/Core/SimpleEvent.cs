@@ -53,7 +53,8 @@ namespace HoweFramework
                 {
                     var variable = node.Value;
                     var originNode = variable.Value;
-                    if (originNode.Value == handler)
+                    // 派发进行到最后一个订阅者时缓存节点为 null，需要判空。
+                    if (originNode != null && originNode.Value == handler)
                     {
                         variable.Value = originNode.Next;
                     }
@@ -158,7 +159,8 @@ namespace HoweFramework
                 {
                     var variable = node.Value;
                     var originNode = variable.Value;
-                    if (originNode.Value == handler)
+                    // 派发进行到最后一个订阅者时缓存节点为 null，需要判空。
+                    if (originNode != null && originNode.Value == handler)
                     {
                         variable.Value = originNode.Next;
                     }

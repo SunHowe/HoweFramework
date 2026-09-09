@@ -98,10 +98,20 @@ namespace HoweFramework
         {
             if (m_SoundHelper == null)
             {
+                ReferencePool.Release(playSoundParams);
                 throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "SoundHelper is not set.");
             }
 
-            return m_SoundHelper.PlaySound(groupId, soundAssetName, playSoundParams);
+            try
+            {
+                return m_SoundHelper.PlaySound(groupId, soundAssetName, playSoundParams);
+            }
+            catch
+            {
+                // 播放失败（如声音组不存在）时归还参数对象，避免引用池对象泄漏。
+                ReferencePool.Release(playSoundParams);
+                throw;
+            }
         }
 
         /// <summary>

@@ -11,13 +11,20 @@ namespace HoweFramework
     /// </summary>
     internal sealed class UnityWebRequestHelper : IWebRequestHelper
     {
+        /// <summary>
+        /// 默认请求超时时长，以秒为单位。
+        /// </summary>
+        private const int DefaultTimeoutSeconds = 30;
+
         public void Dispose()
         {
         }
 
         public async UniTask<(int code, byte[] responseBody)> Get(string url, Dictionary<string, string> headers, CancellationToken token = default)
         {
-            var request = new UnityWebRequest(url, "GET");
+            // UnityWebRequest 及 handler 持有原生资源，必须 Dispose（using 覆盖取消路径）。
+            using var request = new UnityWebRequest(url, "GET");
+            request.timeout = DefaultTimeoutSeconds;
             foreach (var (key, value) in headers)
             {
                 request.SetRequestHeader(key, value);
@@ -33,13 +40,15 @@ namespace HoweFramework
             {
                 return ((int)request.responseCode, request.downloadHandler.data);
             }
-            
+
             return ((int)HttpStatusCode.OK, request.downloadHandler.data);
         }
 
         public async UniTask<(int code, byte[] responseBody)> Post(string url, byte[] requestBody, Dictionary<string, string> headers, string contentType, CancellationToken token = default)
         {
-            var request = new UnityWebRequest(url, "POST");
+            // UnityWebRequest 及 handler 持有原生资源，必须 Dispose（using 覆盖取消路径）。
+            using var request = new UnityWebRequest(url, "POST");
+            request.timeout = DefaultTimeoutSeconds;
 
             foreach (var (key, value) in headers)
             {

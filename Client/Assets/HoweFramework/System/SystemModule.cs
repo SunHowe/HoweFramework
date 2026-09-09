@@ -107,10 +107,19 @@ namespace HoweFramework
 
         protected override void OnDestroy()
         {
-            foreach (var system in m_Systems)
+            // 逆序销毁：后注册的系统通常依赖先注册的系统。单个系统销毁异常不中断销毁链。
+            for (int i = m_Systems.Count - 1; i >= 0; i--)
             {
-                OnSystemDestroyed?.Invoke(system);
-                system.Destroy();
+                var system = m_Systems[i];
+                try
+                {
+                    OnSystemDestroyed?.Invoke(system);
+                    system.Destroy();
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"销毁系统 {system.GetType().Name} 时发生异常：{e.Message}\n{e.StackTrace}");
+                }
             }
 
             m_Systems.Clear();

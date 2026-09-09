@@ -46,8 +46,17 @@ namespace HoweFramework
             }
 
             Instance = (T)this;
-            OnInit();
-            
+            try
+            {
+                OnInit();
+            }
+            catch
+            {
+                // OnInit 失败时回滚，避免留下未注册却不可重建的僵尸状态。
+                Instance = null;
+                throw;
+            }
+
             if (RegisterIOC)
             {
                 IOCModule.Instance.Register(Instance);

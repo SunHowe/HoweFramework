@@ -82,10 +82,12 @@ namespace HoweFramework
             }
             else if ((m_Mode & EventDispatcherMode.AllowMultiHandler) != EventDispatcherMode.AllowMultiHandler)
             {
+                proxy.Dispose();
                 throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"Event '{id}' not allow multi handler.");
             }
             else if ((m_Mode & EventDispatcherMode.AllowDuplicateHandler) != EventDispatcherMode.AllowDuplicateHandler && Check(id, handler))
             {
+                proxy.Dispose();
                 throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"Event '{id}' not allow duplicate handler.");
             }
             else
@@ -120,6 +122,12 @@ namespace HoweFramework
             {
                 foreach (KeyValuePair<object, LinkedListNode<PriorityEventHandler>> cachedNode in m_CachedNodes)
                 {
+                    // 只处理与待退订事件 id 相同的派发缓存，避免同一委托订阅多个事件时跨事件误伤。
+                    if (cachedNode.Key is GameEventArgs eventArgs && eventArgs.Id != id)
+                    {
+                        continue;
+                    }
+
                     if (cachedNode.Value != null && cachedNode.Value.Value.Handler == handler)
                     {
                         m_TempNodes.Add(cachedNode.Key, cachedNode.Value.Next);
@@ -167,6 +175,15 @@ namespace HoweFramework
         /// </summary>
         public void Dispose()
         {
+            // 释放所有事件处理器代理对象，避免引用池对象流失。
+            foreach (var pair in m_EventHandlerDict)
+            {
+                foreach (var handler in pair.Value)
+                {
+                    handler.Dispose();
+                }
+            }
+
             m_EventHandlerDict.Clear();
         }
         

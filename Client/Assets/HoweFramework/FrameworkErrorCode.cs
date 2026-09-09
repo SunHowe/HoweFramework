@@ -239,6 +239,11 @@ namespace HoweFramework
         /// </summary>
         public const int NetworkNotSupportPacket = 413;
 
+        /// <summary>
+        /// 网络频道已关闭。
+        /// </summary>
+        public const int NetworkChannelClosed = 414;
+
         #endregion
 
         #region [WebRequest]
@@ -275,7 +280,7 @@ namespace HoweFramework
         public const int WebRequestBadGateway = 530;
         public const int WebRequestServiceUnavailable = 531;
         public const int WebRequestGatewayTimeout = 532;
-        public const int WebRequestHttpVersionNotSupported = 505;
+        public const int WebRequestHttpVersionNotSupported = 533;
         public const int WebRequestVariantAlsoNegotiates = 534;
         public const int WebRequestInsufficientStorage = 535;
         public const int WebRequestLoopDetected = 536;
@@ -319,6 +324,11 @@ namespace HoweFramework
         /// 请求调度器正在销毁。
         /// </summary>
         public const int RequestDispatcherDisposing = 703;
+
+        /// <summary>
+        /// 请求超时。
+        /// </summary>
+        public const int RequestTimeout = 704;
 
         #endregion
 

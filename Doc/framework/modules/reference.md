@@ -30,6 +30,8 @@ ReferencePool.Release(e);
 - Release 后不要再用该实例。
 - `Clear` 若漏掉集合/事件，会脏数据串实例。
 - 这是静态池，不是 Module；`GameApp` 销毁不会自动 `ClearAllCache`。
+- **线程安全**：`Acquire`/`Release`/`ClearCache`/`ClearAllCache` 已加全局锁，网络线程（Socket 回调）与主线程并发访问是安全的。锁只保护池结构本身，`IReference.Clear` 在锁外执行，业务不要在 `Clear` 里再回调池操作以外的重逻辑。
+- `Release(null)` 是安全的（直接返回）。
 
 ## 相关源码
 

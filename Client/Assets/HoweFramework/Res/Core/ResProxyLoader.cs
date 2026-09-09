@@ -47,6 +47,11 @@ namespace HoweFramework
                 assetItemInfo = AssetItemInfo.Create(assetKey, assetType, m_ResLoader.LoadAssetAsync, m_ResLoader.UnloadAsset);
                 m_AssetItemDict.Add(assetKey, assetItemInfo);
             }
+            else if (assetItemInfo.AssetType != assetType)
+            {
+                // 同一资源以不同类型加载会错配缓存，直接报错。
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, $"Asset '{assetKey}' already loaded with type '{assetItemInfo.AssetType.Name}', cannot load as '{assetType.Name}'.");
+            }
 
             var asset = await assetItemInfo.GetAssetAsync();
 

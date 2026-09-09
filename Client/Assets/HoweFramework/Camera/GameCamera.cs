@@ -20,7 +20,8 @@ namespace HoweFramework
 
         private void OnEnable()
         {
-            CameraModule.Instance.RegisterCamera(this);
+            // 模块销毁后（如退出播放模式时场景组件回调晚于模块销毁）Instance 为 null，需要判空。
+            CameraModule.Instance?.RegisterCamera(this);
         }
 
         private void OnDisable()

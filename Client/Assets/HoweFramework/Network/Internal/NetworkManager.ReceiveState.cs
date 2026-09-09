@@ -8,6 +8,12 @@ namespace HoweFramework
         private sealed class ReceiveState : IDisposable
         {
             private const int DefaultBufferLength = 1024 * 64;
+
+            /// <summary>
+            /// 消息包长度上限（64MB），防止恶意或损坏的长度字段导致超大内存分配（OOM）。
+            /// </summary>
+            private const int MaxPacketLength = 1024 * 1024 * 64;
+
             private MemoryStream m_Stream;
             private IPacketHeader m_PacketHeader;
             private bool m_Disposed;
@@ -77,9 +83,9 @@ namespace HoweFramework
 
             private void Reset(int targetLength, IPacketHeader packetHeader)
             {
-                if (targetLength < 0)
+                if (targetLength < 0 || targetLength > MaxPacketLength)
                 {
-                    throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Target length is invalid.");
+                    throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, $"Target length '{targetLength}' is invalid.");
                 }
 
                 m_Stream.Position = 0L;

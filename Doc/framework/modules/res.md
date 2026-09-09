@@ -30,6 +30,10 @@ var asset = await loader.LoadAssetAsync(key, typeof(GameObject));
 - 局部 loader 是 `ResProxyLoader`，Dispose 才会卸资源。
 - 不要长期持有核心加载器当业务缓存。
 - YooAsset 初始化是独立步骤，与 `UseYooAsset` 设核心加载器分开。
+- **失败语义**：`LoadAssetAsync` 加载失败返回 null（不抛异常），且失败结果不缓存——下次调用同 key 会重新发起加载（可重试）。调用方按 null 即失败处理。
+- 同一 key 只允许一种资源类型：以不同类型重复加载同 key 会直接抛 `InvalidParam`（缓存按 key 聚合，类型错配会污染引用计数）。
+- 场景加载/卸载失败会清理句柄登记，可安全重试；场景卸载中禁止并发加载同一场景（`ResSceneUnloading`）。
+- `SetResCoreLoader` 覆盖旧加载器前会先 `Dispose` 旧实例，重复设置不会泄漏句柄。
 
 ## 相关源码
 

@@ -41,6 +41,11 @@ namespace HoweFramework
                 Log.Error($"Catch exception: ErrorCode={e.ErrorCode}, Message={e.Message}\n{e.StackTrace}");
                 return CommonResponse.Create(e.ErrorCode);
             }
+            catch (OperationCanceledException)
+            {
+                // 取消令牌触发的取消（如超时、主动取消），返回统一的取消响应。
+                return CommonResponse.Create(FrameworkErrorCode.RequestCanceled);
+            }
             catch (Exception e)
             {
                 Log.Error($"Catch exception: {e.Message}\n{e.StackTrace}");

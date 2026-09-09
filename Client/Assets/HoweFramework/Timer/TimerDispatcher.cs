@@ -29,6 +29,17 @@ namespace HoweFramework
 
         public void Clear()
         {
+            // 归还存活的 TimerInfo，避免引用池对象流失。
+            foreach (var info in m_TimerInfoList)
+            {
+                ReferencePool.Release(info);
+            }
+
+            foreach (var info in m_TimerInfoQueue)
+            {
+                ReferencePool.Release(info);
+            }
+
             m_TimerInfoDict.Clear();
             m_TimerInfoList.Clear();
             m_TimerInfoQueue.Clear();
@@ -44,6 +55,12 @@ namespace HoweFramework
 
         public void Update(float elapseSeconds)
         {
+            if (elapseSeconds <= 0f)
+            {
+                // 逻辑时间停摆（如 timeScale=0 暂停）时，定时器（含帧定时器）不前进。
+                return;
+            }
+
             m_ElapsedTime += elapseSeconds;
             m_UpdateTimes += 1;
 
@@ -144,6 +161,11 @@ namespace HoweFramework
 
         public int AddFrameTimer(int interval, int repeatTimes, TimerCallback callback, object userData)
         {
+            if (interval < 1)
+            {
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Frame timer interval must be greater than or equal to 1.");
+            }
+
             if (m_IncrementTimerId >= int.MaxValue)
                 m_IncrementTimerId = 0;
 
@@ -174,6 +196,11 @@ namespace HoweFramework
 
         public int AddTimer(float interval, int repeatTimes, TimerCallback callback, object userData)
         {
+            if (interval <= 0f)
+            {
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Timer interval must be greater than 0.");
+            }
+
             if (m_IncrementTimerId >= int.MaxValue)
                 m_IncrementTimerId = 0;
 

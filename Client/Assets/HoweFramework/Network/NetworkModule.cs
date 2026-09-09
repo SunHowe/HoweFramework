@@ -20,7 +20,7 @@ namespace HoweFramework
         /// <summary>
         /// 获取网络频道数量。
         /// </summary>
-        public int NetworkChannelCount { get; }
+        public int NetworkChannelCount => m_NetworkManager?.NetworkChannelCount ?? 0;
 
         /// <summary>
         /// 网络管理器。

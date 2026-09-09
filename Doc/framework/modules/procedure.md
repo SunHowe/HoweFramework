@@ -40,6 +40,7 @@ ProcedureModule.Instance.Launch<ProcedureSplash>(procedures);
 - `ChangeNextProcedure` 按 **Launch 数组顺序** 前进，与 TypeId 数值无关。顺序由数组决定，不由类型名决定。
 - 同一类型只能注册一次（字典按 TypeId 去重）。
 - 模块销毁会 `Leave` 当前流程。
+- **重入约定**：在 `OnEnter`/`OnLeave`（含 `Launch` 的首次 Enter）中调用 `ChangeProcedure`/`ChangeNextProcedure` 是允许的，切换请求会延迟到本次切换完成后生效；多次重入以最后一次为准。旧版本无此保护，回调中切换会重复执行 Leave 甚至无限递归。
 
 ## 相关源码
 

@@ -46,6 +46,9 @@ namespace HoweFramework
                 m_Name = name ?? string.Empty;
                 m_SendPacketPool = new Queue<Packet>();
                 m_ReceivePacketPool = EventModule.Instance.CreateThreadSafeEventDispatcher();
+                // 收包池允许无注册处理函数（未注册的服务器推送包由默认处理函数兜底，不抛异常）；
+                // 且始终触发默认处理函数（保证已注册 Handler 的 RPC 响应包仍会路由到 RequestDispatcher）。
+                m_ReceivePacketPool.SetMode(EventDispatcherMode.AllowNoHandler | EventDispatcherMode.AlwaysInvokeDefaultHandler);
                 m_NetworkChannelHelper = networkChannelHelper;
                 m_AddressFamily = AddressFamily.Unknown;
                 m_ResetHeartBeatElapseSecondsWhenReceivePacket = false;
@@ -66,6 +69,11 @@ namespace HoweFramework
                 NetworkChannelCustomError = null;
 
                 networkChannelHelper.Initialize(this);
+
+                if (networkChannelHelper.PacketHeaderLength <= 0)
+                {
+                    throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Packet header length is invalid.");
+                }
             }
 
             /// <summary>
@@ -279,9 +287,21 @@ namespace HoweFramework
                         }
                     }
 
-                    if (sendHeartBeat && m_NetworkChannelHelper.SendHeartBeat())
+                    if (sendHeartBeat)
                     {
-                        if (missHeartBeatCount > 0 && NetworkChannelMissHeartBeat != null)
+                        bool heartBeatSent;
+                        try
+                        {
+                            // 心跳包构造/发送异常不应中断频道轮询。
+                            heartBeatSent = m_NetworkChannelHelper.SendHeartBeat();
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error($"Send heart beat error: {e.Message}\n{e.StackTrace}");
+                            heartBeatSent = false;
+                        }
+
+                        if (heartBeatSent && missHeartBeatCount > 0 && NetworkChannelMissHeartBeat != null)
                         {
                             NetworkChannelMissHeartBeat(this, missHeartBeatCount);
                         }

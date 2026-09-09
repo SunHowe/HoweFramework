@@ -46,6 +46,14 @@ namespace HoweFramework
             using var _ = EventCapture.Create(NetworkConnectedEventArgs.EventId, OnNetworkConnected);
             using var ___ = EventCapture.Create(NetworkErrorEventArgs.EventId, OnNetworkError);
             using var ____ = EventCapture.Create(NetworkCustomErrorEventArgs.EventId, OnNetworkCustomError);
+            using var _____ = EventCapture.Create(NetworkClosedEventArgs.EventId, OnNetworkClosed);
+
+            // 关联外部取消令牌：取消时完成等待，避免挂起。
+            using var registration = token.Register(static state =>
+            {
+                var tcs = (AutoResetUniTaskCompletionSource<IResponse>)state;
+                tcs.TrySetResult(CommonResponse.Create(FrameworkErrorCode.RequestCanceled));
+            }, m_UniTaskCompletionSource);
 
             NetworkChannel.Connect(Address, Port);
 
@@ -112,6 +120,32 @@ namespace HoweFramework
             }
 
             m_UniTaskCompletionSource.TrySetResult(CommonResponse.Create(networkErrorEventArgs.ErrorCode, networkErrorEventArgs.ErrorMessage));
+        }
+
+        /// <summary>
+        /// 网络连接关闭事件。连接进行中关闭/重连/销毁频道时兜底完成等待，避免挂起。
+        /// </summary>
+        /// <param name="sender">事件发送者。</param>
+        /// <param name="e">网络连接关闭事件。</param>
+        private void OnNetworkClosed(object sender, GameEventArgs e)
+        {
+            var networkClosedEventArgs = e as NetworkClosedEventArgs;
+            if (networkClosedEventArgs == null)
+            {
+                return;
+            }
+
+            if (networkClosedEventArgs.NetworkChannel != NetworkChannel)
+            {
+                return;
+            }
+
+            if (m_UniTaskCompletionSource == null)
+            {
+                return;
+            }
+
+            m_UniTaskCompletionSource.TrySetResult(CommonResponse.Create(FrameworkErrorCode.NetworkChannelClosed));
         }
 
         /// <summary>

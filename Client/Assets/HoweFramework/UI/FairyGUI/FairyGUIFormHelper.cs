@@ -357,7 +357,22 @@ namespace HoweFramework
                 return;
             }
 
-            LoadUIPackageBytesAsync(packageName).ContinueWith(bytes => callback(bytes, string.Empty));
+            LoadMethod().Forget();
+
+            async UniTask LoadMethod()
+            {
+                try
+                {
+                    var packageBytes = await LoadUIPackageBytesAsync(packageName);
+                    callback(packageBytes, string.Empty);
+                }
+                catch (Exception e)
+                {
+                    // 加载失败必须兜底回调，否则 FairyGUI 侧一直等待导致界面加载挂起。
+                    Log.Error($"加载UI包[{packageName}]失败：{e.Message}\n{e.StackTrace}");
+                    callback(null, string.Empty);
+                }
+            }
         }
 
         public void LoadUIPackageBytes(string packageName, out byte[] bytes, out string assetNamePrefix)

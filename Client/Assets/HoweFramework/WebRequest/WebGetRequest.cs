@@ -28,6 +28,9 @@ namespace HoweFramework
         {
             base.Clear();
             Url = null;
+            // 清理请求头与参数，避免池化复用时串数据/泄漏凭证。
+            Headers.Clear();
+            Parameters.Clear();
         }
 
         protected override UniTask<IResponse> OnExecute(CancellationToken token)

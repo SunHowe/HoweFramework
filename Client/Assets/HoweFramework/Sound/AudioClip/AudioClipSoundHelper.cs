@@ -152,24 +152,46 @@ namespace HoweFramework
         {
             var token = loadInfo.CancellationTokenSource.Token;
 
+            // 缓存关键字段：取消路径下 loadInfo 可能已被回收复用，await 之后不可再访问其字段。
+            var serialId = loadInfo.SerialId;
             var groupId = loadInfo.GroupId;
-            var soundAsset = await m_ResLoader.LoadAssetAsync<AudioClip>(loadInfo.SoundAssetName, token);
+            var soundAssetName = loadInfo.SoundAssetName;
+
+            var soundAsset = await m_ResLoader.LoadAssetAsync<AudioClip>(soundAssetName, token);
+
+            // 加载结束后（无论成功/失败/取消）先移除加载记录，避免残留导致 Stop/Pause/Resume 误命中已回收对象。
+            m_LoadInfoDict.Remove(serialId);
 
             if (token.IsCancellationRequested)
             {
                 return;
             }
-            
+
+            if (soundAsset == null)
+            {
+                // 加载失败：卸载空引用并清理，避免字典残留。
+                m_ResLoader.UnloadAsset(soundAssetName);
+                loadInfo.Dispose();
+                return;
+            }
+
             if (!m_SoundGroupHelperDict.TryGetValue(groupId, out var soundGroupHelper))
             {
-                m_ResLoader.UnloadAsset(loadInfo.SoundAssetName);
+                m_ResLoader.UnloadAsset(soundAssetName);
                 loadInfo.Dispose();
-                
+
                 throw new ErrorCodeException(FrameworkErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
             }
 
-            m_SoundGroupIdDict.Add(loadInfo.SerialId, loadInfo.GroupId);
-            soundGroupHelper.PlaySound(loadInfo.SerialId, loadInfo.SoundAssetName, soundAsset, loadInfo.PlaySoundParams);
+            m_SoundGroupIdDict.Add(serialId, groupId);
+            soundGroupHelper.PlaySound(serialId, soundAssetName, soundAsset, loadInfo.PlaySoundParams);
+
+            // 加载期间被暂停的声音，加载完成后保持暂停状态。
+            if (loadInfo.IsPause)
+            {
+                soundGroupHelper.PauseSound(serialId);
+            }
+
             loadInfo.PlaySoundParams = null;
             loadInfo.Dispose();
         }
@@ -208,12 +230,24 @@ namespace HoweFramework
 
             foreach (var soundGroupHelper in m_SoundGroupHelperDict.Values)
             {
-                soundGroupHelper.SetVolume(volume);
+                // 设置全局音量，不能覆盖各组独立音量（实际音量 = 全局 × 组 × 播放）。
+                soundGroupHelper.SetGlobalVolume(volume);
             }
         }
 
         public void StopAllSounds(int groupId)
         {
+            if (groupId == 0)
+            {
+                // 组编号为 0 时停止所有声音组中的声音。
+                foreach (var groupHelper in m_SoundGroupHelperDict.Values)
+                {
+                    groupHelper.StopAllSounds();
+                }
+
+                return;
+            }
+
             if (m_SoundGroupHelperDict.TryGetValue(groupId, out var soundGroupHelper))
             {
                 soundGroupHelper.StopAllSounds();
@@ -250,6 +284,17 @@ namespace HoweFramework
 
         public void StopSound(string soundAssetName, int groupId)
         {
+            if (groupId == 0)
+            {
+                // 组编号为 0 时停止所有声音组中匹配的声音。
+                foreach (var groupHelper in m_SoundGroupHelperDict.Values)
+                {
+                    groupHelper.StopSound(soundAssetName);
+                }
+
+                return;
+            }
+
             if (m_SoundGroupHelperDict.TryGetValue(groupId, out var soundGroupHelper))
             {
                 soundGroupHelper.StopSound(soundAssetName);

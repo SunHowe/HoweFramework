@@ -71,24 +71,37 @@ namespace HoweFramework
 
             m_CameraListChanged = false;
 
+            // 相机可能被场景卸载销毁（Unity fake-null），访问前需要判空。
             if (m_CameraControllers.Count == 0)
             {
                 MainCamera = m_InitCamera;
-                MainCamera.enabled = true;
+                if (MainCamera != null)
+                {
+                    MainCamera.enabled = true;
+                }
                 return;
             }
 
             var cameraController = m_CameraControllers[0];
             MainCamera = cameraController.Camera;
-            MainCamera.enabled = true;
+            if (MainCamera != null)
+            {
+                MainCamera.enabled = true;
+            }
 
             for (int i = 1; i < m_CameraControllers.Count; i++)
             {
                 var camera = m_CameraControllers[i].Camera;
-                camera.enabled = false;
+                if (camera != null)
+                {
+                    camera.enabled = false;
+                }
             }
-            
-            m_InitCamera.enabled = false;
+
+            if (m_InitCamera != null)
+            {
+                m_InitCamera.enabled = false;
+            }
         }
     }
 }

@@ -30,6 +30,7 @@ pool.Dispose();
 
 - 模块级 Instantiate 走内部全局池；Destroy 模块时会释放该池。
 - 局部池不 Dispose 会拖住 ResLoader。
+- `Release` 有重复归还检测（同一实例重复入池会被拒绝并告警），池销毁后归还的对象直接 `Destroy`，不会泄漏。
 
 ## 相关源码
 

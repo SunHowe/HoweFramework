@@ -35,7 +35,17 @@ namespace HoweFramework
             var count = Math.Min(ObjectNameList.Count, ObjectList.Count);
             for (var i = 0; i < count; i++)
             {
-                m_ObjectDictionary.Add(ObjectNameList[i], ObjectList[i]);
+                var objectName = ObjectNameList[i];
+                if (string.IsNullOrEmpty(objectName))
+                {
+                    continue;
+                }
+
+                // 重名键容错：保留先出现的一项并告警，避免 Awake 直接抛异常中断组件初始化。
+                if (!m_ObjectDictionary.TryAdd(objectName, ObjectList[i]))
+                {
+                    Log.Warning($"ObjectCollector on '{gameObject.name}' has duplicate object name '{objectName}', the later one is ignored.");
+                }
             }
         }
 

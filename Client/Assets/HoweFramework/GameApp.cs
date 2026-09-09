@@ -62,11 +62,18 @@ namespace HoweFramework
         /// </summary>
         public void Destroy()
         {
-            // 销毁模块。
+            // 销毁模块。单个模块销毁异常不中断销毁链，保证后续模块都能销毁。
             for (int i = m_ModuleList.Count - 1; i >= 0; i--)
             {
                 ModuleBase module = m_ModuleList[i];
-                module.Destroy();
+                try
+                {
+                    module.Destroy();
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"销毁模块 {module.GetType().Name} 时发生异常：{e.Message}\n{e.StackTrace}");
+                }
             }
 
             m_ModuleList.Clear();

@@ -214,17 +214,34 @@ namespace HoweFramework
                 return;
             }
 
+            // 池已销毁（根节点已 Destroy 或 Clear），归还的对象直接销毁，避免泄漏。
+            if (m_Root == null)
+            {
+                Object.Destroy(gameObject);
+                return;
+            }
+
             if (!m_GameObjectDict.TryGetValue(pooledGameObject.AssetKey, out var gameObjects))
             {
                 gameObjects = ReusableQueue<GameObject>.Create();
                 m_GameObjectDict.Add(pooledGameObject.AssetKey, gameObjects);
             }
-            else if (m_CacheCountLimitDict.TryGetValue(pooledGameObject.AssetKey, out var limit) && gameObjects.Count >= limit)
+            else
             {
-                // 超过缓存数量限制，销毁对象。
-                Object.Destroy(gameObject);
-                Log.Debug($"Pooled game object '{gameObject.name}' is over cache count limit.");
-                return;
+                // 重复归还检测：同一实例重复入池会导致后续 Instantiate 出同一对象两次。
+                if (gameObjects.Contains(gameObject))
+                {
+                    Log.Error($"Pooled game object '{gameObject.name}' is already in pool.");
+                    return;
+                }
+
+                if (m_CacheCountLimitDict.TryGetValue(pooledGameObject.AssetKey, out var limit) && gameObjects.Count >= limit)
+                {
+                    // 超过缓存数量限制，销毁对象。
+                    Object.Destroy(gameObject);
+                    Log.Debug($"Pooled game object '{gameObject.name}' is over cache count limit.");
+                    return;
+                }
             }
 
             gameObject.transform.SetParent(m_Root);

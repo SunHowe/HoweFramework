@@ -25,12 +25,14 @@ namespace HoweFramework
         /// <param name="property">属性配置。</param>
         internal protected virtual void SetProperty(BehaviorPropertyConfig property)
         {
-            var propertyInfo = GetType().GetProperty(property.Name);
+            var propertyInfo = GetType().GetProperty(property.Name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
             if (propertyInfo == null)
             {
+                // 配置中的属性名与节点类不匹配（如重命名后未同步），告警以便排查。
+                Log.Warning($"行为节点 {GetType().Name} 不存在属性 '{property.Name}'，该配置项被忽略。");
                 return;
             }
-            
+
             propertyInfo.SetValue(this, property.Value);
         }
 

@@ -38,7 +38,9 @@ await UIModule.Instance.CloseUIForm(UIFormId.Xxx, closeMultiple: true);
 - 关闭后的界面会进 `UIForm` 缓存（含打开 `UIFormType.Main` 时框架关掉的其它界面）。再次打开必须复用已 `OnInit` 的 `IUIFormLogic`，只换 `FormSerialId`。若对缓存实例再 `CreateUIFormLogic` + `Init`，新逻辑的 `UIForm` 仍为 null，已加载路径上的 `OnOpen` 访问 `Request` / `RequestUserData` 会空引用。
 - 每次打开（含单例复开、缓存命中）都会分配新的 `FormSerialId`。`IUIForm.CloseForm` 带当前序列号，避免多实例时关掉最旧的那个。不指定序列号的 `CloseUIForm(formId)` 仍关最旧实例；`closeMultiple: true` 关掉该 FormId 全部打开实例。
 - 加载失败会完成打开请求、移出打开列表并 `Destroy`（不进缓存）。加载完成时若已被栈隐藏，会调 `OnInvisible`。
-- 模块销毁时先给队列剩余请求回 `UIFormWhileDestroying`，再关已打开界面。
+- 模块销毁时先给队列剩余请求回 `UIFormWhileDestroying`，再关已打开界面；单个界面关闭/销毁异常不中断销毁链。
+- **回调重入契约**：在 `OnOpen`/`OnUpdate`/`OnInit` 回调中调用 `CloseForm` 是允许的，框架检测到界面已关闭后不再继续后续打开流程；`OnClose`/`OnInvisible` 回调中重入关闭会被忽略（不会重复执行关闭流程）。
+- FairyGUI 包字节加载失败会兜底回调（bytes=null），界面加载失败流程正常走完，不会挂起。
 - 错误码 100–112 见 `FrameworkErrorCode` UI 段。
 
 ## 相关源码

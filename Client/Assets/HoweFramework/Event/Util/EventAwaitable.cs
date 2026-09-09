@@ -14,7 +14,7 @@ namespace HoweFramework
         private int m_EventId;
         private IEventSubscribe m_EventSubscribe;
         private AutoResetUniTaskCompletionSource<bool> m_UniTaskCompletionSource;
-        private CancellationTokenSource m_CancellationTokenSource;
+        private CancellationTokenRegistration m_Registration;
         private UniTask<bool> m_UniTask;
         private int m_ReferenceId = 0;
 
@@ -23,6 +23,7 @@ namespace HoweFramework
             m_EventId = 0;
             m_EventSubscribe = null;
             m_UniTaskCompletionSource = null;
+            m_Registration = default;
             m_ReferenceId = 0;
             m_UniTask = default;
         }
@@ -36,12 +37,9 @@ namespace HoweFramework
 
             m_EventSubscribe.Unsubscribe(m_EventId, OnEvent);
 
-            if (m_CancellationTokenSource != null)
-            {
-                m_CancellationTokenSource.Cancel();
-                m_CancellationTokenSource.Dispose();
-                m_CancellationTokenSource = null;
-            }
+            // 注销取消回调，避免长寿命 token 源上累积指向已回收对象的注册项。
+            m_Registration.Dispose();
+            m_Registration = default;
 
             ReferencePool.Release(this);
         }
@@ -83,7 +81,8 @@ namespace HoweFramework
 
             if (token != default)
             {
-                token.Register(eventAwaitable.OnTokenCancel, eventAwaitable.m_ReferenceId);
+                // 保存注册句柄，Dispose 时注销。
+                eventAwaitable.m_Registration = token.Register(eventAwaitable.OnTokenCancel, eventAwaitable.m_ReferenceId);
             }
 
             return eventAwaitable;

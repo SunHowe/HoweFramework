@@ -21,7 +21,8 @@ namespace HoweFramework
             {
                 if (string.IsNullOrEmpty(m_ResponseText))
                 {
-                    m_ResponseText = Encoding.UTF8.GetString(RawResponseBody);
+                    // 原始数据可能为 null（请求失败时），做空防护。
+                    m_ResponseText = RawResponseBody != null ? Encoding.UTF8.GetString(RawResponseBody) : string.Empty;
                 }
 
                 return m_ResponseText;

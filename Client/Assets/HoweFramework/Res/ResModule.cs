@@ -16,6 +16,12 @@ namespace HoweFramework
         /// <param name="resLoader">核心资源加载器。</param>
         public void SetResCoreLoader(IResLoader resLoader)
         {
+            // 覆盖前释放旧加载器，避免其持有的资源句柄泄漏。
+            if (m_ResLoader != null && m_ResLoader != resLoader)
+            {
+                m_ResLoader.Dispose();
+            }
+
             m_ResLoader = resLoader;
         }
 

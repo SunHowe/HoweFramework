@@ -17,7 +17,12 @@ namespace HoweFramework
         /// <returns>异或后的二进制流。</returns>
         public static byte[] GetQuickXorBytes(byte[] bytes, byte[] code)
         {
-            return GetXorBytes(bytes, 0, QuickEncryptLength, code);
+            if (bytes == null)
+            {
+                return null;
+            }
+
+            return GetXorBytes(bytes, 0, Math.Min(QuickEncryptLength, bytes.Length), code);
         }
 
         /// <summary>
@@ -27,7 +32,12 @@ namespace HoweFramework
         /// <param name="code">异或二进制流。</param>
         public static void GetQuickSelfXorBytes(byte[] bytes, byte[] code)
         {
-            GetSelfXorBytes(bytes, 0, QuickEncryptLength, code);
+            if (bytes == null)
+            {
+                return;
+            }
+
+            GetSelfXorBytes(bytes, 0, Math.Min(QuickEncryptLength, bytes.Length), code);
         }
 
         /// <summary>
@@ -108,13 +118,24 @@ namespace HoweFramework
                 throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Code length is invalid.");
             }
 
-            if (startIndex < 0 || length < 0 || startIndex + length > bytes.Length)
+            if (startIndex < 0 || startIndex > bytes.Length)
             {
-                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Start index or length is invalid.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Start index is invalid.");
             }
 
+            if (length < 0)
+            {
+                // 计算整个二进制流。
+                length = bytes.Length - startIndex;
+            }
+            else if (startIndex + length > bytes.Length)
+            {
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, "Length is invalid.");
+            }
+
+            int endIndex = startIndex + length;
             int codeIndex = startIndex % codeLength;
-            for (int i = startIndex; i < length; i++)
+            for (int i = startIndex; i < endIndex; i++)
             {
                 bytes[i] ^= code[codeIndex++];
                 codeIndex %= codeLength;

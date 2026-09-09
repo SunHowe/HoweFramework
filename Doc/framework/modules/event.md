@@ -35,6 +35,10 @@ local.Dispose();
 - 局部调度器必须 `Dispose`。
 - `IsReleaseAfterFire` 为 true 时派发后回收，持有事件引用会变成已 Clear 的对象。需要在 Handler 之后继续持有实例时（例如 Packet 当远程响应），调用 `SetIsReleaseAfterFire(false)`；`Clear` 会把该标记复位为 true。
 - `Packet` 继承 `GameEventArgs`，可用同一套调度；`Packet.Id` 同样是 TypeId。
+- 优先级调度器（`CreatePriorityEventDispatcher`）按优先级从高到低派发，同优先级按订阅先后（FIFO）。其底层 `MultiSortedDictionary` 的排序插入曾整体失效（[5,3] 插 4 得 [4,5,3]），已修复；升级框架后若业务曾依赖错误顺序需复查。
+- `Unsubscribe(id, handler)` 在派发进行中调用是安全的（缓存节点延迟跳过）；同一委托订阅多个不同事件时，退订只影响指定 id 的事件，不会跨事件误伤。
+- `ThreadSafeEventDispatcher` 单事件派发异常只记日志并继续处理队列剩余事件，不上抛主循环；`ClearEvents`/`Dispose` 会把队列中未处理的事件项与事件参数一并归还引用池。
+- `SimpleEvent` 在最后一个订阅者的 Handler 内 `Unsubscribe` 自身是安全的（一次性订阅写法）。
 
 ## 相关源码
 

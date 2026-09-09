@@ -12,6 +12,22 @@ namespace HoweFramework
         private static FairyGUIFormHelper s_FairyGUIFormHelper;
 
         /// <summary>
+        /// 获取 FairyGUI 界面辅助器，未初始化时抛出明确异常（而非 NRE）。
+        /// </summary>
+        private static FairyGUIFormHelper FormHelper
+        {
+            get
+            {
+                if (s_FairyGUIFormHelper == null)
+                {
+                    throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "FairyGUI is not initialized. Call UseFairyGUI first.");
+                }
+
+                return s_FairyGUIFormHelper;
+            }
+        }
+
+        /// <summary>
         /// 设置UI模块使用FairyGUI。
         /// </summary>
         /// <param name="module">UI模块。</param>
@@ -33,7 +49,7 @@ namespace HoweFramework
         /// <param name="preloadPackageMode">是否开启预加载包模式。</param>
         public static void SetPreloadPackageMode(this UIModule module, bool preloadPackageMode)
         {
-            s_FairyGUIFormHelper.SetPreloadPackageMode(preloadPackageMode);
+            FormHelper.SetPreloadPackageMode(preloadPackageMode);
         }
 
         /// <summary>
@@ -44,7 +60,7 @@ namespace HoweFramework
         /// <returns>加载任务。</returns>
         public static UniTask LoadFairyGUIPackagesAsync(this UIModule module, string assetKey)
         {
-            return s_FairyGUIFormHelper.LoadUIPackagesAsync(assetKey);
+            return FormHelper.LoadUIPackagesAsync(assetKey);
         }
 
         /// <summary>
@@ -54,7 +70,7 @@ namespace HoweFramework
         /// <param name="bindings">界面绑定。</param>
         public static void AddFairyGUIFormBindings(this UIModule module, FairyGUIFormBinding[] bindings)
         {
-            s_FairyGUIFormHelper.AddUIFormBindings(bindings);
+            FormHelper.AddUIFormBindings(bindings);
         }
 
         /// <summary>

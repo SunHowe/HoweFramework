@@ -106,7 +106,14 @@ namespace HoweFramework
                 return false;
             }
 
-            return int.Parse(value) != 0;
+            // 存档损坏时容错返回默认值，而不是抛 FormatException。
+            if (!int.TryParse(value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var result))
+            {
+                Log.Warning($"Setting '{settingName}' value '{value}' is invalid.");
+                return false;
+            }
+
+            return result != 0;
         }
 
         /// <summary>
@@ -123,7 +130,13 @@ namespace HoweFramework
                 return defaultValue;
             }
 
-            return int.Parse(value) != 0;
+            if (!int.TryParse(value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var result))
+            {
+                Log.Warning($"Setting '{settingName}' value '{value}' is invalid.");
+                return defaultValue;
+            }
+
+            return result != 0;
         }
 
         /// <summary>
@@ -150,7 +163,13 @@ namespace HoweFramework
                 return 0;
             }
 
-            return int.Parse(value);
+            if (!int.TryParse(value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var result))
+            {
+                Log.Warning($"Setting '{settingName}' value '{value}' is invalid.");
+                return 0;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -167,7 +186,13 @@ namespace HoweFramework
                 return defaultValue;
             }
 
-            return int.Parse(value);
+            if (!int.TryParse(value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var result))
+            {
+                Log.Warning($"Setting '{settingName}' value '{value}' is invalid.");
+                return defaultValue;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -177,7 +202,7 @@ namespace HoweFramework
         /// <param name="value">要写入的整数值。</param>
         public void SetInt(string settingName, int value)
         {
-            m_Settings[settingName] = value.ToString();
+            m_Settings[settingName] = value.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -194,7 +219,13 @@ namespace HoweFramework
                 return 0f;
             }
 
-            return float.Parse(value);
+            if (!float.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var result))
+            {
+                Log.Warning($"Setting '{settingName}' value '{value}' is invalid.");
+                return 0f;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -211,7 +242,13 @@ namespace HoweFramework
                 return defaultValue;
             }
 
-            return float.Parse(value);
+            if (!float.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var result))
+            {
+                Log.Warning($"Setting '{settingName}' value '{value}' is invalid.");
+                return defaultValue;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -221,7 +258,7 @@ namespace HoweFramework
         /// <param name="value">要写入的浮点数值。</param>
         public void SetFloat(string settingName, float value)
         {
-            m_Settings[settingName] = value.ToString();
+            m_Settings[settingName] = value.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
         /// <summary>

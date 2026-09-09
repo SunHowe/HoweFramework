@@ -531,19 +531,33 @@ namespace HoweFramework
         {
             CompletePendingRequests(FrameworkErrorCode.UIFormWhileDestroying);
 
-            // 销毁所有已打开的界面。
+            // 销毁所有已打开的界面。单个界面关闭/销毁异常不中断销毁链。
             var node = m_UIFormOpenedList.First;
             while (node != null)
             {
                 var form = node.Value;
                 node = node.Next;
 
-                if (form.IsOpen)
+                try
                 {
-                    form.CloseImmediate();
+                    if (form.IsOpen)
+                    {
+                        form.CloseImmediate();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"关闭界面 {form.FormId} 时发生异常：{e.Message}\n{e.StackTrace}");
                 }
 
-                form.Destroy();
+                try
+                {
+                    form.Destroy();
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"销毁界面 {form.FormId} 时发生异常：{e.Message}\n{e.StackTrace}");
+                }
             }
 
             m_UIFormOpenedList.Clear();

@@ -52,8 +52,9 @@ namespace HoweFramework
             if (m_SafeAreaObject == null)
                 return;
 
-            m_SafeAreaObject.SetSize(safeArea.width, safeArea.height);
-            m_SafeAreaObject.SetXY(safeArea.x, safeArea.y);
+            var uiSafeArea = ConvertSafeAreaToUICoordinates(safeArea);
+            m_SafeAreaObject.SetSize(uiSafeArea.width, uiSafeArea.height);
+            m_SafeAreaObject.SetXY(uiSafeArea.x, uiSafeArea.y);
         }
 
         public static IDisposable Create(GComponent contentPane)

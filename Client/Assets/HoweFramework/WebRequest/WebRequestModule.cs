@@ -39,7 +39,7 @@ namespace HoweFramework
             }
 
             var (statusCode, responseBody) = await m_WebRequestHelper.Post(request.Url, request.RequestBody, request.Headers, request.ContentType, token);
-            if (statusCode != (int)HttpStatusCode.OK)
+            if (statusCode < 200 || statusCode >= 300)
             {
                 return WebRequestResponse.Create(GetErrorCode(statusCode), responseBody);
             }
@@ -79,16 +79,17 @@ namespace HoweFramework
                         sb.Append("&");
                     }
 
-                    sb.Append(key);
+                    // 参数键值必须 URL 编码，避免特殊字符（&、=、空格等）破坏查询串。
+                    sb.Append(UnityEngine.Networking.UnityWebRequest.EscapeURL(key));
                     sb.Append("=");
-                    sb.Append(value);
+                    sb.Append(UnityEngine.Networking.UnityWebRequest.EscapeURL(value));
                 }
 
                 url = sb.ToString();
             }
 
             var (statusCode, responseBody) = await m_WebRequestHelper.Get(url, request.Headers, token);
-            if (statusCode != (int)HttpStatusCode.OK)
+            if (statusCode < 200 || statusCode >= 300)
             {
                 return WebRequestResponse.Create(GetErrorCode(statusCode), responseBody);
             }

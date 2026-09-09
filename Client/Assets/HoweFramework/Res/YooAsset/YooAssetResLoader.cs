@@ -57,12 +57,20 @@ namespace HoweFramework
             var tcs = AutoResetUniTaskCompletionSource.Create();
             s_DestroyTcs = tcs;
 
-            await m_ResourcePackage.DestroyPackageAsync().ToUniTask();
-
-            YooAssets.RemovePackage(DefaultPackageName);
-
-            s_DestroyTcs = null;
-            tcs.TrySetResult();
+            try
+            {
+                if (m_ResourcePackage != null)
+                {
+                    await m_ResourcePackage.DestroyPackageAsync().ToUniTask();
+                    YooAssets.RemovePackage(DefaultPackageName);
+                }
+            }
+            finally
+            {
+                // 保证销毁信号一定完结，避免下次初始化永久等待。
+                s_DestroyTcs = null;
+                tcs.TrySetResult();
+            }
         }
 
         public void Dispose()
@@ -108,6 +116,11 @@ namespace HoweFramework
             {
                 assetItemInfo = AssetItemInfo.Create(assetKey, assetType, LoadAssetWithYooAssets, UnloadAssetWithYooAssets);
                 m_AssetItemDict.Add(assetKey, assetItemInfo);
+            }
+            else if (assetItemInfo.AssetType != assetType)
+            {
+                // 同一资源以不同类型加载会错配缓存，直接报错。
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidParam, $"Asset '{assetKey}' already loaded with type '{assetItemInfo.AssetType.Name}', cannot load as '{assetType.Name}'.");
             }
 
             var asset = await assetItemInfo.GetAssetAsync();
@@ -217,6 +230,12 @@ namespace HoweFramework
         /// <exception cref="ErrorCodeException"></exception>
         public async UniTask<Scene> LoadScene(string sceneAssetName)
         {
+            if (m_UnloadSceneOperationDict.ContainsKey(sceneAssetName))
+            {
+                // 场景正在卸载中，禁止并发加载同一场景。
+                throw new ErrorCodeException(FrameworkErrorCode.ResSceneUnloading);
+            }
+
             if (m_SceneHandlerDict.TryGetValue(sceneAssetName, out var operation))
             {
                 if (operation.Status == EOperationStatus.Succeeded)
@@ -230,7 +249,18 @@ namespace HoweFramework
             operation = m_ResourcePackage.LoadSceneAsync(sceneAssetName, LoadSceneMode.Additive);
             m_SceneHandlerDict[sceneAssetName] = operation;
 
-            await operation.ToUniTask();
+            try
+            {
+                await operation.ToUniTask();
+            }
+            catch (Exception e)
+            {
+                // ToUniTask 在失败时抛异常：清理句柄并移除登记，允许后续重试。
+                Log.Error($"加载场景 '{sceneAssetName}' 失败：{e.Message}\n{e.StackTrace}");
+                operation.Release();
+                m_SceneHandlerDict.Remove(sceneAssetName);
+                throw new ErrorCodeException(FrameworkErrorCode.ResSceneLoadFailed);
+            }
 
             if (operation.Status != EOperationStatus.Succeeded)
             {
@@ -278,12 +308,26 @@ namespace HoweFramework
             var unloadOperation = operation.UnloadSceneAsync();
             m_UnloadSceneOperationDict[sceneAssetName] = unloadOperation;
 
-            await unloadOperation;
-
-            m_UnloadSceneOperationDict.Remove(sceneAssetName);
+            try
+            {
+                await unloadOperation;
+            }
+            catch (Exception e)
+            {
+                // 卸载失败（await 抛异常）：恢复句柄登记以允许重试。
+                Log.Error($"卸载场景 '{sceneAssetName}' 失败：{e.Message}\n{e.StackTrace}");
+                m_SceneHandlerDict[sceneAssetName] = operation;
+                throw new ErrorCodeException(FrameworkErrorCode.ResSceneUnloadFailed);
+            }
+            finally
+            {
+                m_UnloadSceneOperationDict.Remove(sceneAssetName);
+            }
 
             if (unloadOperation.Status != EOperationStatus.Succeeded)
             {
+                // 卸载失败：恢复句柄登记以允许重试。
+                m_SceneHandlerDict[sceneAssetName] = operation;
                 throw new ErrorCodeException(FrameworkErrorCode.ResSceneUnloadFailed);
             }
 
@@ -340,7 +384,17 @@ namespace HoweFramework
             var operation = m_ResourcePackage.LoadAssetAsync(assetKey, assetType);
             m_AssetHandlerDict[assetKey] = operation;
 
-            await operation.ToUniTask();
+            try
+            {
+                await operation.ToUniTask();
+            }
+            catch
+            {
+                // 加载失败：释放并移除失败句柄，避免残留。
+                m_AssetHandlerDict.Remove(assetKey);
+                operation.Release();
+                throw;
+            }
 
             return operation.AssetObject;
         }

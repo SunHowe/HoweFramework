@@ -50,6 +50,12 @@ namespace HoweFramework
                 }
 
                 ++m_Times;
+
+                // 重置子节点状态，保证下一次迭代从头执行（带记忆的子节点否则只真正执行一次）。
+                if (m_Times < RepeatCount)
+                {
+                    ResetChildState();
+                }
             }
 
             return FrameworkErrorCode.Success;

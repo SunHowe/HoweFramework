@@ -169,6 +169,7 @@ namespace HoweFramework
             IsOpen = false;
             IsVisible = false;
             m_LoadId = 0;
+            m_IsClosing = false;
             m_UIFormHelper = null;
             m_FormLogic = null;
             InnerSetRequestResponse(CommonResponse.Create(FrameworkErrorCode.UIFormWhileDestroying));
@@ -243,6 +244,13 @@ namespace HoweFramework
                 {
                     // 已打开，触发更新回调，并完成「只关心打开」的等待。
                     m_FormLogic.OnUpdate();
+
+                    // 用户回调中可能已关闭界面（重入），此时不再继续。
+                    if (!IsOpen)
+                    {
+                        return;
+                    }
+
                     request.AsRef().Reference?.OnFormOpenSuccess();
                 }
                 else
@@ -254,7 +262,19 @@ namespace HoweFramework
                     var requestRef = request.AsRef();
 
                     m_FormLogic.OnOpen();
+
+                    // 用户回调中可能已关闭界面（重入），此时不再继续。
+                    if (!IsOpen)
+                    {
+                        return;
+                    }
+
                     m_FormLogic.OnUpdate(); // 打开时也触发更新回调。
+
+                    if (!IsOpen)
+                    {
+                        return;
+                    }
 
                     requestRef.Reference?.OnFormOpenSuccess();
                 }
@@ -268,6 +288,11 @@ namespace HoweFramework
         }
 
         /// <summary>
+        /// 是否正在关闭流程中（防止 OnClose/OnInvisible 回调重入）。
+        /// </summary>
+        private bool m_IsClosing;
+
+        /// <summary>
         /// 立即关闭界面。
         /// </summary>
         public void CloseImmediate()
@@ -278,22 +303,36 @@ namespace HoweFramework
                 throw new ErrorCodeException(FrameworkErrorCode.UIFormNotOpen);
             }
 
-            if (IsVisible)
+            if (m_IsClosing)
             {
-                // 界面可见，则设置为不可见。
-                SetVisible(false);
+                // 关闭流程重入（OnClose/OnInvisible 回调中再次关闭），直接返回。
+                return;
             }
 
-            IsOpen = false;
-
-            if (IsLoaded)
+            m_IsClosing = true;
+            try
             {
-                m_UIFormHelper.SetUIFormInstanceIsOpen(FormInstance, FormGroup.GroupInstance, false);
-                m_FormLogic.OnClose();
-            }
+                if (IsVisible)
+                {
+                    // 界面可见，则设置为不可见。
+                    SetVisible(false);
+                }
 
-            // 设置响应包。
-            InnerSetRequestResponse(CommonResponse.Create(m_FormLogic.ErrorCodeOnClose));
+                IsOpen = false;
+
+                if (IsLoaded)
+                {
+                    m_UIFormHelper.SetUIFormInstanceIsOpen(FormInstance, FormGroup.GroupInstance, false);
+                    m_FormLogic.OnClose();
+                }
+
+                // 设置响应包。
+                InnerSetRequestResponse(CommonResponse.Create(m_FormLogic.ErrorCodeOnClose));
+            }
+            finally
+            {
+                m_IsClosing = false;
+            }
         }
 
         /// <summary>
@@ -324,6 +363,12 @@ namespace HoweFramework
                 m_UIFormHelper.SetUIFormInstanceSortingOrder(FormInstance, m_SortingOrder);
                 m_UIFormHelper.SetUIFormInstanceIsOpen(FormInstance, FormGroup.GroupInstance, true);
                 m_FormLogic.OnOpen();
+
+                if (!IsOpen)
+                {
+                    // OnOpen 回调中界面被关闭（重入），不再继续。
+                    return;
+                }
 
                 requestRef.Reference?.OnFormOpenSuccess();
 

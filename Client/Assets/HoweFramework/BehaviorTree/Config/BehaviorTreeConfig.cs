@@ -63,6 +63,9 @@ namespace HoweFramework
                 throw new ErrorCodeException(FrameworkErrorCode.BehaviorNodeCreateFailed);
             }
 
+            // 配置路径不会经过 BehaviorRoot.Create，需要手动注入上下文（AddChild 会沿树逐层传播）。
+            rootNode.SetContext(rootNode);
+
             using var checkNodeQueue = ReusableQueue<(IBehaviorNode, BehaviorNodeConfig)>.Create();
             using var nodeListBuffer = ReusableList<IBehaviorNode>.Create();
 
@@ -163,10 +166,8 @@ namespace HoweFramework
 
             if (errorCode != 0)
             {
-                foreach (var node in nodeListBuffer)
-                {
-                    node.Dispose();
-                }
+                // 根节点 Dispose 会递归释放整棵子树，无需逐个释放（逐个释放会导致二次释放污染引用池）。
+                rootNode.Dispose();
 
                 throw new ErrorCodeException(errorCode);
             }

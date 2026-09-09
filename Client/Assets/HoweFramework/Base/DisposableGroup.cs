@@ -26,16 +26,28 @@ namespace HoweFramework
         }
 
         /// <summary>
-        /// 释放所有可释放对象。
+        /// 释放所有可释放对象。单个对象释放异常不中断其余对象的释放。
         /// </summary>
         public void Dispose()
         {
-            foreach (var disposable in m_DisposableList)
+            try
             {
-                disposable.Dispose();
+                foreach (var disposable in m_DisposableList)
+                {
+                    try
+                    {
+                        disposable.Dispose();
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error($"DisposableGroup dispose error: {e.Message}\n{e.StackTrace}");
+                    }
+                }
             }
-
-            m_DisposableList.Clear();
+            finally
+            {
+                m_DisposableList.Clear();
+            }
         }
     }
 }

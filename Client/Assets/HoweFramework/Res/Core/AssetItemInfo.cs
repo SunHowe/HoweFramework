@@ -22,6 +22,11 @@ namespace HoweFramework
         /// </summary>
         public int AssetInstanceId { get; private set; }
 
+        /// <summary>
+        /// 资源类型。
+        /// </summary>
+        public Type AssetType => m_AssetType;
+
         private string m_AssetKey;
         private Object m_Asset;
         private int m_RefCount;
@@ -116,16 +121,44 @@ namespace HoweFramework
             m_LoadState = 1;
 
             var token = m_CancellationTokenSource.Token;
-            var asset = await m_AssetLoadDelegate(m_AssetKey, m_AssetType, token);
+            Object asset = null;
+            try
+            {
+                asset = await m_AssetLoadDelegate(m_AssetKey, m_AssetType, token);
+            }
+            catch (Exception e)
+            {
+                // 加载失败（含取消）：记录日志后以 null 结果通知等待者，调用方按 null 即失败处理。
+                if (e is not OperationCanceledException)
+                {
+                    Log.Error($"加载资源 '{m_AssetKey}' 失败：{e.Message}\n{e.StackTrace}");
+                }
+            }
 
             if (token.IsCancellationRequested)
             {
+                // 已取消：复位状态，等待者由 Dispose 路径排空。
+                m_LoadState = 0;
+                return;
+            }
+
+            if (asset == null)
+            {
+                // 加载失败：复位状态以允许后续重试，并以 null 通知所有等待者。
+                m_LoadState = 0;
+
+                while (m_TaskQueue.Count > 0)
+                {
+                    var task = m_TaskQueue.Dequeue();
+                    task.TrySetResult(null);
+                }
+
                 return;
             }
 
             m_Asset = asset;
             m_LoadState = 2;
-            AssetInstanceId = m_Asset != null ? m_Asset.GetInstanceID() : 0;
+            AssetInstanceId = m_Asset.GetInstanceID();
 
             while (m_TaskQueue.Count > 0)
             {

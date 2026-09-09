@@ -55,7 +55,7 @@ namespace HoweFramework
         /// <returns>射线检测结果。</returns>
         public static ReadOnlySpan<RaycastHit> Raycast(in Ray ray, int layerMask)
         {
-            var count = Physics.RaycastNonAlloc(ray, s_RaycastHits, layerMask);
+            var count = Physics.RaycastNonAlloc(ray, s_RaycastHits, float.MaxValue, layerMask);
             return s_RaycastHits.AsSpan(0, count);
         }
 

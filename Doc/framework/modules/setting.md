@@ -27,6 +27,7 @@ SettingModule.Instance.SetObject("cfg", myObj);
 
 - 未设 Helper 时调用会 NRE（源码直接转发 `m_SettingHelper`）。
 - PlayerPrefs 不适合大数据。
+- `FileSetting` 的数值读写使用 `InvariantCulture` 且 `TryParse` 容错：存档损坏时读取回退默认值并告警，不再抛 `FormatException`；浮点序列化不再受系统区域文化影响。
 
 ## 相关源码
 

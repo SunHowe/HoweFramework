@@ -42,8 +42,10 @@ namespace HoweFramework
 
         public void Dispose()
         {
+            // 先停止所有播放中的声音，触发停止回调以归还资源引用，避免泄漏。
+            StopAllSounds();
+
             m_AudioSourcePool.Clear();
-            m_PlayInfoList.Clear();
 
             if (m_Root != null)
             {
@@ -277,7 +279,8 @@ namespace HoweFramework
                     continue;
                 }
 
-                playInfo.ElapseSeconds += elapseSeconds;
+                // AudioSource 播放不受 timeScale 影响，计时必须使用真实流逝时间，否则变速/暂停时会截断或滞留。
+                playInfo.ElapseSeconds += realElapseSeconds;
 
                 if (!playInfo.PlaySoundParams.Loop && playInfo.ElapseSeconds >= playInfo.Duration)
                 {

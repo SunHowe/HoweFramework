@@ -29,8 +29,9 @@ namespace HoweFramework
 
         private void UpdateSafeArea(Rect safeArea)
         {
-            ContentPane.SetSize(safeArea.width, safeArea.height);
-            ContentPane.SetXY(safeArea.x, safeArea.y);
+            var uiSafeArea = ConvertSafeAreaToUICoordinates(safeArea);
+            ContentPane.SetSize(uiSafeArea.width, uiSafeArea.height);
+            ContentPane.SetXY(uiSafeArea.x, uiSafeArea.y);
         }
 
         public static IDisposable Create(GComponent contentPane)

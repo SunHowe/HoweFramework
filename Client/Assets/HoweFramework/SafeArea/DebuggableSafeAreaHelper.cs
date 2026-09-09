@@ -94,10 +94,11 @@ namespace HoweFramework
 
             public Rect GetSafeArea()
             {
+                // 与 Screen.safeArea 语义保持一致：物理像素、左下原点，y 为底部 inset。
                 var x = m_OffsetLeft;
-                var y = m_OffsetTop;
+                var y = m_OffsetBottom;
                 var w = m_LastWidth - m_OffsetRight - x;
-                var h = m_LastHeight - m_OffsetBottom - y;
+                var h = m_LastHeight - m_OffsetTop - m_OffsetBottom;
                 return new Rect(x, y, w, h);
             }
 

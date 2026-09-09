@@ -68,8 +68,12 @@ namespace HoweFramework
             {
                 behaviorConfig.Dispose();
             }
-            
+
             m_BehaviorConfigDict.Clear();
+
+            // 释放内部资源加载器（含其 CancellationTokenSource 与资源引用）。
+            m_ResLoader?.Dispose();
+            m_ResLoader = null;
         }
 
         public void Dispose()

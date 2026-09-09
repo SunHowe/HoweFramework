@@ -14,6 +14,11 @@ namespace HoweFramework
         private static readonly Dictionary<Type, IReferenceCache> m_ReferenceCacheDict = new();
 
         /// <summary>
+        /// 线程同步锁。网络线程（Socket 回调）与主线程都会访问引用池，必须加锁。
+        /// </summary>
+        private static readonly object s_Lock = new();
+
+        /// <summary>
         /// 获取引用。
         /// </summary>
         /// <typeparam name="T">引用类型。</typeparam>
@@ -37,7 +42,10 @@ namespace HoweFramework
             }
 #endif
 
-            return GetCache(type, true).Dequeue();
+            lock (s_Lock)
+            {
+                return GetCache(type, true).Dequeue();
+            }
         }
 
         /// <summary>
@@ -46,8 +54,16 @@ namespace HoweFramework
         /// <param name="instance">引用。</param>
         public static void Release(IReference instance)
         {
+            if (instance == null)
+            {
+                return;
+            }
+
             instance.Clear();
-            GetCache(instance.GetType(), true).Enqueue(instance);
+            lock (s_Lock)
+            {
+                GetCache(instance.GetType(), true).Enqueue(instance);
+            }
         }
 
         /// <summary>
@@ -56,13 +72,16 @@ namespace HoweFramework
         /// <typeparam name="T">引用类型。</typeparam>
         public static void ClearCache<T>() where T : class, IReference
         {
-            var cache = GetCache(typeof(T), false);
-            if (cache == null)
+            lock (s_Lock)
             {
-                return;
-            }
+                var cache = GetCache(typeof(T), false);
+                if (cache == null)
+                {
+                    return;
+                }
 
-            cache.Clear();
+                cache.Clear();
+            }
         }
 
         /// <summary>
@@ -70,11 +89,14 @@ namespace HoweFramework
         /// </summary>
         public static void ClearAllCache()
         {
-            foreach (var cache in m_ReferenceCacheDict.Values)
+            lock (s_Lock)
             {
-                cache.Clear();
+                foreach (var cache in m_ReferenceCacheDict.Values)
+                {
+                    cache.Clear();
+                }
+                m_ReferenceCacheDict.Clear();
             }
-            m_ReferenceCacheDict.Clear();
         }
 
         /// <summary>

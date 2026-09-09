@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 
 namespace HoweFramework
@@ -44,6 +45,11 @@ namespace HoweFramework
                 {
                     HandleEvent(eventItem.Sender, eventItem.EventArgs);
                 }
+                catch (Exception e)
+                {
+                    // 单个事件派发异常不中断队列剩余事件的处理，也不上抛主循环。
+                    Log.Error($"Update events error: {e.Message}\n{e.StackTrace}");
+                }
                 finally
                 {
                     ReferencePool.Release(eventItem);
@@ -56,12 +62,22 @@ namespace HoweFramework
         /// </summary>
         public void ClearEvents()
         {
-            m_EventItemQueue.Clear();
+            // 清空时归还队列中的事件项与事件参数，避免引用池对象流失。
+            while (m_EventItemQueue.TryDequeue(out var eventItem))
+            {
+                var eventArgs = eventItem.EventArgs;
+                if (eventArgs != null && eventArgs.IsReleaseAfterFire)
+                {
+                    ReferencePool.Release(eventArgs);
+                }
+
+                ReferencePool.Release(eventItem);
+            }
         }
 
         public override void Dispose()
         {
-            m_EventItemQueue.Clear();
+            ClearEvents();
             base.Dispose();
         }
     }

@@ -30,7 +30,15 @@ namespace HoweFramework
         /// </summary>
         public override void ResetState()
         {
-            m_Child.ResetState();
+            m_Child?.ResetState();
+        }
+
+        /// <summary>
+        /// 重置子节点状态。
+        /// </summary>
+        protected void ResetChildState()
+        {
+            m_Child?.ResetState();
         }
 
         /// <summary>

@@ -28,6 +28,7 @@ using var typed = await someRequest.Execute().As<MyResponse>();
 - `Execute` 结束后请求对象已回收，不要继续用同一个 Request 实例。
 - `GetErrorCode` 会释放响应；还要读业务字段时用 `As<T>` 并 `using`。
 - 调度器销毁中：`RequestDispatcherDisposing`。
+- `OnExecute` 抛 `OperationCanceledException`（如超时、主动取消）统一回 `RequestCanceled`，不会被当成框架异常。
 
 ## 相关源码
 

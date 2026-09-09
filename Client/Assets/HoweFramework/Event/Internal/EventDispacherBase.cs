@@ -106,6 +106,12 @@ namespace HoweFramework
             {
                 foreach (KeyValuePair<object, LinkedListNode<GameEventHandler>> cachedNode in m_CachedNodes)
                 {
+                    // 只处理与待退订事件 id 相同的派发缓存，避免同一委托订阅多个事件时跨事件误伤。
+                    if (cachedNode.Key is GameEventArgs eventArgs && eventArgs.Id != id)
+                    {
+                        continue;
+                    }
+
                     if (cachedNode.Value != null && cachedNode.Value.Value == handler)
                     {
                         m_TempNodes.Add(cachedNode.Key, cachedNode.Value.Next);

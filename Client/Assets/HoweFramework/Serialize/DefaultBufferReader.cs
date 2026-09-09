@@ -46,9 +46,9 @@ namespace HoweFramework
         /// <inheritdoc/>
         public ReadOnlySpan<byte> ReadBytes(int size)
         {
-            if (Position + size > BufferSize)
+            if (size < 0 || Position + size > BufferSize)
             {
-                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "缓冲区读取器已到达末尾。");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "缓冲区读取长度无效或已到达末尾。");
             }
 
             var result = new ReadOnlySpan<byte>(m_Buffer, Position, size);
@@ -136,6 +136,12 @@ namespace HoweFramework
             if (byteCount == -1)
             {
                 return default;
+            }
+
+            // 校验长度合法性，防止损坏的数据导致读取位置倒退/越界。
+            if (byteCount < 0 || Position + byteCount > BufferSize)
+            {
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"对象数据长度 '{byteCount}' 无效。");
             }
 
             T instance;

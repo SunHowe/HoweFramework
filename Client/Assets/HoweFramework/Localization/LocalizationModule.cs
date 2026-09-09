@@ -181,6 +181,9 @@ namespace HoweFramework
                 throw new ErrorCodeException(FrameworkErrorCode.FrameworkException, "Language is unspecified.");
             }
 
+            // 加载前清空旧文本，避免重复加载/切换语言时旧语言文本残留。
+            ClearText();
+
             using var uniTaskList = ReusableList<UniTask>.Create();
 
             foreach (var source in m_SourceList)
@@ -204,7 +207,15 @@ namespace HoweFramework
         /// </summary>
         private Language LoadLanguage()
         {
-            return (Language)SettingModule.Instance.GetInt(FrameworkSettings.Language, (int)DefaultLanguage);
+            var language = (Language)SettingModule.Instance.GetInt(FrameworkSettings.Language, (int)DefaultLanguage);
+
+            // 存档损坏可能产生未定义的枚举值，回退到默认语言。
+            if (!System.Enum.IsDefined(typeof(Language), language))
+            {
+                language = DefaultLanguage;
+            }
+
+            return language;
         }
 
         protected override void OnInit()

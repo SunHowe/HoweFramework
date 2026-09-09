@@ -116,8 +116,9 @@ namespace HoweFramework
                     node = node.Previous;
                 }
 
-                if (node == first)
+                if (node == first && first.Value.CompareTo(value) > 0)
                 {
+                    // 新值最小，需要插到队首。为保持 First 节点身份不变，在 first 后插入 first 的旧值，再将 first 的值改写为新值。
                     m_LinkedList.AddAfter(first, first.Value);
                     first.Value = value;
                 }

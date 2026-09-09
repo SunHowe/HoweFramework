@@ -28,7 +28,7 @@ var login = SystemModule.Instance.GetSystem<ILoginSystem>();
 
 - `GetSystem` 未注册返回 default。
 - 按接口注册时，`GetSystem` 要用同一接口类型。
-- 模块销毁会清系统列表（见 `SystemModule.OnDestroy`）。
+- 模块销毁会清系统列表（见 `SystemModule.OnDestroy`）：**逆序**销毁（后注册的先销毁），单个系统销毁异常不中断销毁链；`SystemBase.Destroy` 保证事件退订一定执行（try-finally）。
 
 ## 相关源码
 

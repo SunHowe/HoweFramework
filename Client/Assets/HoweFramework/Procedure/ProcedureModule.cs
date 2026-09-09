@@ -28,6 +28,16 @@ namespace HoweFramework
         private readonly List<ProcedureBase> m_ProcedureList = new();
 
         /// <summary>
+        /// 是否正在切换流程。
+        /// </summary>
+        private bool m_IsChangingProcedure;
+
+        /// <summary>
+        /// 切换流程期间重入的待切换流程 id（0 表示无）。
+        /// </summary>
+        private int m_PendingProcedureId;
+
+        /// <summary>
         /// 启动流程状态机。
         /// </summary>
         /// <typeparam name="T">初始流程类型。</typeparam>
@@ -63,7 +73,28 @@ namespace HoweFramework
             }
 
             Procedure = launchProcedure;
-            Procedure.Enter();
+
+            m_IsChangingProcedure = true;
+            try
+            {
+                Procedure.Enter();
+
+                // 处理 Enter 期间重入的切换请求。
+                while (m_PendingProcedureId != 0)
+                {
+                    var pendingProcedure = m_ProcedureDict[m_PendingProcedureId];
+                    m_PendingProcedureId = 0;
+
+                    Procedure.Leave();
+                    Procedure = pendingProcedure;
+                    Procedure.Enter();
+                }
+            }
+            finally
+            {
+                m_IsChangingProcedure = false;
+                m_PendingProcedureId = 0;
+            }
         }
 
         /// <summary>
@@ -81,7 +112,7 @@ namespace HoweFramework
         }
 
         /// <summary>
-        /// 切换流程，应从流程实例类中调用。
+        /// 切换流程，应从流程实例类中调用。在流程 OnEnter/OnLeave 中重入调用时，将延迟到本次切换完成后生效（多次重入以最后一次为准）。
         /// </summary>
         /// <param name="procedureId">流程 id（类型 TypeId）。</param>
         internal void ChangeProcedure(int procedureId)
@@ -96,9 +127,38 @@ namespace HoweFramework
                 throw new ErrorCodeException(FrameworkErrorCode.ProcedureNotExist);
             }
 
-            Procedure.Leave();
-            Procedure = newProcedure;
-            Procedure.Enter();
+            if (m_IsChangingProcedure)
+            {
+                // 正在切换流程，记录目标流程，待本次切换完成后生效。
+                m_PendingProcedureId = procedureId;
+                return;
+            }
+
+            m_IsChangingProcedure = true;
+            try
+            {
+                while (true)
+                {
+                    m_PendingProcedureId = 0;
+
+                    Procedure.Leave();
+                    Procedure = newProcedure;
+                    Procedure.Enter();
+
+                    // 处理切换期间重入的切换请求。
+                    if (m_PendingProcedureId == 0)
+                    {
+                        break;
+                    }
+
+                    newProcedure = m_ProcedureDict[m_PendingProcedureId];
+                }
+            }
+            finally
+            {
+                m_IsChangingProcedure = false;
+                m_PendingProcedureId = 0;
+            }
         }
 
         /// <summary>

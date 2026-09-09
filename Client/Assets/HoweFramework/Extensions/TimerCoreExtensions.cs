@@ -29,6 +29,7 @@ namespace HoweFramework
             private int m_TimerId;
             private ITimerCore m_TimerCore;
             private CancellationToken m_CancellationToken;
+            private CancellationTokenRegistration m_Registration;
             private AutoResetUniTaskCompletionSource m_UniTaskCompletionSource;
 
             public void Dispose()
@@ -38,6 +39,9 @@ namespace HoweFramework
 
             public void Clear()
             {
+                // 注销取消回调，避免长寿命 token 源上累积指向已回收对象的注册项。
+                m_Registration.Dispose();
+                m_Registration = default;
                 m_TimerId = 0;
                 m_TimerCore = null;
                 m_CancellationToken = CancellationToken.None;
@@ -91,13 +95,14 @@ namespace HoweFramework
 
                 var source = ReferencePool.Acquire<TimerUniTaskCompletionSource>();
 
-                var timerId = timerCore.AddTimer(delay, 1, source.TrySetResult);
-                token.Register(source.TrySetCanceled, timerId);
-
-                source.m_TimerId = timerId;
+                // 先初始化字段再注册取消回调：注册时若 token 已取消会同步触发回调，必须保证字段已就绪。
                 source.m_TimerCore = timerCore;
                 source.m_CancellationToken = token;
                 source.m_UniTaskCompletionSource = AutoResetUniTaskCompletionSource.Create();
+
+                var timerId = timerCore.AddTimer(delay, 1, source.TrySetResult);
+                source.m_TimerId = timerId;
+                source.m_Registration = token.Register(source.TrySetCanceled, timerId);
 
                 return source.m_UniTaskCompletionSource.Task;
             }

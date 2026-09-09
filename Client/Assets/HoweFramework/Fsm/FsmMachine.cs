@@ -43,6 +43,26 @@ namespace HoweFramework
         private readonly Dictionary<int, FsmStateHandler> m_StateExitHandlerDict = new();
 
         /// <summary>
+        /// 是否正在切换状态。
+        /// </summary>
+        private bool m_IsChangingState;
+
+        /// <summary>
+        /// 切换状态期间是否有重入的待切换状态。
+        /// </summary>
+        private bool m_HasPendingState;
+
+        /// <summary>
+        /// 切换状态期间重入的待切换状态（0 表示停机，需配合 m_HasPendingState 区分）。
+        /// </summary>
+        private int m_PendingState;
+
+        /// <summary>
+        /// 是否已释放。
+        /// </summary>
+        private bool m_IsDisposed;
+
+        /// <summary>
         /// 添加状态。
         /// </summary>
         public void AddState(int stateId)
@@ -56,40 +76,72 @@ namespace HoweFramework
         }
 
         /// <summary>
-        /// 切换状态。
+        /// 切换状态。在状态进入/退出回调中重入调用时，将延迟到本次切换完成后生效（多次重入以最后一次为准）。
         /// </summary>
         public void ChangeState(int stateId)
         {
-            if (CurrentState == stateId)
-            {
-                return;
-            }
-
             if (stateId != 0 && !m_StateSet.Contains(stateId))
             {
                 throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"状态 {stateId} 不存在");
             }
 
-            if (CurrentState != 0)
+            if (m_IsChangingState)
             {
-                OnStateExit?.Invoke(CurrentState);
-
-                if (m_StateExitHandlerDict.TryGetValue(CurrentState, out var exitHandler))
-                {
-                    exitHandler.Invoke();
-                }
+                // 正在切换状态，记录目标状态，待本次切换完成后生效。
+                m_PendingState = stateId;
+                m_HasPendingState = true;
+                return;
             }
 
-            CurrentState = stateId;
-
-            if (CurrentState != 0)
+            if (CurrentState == stateId)
             {
-                if (m_StateEnterHandlerDict.TryGetValue(CurrentState, out var enterHandler))
+                return;
+            }
+
+            m_IsChangingState = true;
+            try
+            {
+                while (true)
                 {
-                    enterHandler.Invoke();
+                    m_HasPendingState = false;
+                    m_PendingState = 0;
+
+                    if (CurrentState != 0)
+                    {
+                        OnStateExit?.Invoke(CurrentState);
+
+                        if (m_StateExitHandlerDict.TryGetValue(CurrentState, out var exitHandler))
+                        {
+                            exitHandler.Invoke();
+                        }
+                    }
+
+                    CurrentState = stateId;
+
+                    if (CurrentState != 0)
+                    {
+                        if (m_StateEnterHandlerDict.TryGetValue(CurrentState, out var enterHandler))
+                        {
+                            enterHandler.Invoke();
+                        }
+
+                        OnStateEnter?.Invoke(CurrentState);
+                    }
+
+                    // 处理切换期间重入的切换请求。
+                    if (!m_HasPendingState || m_PendingState == CurrentState)
+                    {
+                        break;
+                    }
+
+                    stateId = m_PendingState;
                 }
-                
-                OnStateEnter?.Invoke(CurrentState);
+            }
+            finally
+            {
+                m_IsChangingState = false;
+                m_HasPendingState = false;
+                m_PendingState = 0;
             }
         }
 
@@ -147,6 +199,13 @@ namespace HoweFramework
 
         public void Dispose()
         {
+            if (m_IsDisposed)
+            {
+                return;
+            }
+
+            m_IsDisposed = true;
+
             // 停止状态机。
             ChangeState(0);
 
@@ -155,11 +214,17 @@ namespace HoweFramework
 
         public void Clear()
         {
+            OnStateEnter = null;
+            OnStateExit = null;
             m_StateEnterHandlerDict.Clear();
             m_StateExitHandlerDict.Clear();
             m_StateSet.Clear();
             CurrentState = 0;
             Blackboard.Clear();
+            m_IsChangingState = false;
+            m_HasPendingState = false;
+            m_PendingState = 0;
+            m_IsDisposed = false;
         }
 
         /// <summary>

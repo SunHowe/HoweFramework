@@ -7,7 +7,7 @@
 ## 关键类型
 
 - `RemoteRequestModule.CreateRemoteRequestDispatcher` → `RemoteRequestDispatcher`（`IReference`）
-- `IRemoteRequestDispatcher`：`CreateRemoteRequest` 返回 `(requestId, UniTask<IResponse>)`；`SetResponse`；`InterruptAllRequests`；`Dispose`
+- `IRemoteRequestDispatcher`：`CreateRemoteRequest` 返回 `(requestId, UniTask<IResponse>)`；`SetResponse`；`Remove`（以 `RequestCanceled` 完成并回收注册项，用于发送失败等场景）；`InterruptAllRequests`；`Dispose`
 
 找不到 id 的响应会被 `Dispose` 掉。`Dispose` 调度器会用 `RequestDispatcherDisposing` 打断未完成请求。
 
@@ -25,6 +25,7 @@
 
 - 与 `WebRequestModule` 无关。
 - 模块本身 `OnInit`/`OnDestroy` 为空，调度器生命周期在频道 Helper 一侧。
+- **请求超时**：`RemoteRequestDispatcher.RequestTimeout` 默认 30 秒（≤0 关闭）。超时请求以 `RequestTimeout`(704) 完成，检测在 `CreateRemoteRequest` 时惰性扫描——只有持续发新请求才会定期清理超时项。
 
 ## 相关源码
 
