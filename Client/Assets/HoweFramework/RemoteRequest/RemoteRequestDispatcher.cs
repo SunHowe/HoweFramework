@@ -104,7 +104,7 @@ namespace HoweFramework
         /// <summary>
         /// 扫描并中断超时请求。
         /// </summary>
-        private void ScanTimeoutRequests()
+        public void ScanTimeoutRequests()
         {
             if (RequestTimeout <= 0f || m_RequestTimeDict.Count == 0)
             {
@@ -134,6 +134,7 @@ namespace HoweFramework
         public void Dispose()
         {
             InterruptAllRequests(FrameworkErrorCode.RequestDispatcherDisposing);
+            RemoteRequestModule.Instance?.UnregisterDispatcher(this);
             ReferencePool.Release(this);
         }
 

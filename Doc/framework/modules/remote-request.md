@@ -25,7 +25,8 @@
 
 - 与 `WebRequestModule` 无关。
 - 模块本身 `OnInit`/`OnDestroy` 为空，调度器生命周期在频道 Helper 一侧。
-- **请求超时**：`RemoteRequestDispatcher.RequestTimeout` 默认 30 秒（≤0 关闭）。超时请求以 `RequestTimeout`(704) 完成，检测在 `CreateRemoteRequest` 时惰性扫描——只有持续发新请求才会定期清理超时项。
+- **请求超时**：`RemoteRequestDispatcher.RequestTimeout` 默认 30 秒（≤0 关闭）。超时请求以 `RequestTimeout`(704) 完成。模块每帧扫描已创建的调度器；创建新请求时也会惰性扫描。停发新 RPC 时超时仍会触发。
+- `NetworkPacketRequest` 会把 `CancellationToken` 接到等待上：取消时 `Remove` 该请求并以 `RequestCanceled` 完成。
 
 ## 相关源码
 

@@ -90,6 +90,7 @@ namespace HoweFramework
             }
 
             m_SoundGroupHelperDict.Remove(groupId);
+            CancelLoadingSounds(groupId);
             soundGroupHelper.Dispose();
         }
 
@@ -164,6 +165,11 @@ namespace HoweFramework
 
             if (token.IsCancellationRequested)
             {
+                if (soundAsset != null)
+                {
+                    m_ResLoader.UnloadAsset(soundAssetName);
+                }
+
                 return;
             }
 
@@ -179,8 +185,8 @@ namespace HoweFramework
             {
                 m_ResLoader.UnloadAsset(soundAssetName);
                 loadInfo.Dispose();
-
-                throw new ErrorCodeException(FrameworkErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
+                Log.Error($"Sound group '{groupId}' not exist.");
+                return;
             }
 
             m_SoundGroupIdDict.Add(serialId, groupId);
@@ -237,6 +243,8 @@ namespace HoweFramework
 
         public void StopAllSounds(int groupId)
         {
+            CancelLoadingSounds(groupId);
+
             if (groupId == 0)
             {
                 // 组编号为 0 时停止所有声音组中的声音。
@@ -284,6 +292,8 @@ namespace HoweFramework
 
         public void StopSound(string soundAssetName, int groupId)
         {
+            CancelLoadingSounds(groupId, soundAssetName);
+
             if (groupId == 0)
             {
                 // 组编号为 0 时停止所有声音组中匹配的声音。
@@ -302,6 +312,33 @@ namespace HoweFramework
             else
             {
                 throw new ErrorCodeException(FrameworkErrorCode.SoundGroupNotExist, $"Sound group '{groupId}' not exist.");
+            }
+        }
+
+        private void CancelLoadingSounds(int groupId, string soundAssetName = null)
+        {
+            using var toRemove = ReusableList<int>.Create();
+            foreach (var pair in m_LoadInfoDict)
+            {
+                if (groupId != 0 && pair.Value.GroupId != groupId)
+                {
+                    continue;
+                }
+
+                if (soundAssetName != null && pair.Value.SoundAssetName != soundAssetName)
+                {
+                    continue;
+                }
+
+                toRemove.Add(pair.Key);
+            }
+
+            foreach (var serialId in toRemove)
+            {
+                if (m_LoadInfoDict.Remove(serialId, out var loadInfo))
+                {
+                    loadInfo.Dispose();
+                }
             }
         }
         

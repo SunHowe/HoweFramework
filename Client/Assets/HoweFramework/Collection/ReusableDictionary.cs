@@ -13,8 +13,17 @@ namespace HoweFramework
         /// </summary>
         public bool DisposeItems { get; set; }
 
+        private bool m_Disposed;
+
         public void Dispose()
         {
+            if (m_Disposed)
+            {
+                return;
+            }
+
+            m_Disposed = true;
+
             if (DisposeItems)
             {
                 foreach (var item in this)
@@ -32,6 +41,7 @@ namespace HoweFramework
         public static ReusableDictionary<TKey, TValue> Create(bool disposeItems = false)
         {
             var dict = ReferencePool.Acquire<ReusableDictionary<TKey, TValue>>();
+            dict.m_Disposed = false;
             dict.DisposeItems = disposeItems;
             return dict;
         }

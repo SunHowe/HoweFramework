@@ -28,6 +28,9 @@ SettingModule.Instance.SetObject("cfg", myObj);
 - 未设 Helper 时调用会 NRE（源码直接转发 `m_SettingHelper`）。
 - PlayerPrefs 不适合大数据。
 - `FileSetting` 的数值读写使用 `InvariantCulture` 且 `TryParse` 容错：存档损坏时读取回退默认值并告警，不再抛 `FormatException`；浮点序列化不再受系统区域文化影响。
+- **反序列化失败不丢内存配置**：`Deserialize` 先写入临时字典，成功后才替换；文件损坏时 `Load` 返回 false，运行中的设置仍保留。
+- **原子写盘**：`Save` 先写 `.tmp` 再替换目标文件，避免 `FileMode.Create` 截断后写一半留下空档。
+- `SetString(name, null)` 会存成空字符串，避免 `BinaryWriter.Write(null)` 导致整次保存失败。
 
 ## 相关源码
 

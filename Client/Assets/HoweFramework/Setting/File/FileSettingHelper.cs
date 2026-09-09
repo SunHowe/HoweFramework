@@ -92,17 +92,57 @@ namespace HoweFramework
         /// <returns>是否保存游戏配置成功。</returns>
         public bool Save()
         {
+            string tempPath = m_FilePath + ".tmp";
             try
             {
-                using (FileStream fileStream = new FileStream(m_FilePath, FileMode.Create, FileAccess.Write))
+                using (FileStream fileStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
-                    return m_Serializer.Serialize(fileStream, m_Settings);
+                    if (!m_Serializer.Serialize(fileStream, m_Settings))
+                    {
+                        return false;
+                    }
+
+                    fileStream.Flush(true);
                 }
+
+                ReplaceFile(tempPath, m_FilePath);
+                return true;
             }
             catch (Exception exception)
             {
                 Log.Warning($"Save settings failure with exception '{exception}'.");
+                try
+                {
+                    if (File.Exists(tempPath))
+                    {
+                        File.Delete(tempPath);
+                    }
+                }
+                catch
+                {
+                    // ignored
+                }
+
                 return false;
+            }
+        }
+
+        private static void ReplaceFile(string sourceFileName, string destinationFileName)
+        {
+            if (!File.Exists(destinationFileName))
+            {
+                File.Move(sourceFileName, destinationFileName);
+                return;
+            }
+
+            try
+            {
+                File.Replace(sourceFileName, destinationFileName, null);
+            }
+            catch (PlatformNotSupportedException)
+            {
+                File.Delete(destinationFileName);
+                File.Move(sourceFileName, destinationFileName);
             }
         }
 

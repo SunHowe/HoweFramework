@@ -105,12 +105,7 @@ namespace HoweFramework
             {
                 get
                 {
-                    if (m_Socket != null)
-                    {
-                        return m_Socket.Connected;
-                    }
-
-                    return false;
+                    return m_Active && m_Socket != null && m_Socket.Connected;
                 }
             }
 
@@ -437,7 +432,7 @@ namespace HoweFramework
 
                     lock (m_SendPacketPool)
                     {
-                        m_SendPacketPool.Clear();
+                        ClearSendPacketPoolNoLock();
                     }
 
                     m_ReceivePacketPool.ClearEvents();
@@ -540,52 +535,95 @@ namespace HoweFramework
                 m_Disposed = true;
             }
 
+            /// <summary>
+            /// 清空发送队列并归还 Packet 到引用池。调用方须已持有 m_SendPacketPool 锁。
+            /// </summary>
+            protected void ClearSendPacketPoolNoLock()
+            {
+                while (m_SendPacketPool.Count > 0)
+                {
+                    Packet packet = m_SendPacketPool.Dequeue();
+                    if (packet != null)
+                    {
+                        ReferencePool.Release(packet);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// 清空发送队列并归还 Packet 到引用池。
+            /// </summary>
+            protected void ClearSendPacketPool()
+            {
+                lock (m_SendPacketPool)
+                {
+                    ClearSendPacketPoolNoLock();
+                }
+            }
+
             protected virtual bool ProcessSend()
             {
-                if (m_SendState.Stream.Length > 0 || m_SendPacketPool.Count <= 0)
+                if (m_SendState.Stream.Length > 0)
                 {
                     return false;
                 }
 
-                while (m_SendPacketPool.Count > 0)
+                while (true)
                 {
                     Packet packet = null;
                     lock (m_SendPacketPool)
                     {
+                        if (m_SendPacketPool.Count <= 0)
+                        {
+                            break;
+                        }
+
                         packet = m_SendPacketPool.Dequeue();
                     }
 
-                    Log.Debug($"Send packet[{packet.GetType().Name}]: {packet.ToString()}");
-
-                    bool serializeResult = false;
                     try
                     {
-                        serializeResult = m_NetworkChannelHelper.Serialize(packet, m_SendState.Stream);
-                    }
-                    catch (Exception exception)
-                    {
-                        m_Active = false;
-                        if (NetworkChannelError != null)
+                        Log.Debug($"Send packet[{packet.GetType().Name}]: {packet.ToString()}");
+
+                        bool serializeResult = false;
+                        try
                         {
-                            SocketException socketException = exception as SocketException;
-                            NetworkChannelError(this, FrameworkErrorCode.NetworkSerializeError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
-                            return false;
+                            serializeResult = m_NetworkChannelHelper.Serialize(packet, m_SendState.Stream);
+                        }
+                        catch (Exception exception)
+                        {
+                            m_Active = false;
+                            if (NetworkChannelError != null)
+                            {
+                                SocketException socketException = exception as SocketException;
+                                NetworkChannelError(this, FrameworkErrorCode.NetworkSerializeError, socketException != null ? socketException.SocketErrorCode : SocketError.Success, exception.ToString());
+                                return false;
+                            }
+
+                            throw;
                         }
 
-                        throw;
-                    }
-
-                    if (!serializeResult)
-                    {
-                        string errorMessage = "Serialized packet failure.";
-                        if (NetworkChannelError != null)
+                        if (!serializeResult)
                         {
-                            NetworkChannelError(this, FrameworkErrorCode.NetworkSerializeError, SocketError.Success, errorMessage);
-                            return false;
-                        }
+                            string errorMessage = "Serialized packet failure.";
+                            if (NetworkChannelError != null)
+                            {
+                                NetworkChannelError(this, FrameworkErrorCode.NetworkSerializeError, SocketError.Success, errorMessage);
+                                return false;
+                            }
 
-                        throw new ErrorCodeException(FrameworkErrorCode.NetworkSerializeError, errorMessage);
+                            throw new ErrorCodeException(FrameworkErrorCode.NetworkSerializeError, errorMessage);
+                        }
                     }
+                    finally
+                    {
+                        ReferencePool.Release(packet);
+                    }
+                }
+
+                if (m_SendState.Stream.Length <= 0)
+                {
+                    return false;
                 }
 
                 m_SendState.Stream.Position = 0L;

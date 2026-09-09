@@ -16,6 +16,7 @@ namespace HoweFramework
             var gameObject = new GameObject("Safe Area Debugger");
             m_DebuggableSafeAreaComponent = gameObject.AddComponent<DebuggableSafeAreaComponent>();
             m_DebuggableSafeAreaComponent.OnSafeAreaChanged += SetSafeArea;
+            SetSafeArea(new Rect(0, 0, Screen.width, Screen.height));
         }
 
         public override void Dispose()
@@ -97,8 +98,8 @@ namespace HoweFramework
                 // 与 Screen.safeArea 语义保持一致：物理像素、左下原点，y 为底部 inset。
                 var x = m_OffsetLeft;
                 var y = m_OffsetBottom;
-                var w = m_LastWidth - m_OffsetRight - x;
-                var h = m_LastHeight - m_OffsetTop - m_OffsetBottom;
+                var w = Math.Max(0, m_LastWidth - m_OffsetRight - x);
+                var h = Math.Max(0, m_LastHeight - m_OffsetTop - m_OffsetBottom);
                 return new Rect(x, y, w, h);
             }
 

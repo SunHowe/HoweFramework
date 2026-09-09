@@ -83,6 +83,12 @@ namespace HoweFramework
         /// <returns>异步加载任务。</returns>
         public async UniTask LoadAsync(LoadableProgress onProgress = null, CancellationToken cancellationToken = default)
         {
+            if (m_LoadableTasks.Count == 0 || m_TotalWeight <= 0)
+            {
+                onProgress?.Invoke(1f);
+                return;
+            }
+
             // 设置各任务占比。
             foreach (var loadableTask in m_LoadableTasks)
             {

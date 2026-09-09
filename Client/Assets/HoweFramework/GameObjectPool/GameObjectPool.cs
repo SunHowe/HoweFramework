@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace HoweFramework
         private IResLoader m_ResLoader;
         private readonly Dictionary<string, ReusableQueue<GameObject>> m_GameObjectDict = new();
         private readonly Dictionary<string, int> m_CacheCountLimitDict = new();
+        private readonly Dictionary<string, GameObject> m_PrefabDict = new();
         private Transform m_Root;
 
         public static GameObjectPool Create(IResLoader resLoader)
@@ -32,6 +34,7 @@ namespace HoweFramework
         {
             ClearAllCache();
 
+            m_PrefabDict.Clear();
             m_ResLoader.Dispose();
 
             if (m_Root != null)
@@ -47,6 +50,7 @@ namespace HoweFramework
             m_ResLoader = null;
             m_GameObjectDict.Clear();
             m_CacheCountLimitDict.Clear();
+            m_PrefabDict.Clear();
             m_Root = null;
         }
 
@@ -54,14 +58,8 @@ namespace HoweFramework
         {
             foreach (var queue in m_GameObjectDict.Values)
             {
-                while (queue.Count > 0)
-                {
-                    var gameObject = queue.Dequeue();
-                    if (gameObject != null)
-                    {
-                        Object.Destroy(gameObject);
-                    }
-                }
+                DestroyCachedObjects(queue);
+                queue.Dispose();
             }
 
             m_GameObjectDict.Clear();
@@ -74,15 +72,8 @@ namespace HoweFramework
                 return;
             }
 
-            while (gameObjects.Count > 0)
-            {
-                var gameObject = gameObjects.Dequeue();
-                if (gameObject != null)
-                {
-                    Object.Destroy(gameObject);
-                }
-            }
-
+            DestroyCachedObjects(gameObjects);
+            gameObjects.Dispose();
             m_GameObjectDict.Remove(assetKey);
         }
 
@@ -130,10 +121,10 @@ namespace HoweFramework
                 }
             }
 
-            var prefab = await m_ResLoader.LoadAssetAsync<GameObject>(assetKey, token);
-            if (prefab == null)
+            var prefab = await EnsurePrefabLoadedAsync(assetKey, token);
+            if (m_Root == null)
             {
-                throw new ErrorCodeException(FrameworkErrorCode.ResNotFound, $"Load asset '{assetKey}' failed.");
+                throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, "GameObjectPool has been disposed.");
             }
 
             gameObject = Object.Instantiate(prefab);
@@ -152,35 +143,29 @@ namespace HoweFramework
                 return;
             }
 
-            if (m_CacheCountLimitDict.TryGetValue(assetKey, out var limit) && count > limit)
+            int target = GetPreloadTargetCount(assetKey, count);
+            if (GetCacheCount(assetKey) >= target)
             {
-                count = limit;
+                return;
             }
 
+            var prefab = await EnsurePrefabLoadedAsync(assetKey, token);
+            if (m_Root == null)
+            {
+                return;
+            }
+
+            target = GetPreloadTargetCount(assetKey, count);
             if (!m_GameObjectDict.TryGetValue(assetKey, out var gameObjects))
             {
                 gameObjects = ReusableQueue<GameObject>.Create();
                 m_GameObjectDict.Add(assetKey, gameObjects);
             }
-            else
-            {
-                count -= gameObjects.Count;
 
-                if (count <= 0)
-                {
-                    return;
-                }
-            }
-
-            var prefab = await m_ResLoader.LoadAssetAsync<GameObject>(assetKey, token);
-            if (prefab == null)
+            int toCreate = target - gameObjects.Count;
+            while (toCreate > 0)
             {
-                throw new ErrorCodeException(FrameworkErrorCode.ResNotFound, $"Load asset '{assetKey}' failed.");
-            }
-
-            while (count > 0)
-            {
-                --count;
+                --toCreate;
 
                 var gameObject = Object.Instantiate(prefab);
                 var pooledGameObject = gameObject.GetOrAddComponent<PooledGameObject>();
@@ -257,6 +242,60 @@ namespace HoweFramework
             else
             {
                 m_CacheCountLimitDict[assetKey] = limit;
+            }
+        }
+
+        /// <summary>
+        /// 每个资源 key 只 LoadAsset 一次，避免缓存未命中时反复加引用。预制体随池 Dispose（ResLoader）一并卸载。
+        /// </summary>
+        private async UniTask<GameObject> EnsurePrefabLoadedAsync(string assetKey, CancellationToken token)
+        {
+            if (m_PrefabDict.TryGetValue(assetKey, out var cached) && cached != null)
+            {
+                return cached;
+            }
+
+            var prefab = await m_ResLoader.LoadAssetAsync<GameObject>(assetKey, token);
+            if (token.IsCancellationRequested)
+            {
+                token.ThrowIfCancellationRequested();
+            }
+
+            if (prefab == null)
+            {
+                throw new ErrorCodeException(FrameworkErrorCode.ResNotFound, $"Load asset '{assetKey}' failed.");
+            }
+
+            if (m_PrefabDict.TryGetValue(assetKey, out cached) && cached != null)
+            {
+                // 并发加载同一 key 会多一次引用，卸掉多余的那次。
+                m_ResLoader.UnloadAsset(assetKey);
+                return cached;
+            }
+
+            m_PrefabDict[assetKey] = prefab;
+            return prefab;
+        }
+
+        private int GetPreloadTargetCount(string assetKey, int count)
+        {
+            if (m_CacheCountLimitDict.TryGetValue(assetKey, out var limit) && count > limit)
+            {
+                return limit;
+            }
+
+            return count;
+        }
+
+        private static void DestroyCachedObjects(ReusableQueue<GameObject> gameObjects)
+        {
+            while (gameObjects.Count > 0)
+            {
+                var gameObject = gameObjects.Dequeue();
+                if (gameObject != null)
+                {
+                    Object.Destroy(gameObject);
+                }
             }
         }
 

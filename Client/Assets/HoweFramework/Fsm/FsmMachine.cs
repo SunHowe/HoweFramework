@@ -58,6 +58,11 @@ namespace HoweFramework
         private int m_PendingState;
 
         /// <summary>
+        /// 切换状态期间是否应在结束后释放（回调中 Dispose）。
+        /// </summary>
+        private bool m_ReleaseAfterChange;
+
+        /// <summary>
         /// 是否已释放。
         /// </summary>
         private bool m_IsDisposed;
@@ -80,6 +85,11 @@ namespace HoweFramework
         /// </summary>
         public void ChangeState(int stateId)
         {
+            if (m_IsDisposed && stateId != 0)
+            {
+                return;
+            }
+
             if (stateId != 0 && !m_StateSet.Contains(stateId))
             {
                 throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"状态 {stateId} 不存在");
@@ -101,8 +111,16 @@ namespace HoweFramework
             m_IsChangingState = true;
             try
             {
+                const int maxStateChanges = 32;
+                int changes = 0;
                 while (true)
                 {
+                    if (++changes > maxStateChanges)
+                    {
+                        Log.Error("Fsm ChangeState exceeded max reentrant switches.");
+                        break;
+                    }
+
                     m_HasPendingState = false;
                     m_PendingState = 0;
 
@@ -128,6 +146,17 @@ namespace HoweFramework
                         OnStateEnter?.Invoke(CurrentState);
                     }
 
+                    if (m_IsDisposed)
+                    {
+                        if (CurrentState != 0)
+                        {
+                            stateId = 0;
+                            continue;
+                        }
+
+                        break;
+                    }
+
                     // 处理切换期间重入的切换请求。
                     if (!m_HasPendingState || m_PendingState == CurrentState)
                     {
@@ -142,6 +171,12 @@ namespace HoweFramework
                 m_IsChangingState = false;
                 m_HasPendingState = false;
                 m_PendingState = 0;
+
+                if (m_ReleaseAfterChange)
+                {
+                    m_ReleaseAfterChange = false;
+                    ReferencePool.Release(this);
+                }
             }
         }
 
@@ -206,9 +241,16 @@ namespace HoweFramework
 
             m_IsDisposed = true;
 
-            // 停止状态机。
-            ChangeState(0);
+            if (m_IsChangingState)
+            {
+                // 回调中 Dispose：切到停机并延迟 Release，避免使用中的实例入池。
+                m_PendingState = 0;
+                m_HasPendingState = true;
+                m_ReleaseAfterChange = true;
+                return;
+            }
 
+            ChangeState(0);
             ReferencePool.Release(this);
         }
 
@@ -224,6 +266,7 @@ namespace HoweFramework
             m_IsChangingState = false;
             m_HasPendingState = false;
             m_PendingState = 0;
+            m_ReleaseAfterChange = false;
             m_IsDisposed = false;
         }
 

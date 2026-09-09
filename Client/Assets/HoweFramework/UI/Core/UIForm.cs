@@ -170,6 +170,8 @@ namespace HoweFramework
             IsVisible = false;
             m_LoadId = 0;
             m_IsClosing = false;
+            m_LoadFailureHandled = false;
+            m_SortingOrder = 0;
             m_UIFormHelper = null;
             m_FormLogic = null;
             InnerSetRequestResponse(CommonResponse.Create(FrameworkErrorCode.UIFormWhileDestroying));
@@ -312,22 +314,41 @@ namespace HoweFramework
             m_IsClosing = true;
             try
             {
-                if (IsVisible)
+                if (!IsLoaded && m_LoadId != 0)
                 {
-                    // 界面可见，则设置为不可见。
-                    SetVisible(false);
+                    m_UIFormHelper?.CancelLoadUIFormInstance(m_LoadId);
+                    m_LoadId = 0;
+                }
+
+                try
+                {
+                    if (IsVisible)
+                    {
+                        SetVisible(false);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"关闭界面时 OnInvisible 异常：{e.Message}\n{e.StackTrace}");
                 }
 
                 IsOpen = false;
 
                 if (IsLoaded)
                 {
-                    m_UIFormHelper.SetUIFormInstanceIsOpen(FormInstance, FormGroup.GroupInstance, false);
-                    m_FormLogic.OnClose();
+                    try
+                    {
+                        m_UIFormHelper.SetUIFormInstanceIsOpen(FormInstance, FormGroup.GroupInstance, false);
+                        m_FormLogic.OnClose();
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error($"关闭界面时 OnClose 异常：{e.Message}\n{e.StackTrace}");
+                    }
                 }
 
-                // 设置响应包。
-                InnerSetRequestResponse(CommonResponse.Create(m_FormLogic.ErrorCodeOnClose));
+                int errorCode = m_FormLogic != null ? m_FormLogic.ErrorCodeOnClose : FrameworkErrorCode.Success;
+                InnerSetRequestResponse(CommonResponse.Create(errorCode));
             }
             finally
             {

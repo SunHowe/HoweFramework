@@ -33,28 +33,44 @@ namespace HoweFramework
 
             Instance = this;
 
-            AddModule<IOCModule>(); // IOC 模块。
-            AddModule<BaseModule>()  // 基础模块。
-                .UseUnityJsonHelper()
-                .UseDefaultTextTemplateHelper();
-            AddModule<EventModule>(); // 事件模块。
-            AddModule<RemoteRequestModule>(); // 远程请求模块。
-            AddModule<NetworkModule>(); // 网络模块。
-            AddModule<WebRequestModule>().UseUnityWebRequest(); // Web请求模块。
-            AddModule<TimerModule>(); // 计时器模块。
-            AddModule<SettingModule>().UsePlayerPrefsSetting(); // 设置模块。
-            AddModule<SafeAreaModule>(); // 安全区域模块。
-            AddModule<ResModule>().UseYooAsset(); // 资源模块。
-            AddModule<SceneModule>(); // 场景模块。
-            AddModule<CameraModule>(); // 相机模块。
-            AddModule<SoundModule>().UseAudioClipSound(); // 声音模块。
-            AddModule<GameObjectPoolModule>(); // 游戏对象池模块。
-            AddModule<DataTableModule>(); // 配置表模块。
-            AddModule<LocalizationModule>(); // 本地化模块。
-            AddModule<BehaviorModule>(); // 行为树模块。
-            AddModule<SystemModule>(); // 系统模块。
-            AddModule<UIModule>(); // UI模块。
-            AddModule<ProcedureModule>(); // 流程模块。
+            try
+            {
+                AddModule<IOCModule>(); // IOC 模块。
+                AddModule<BaseModule>()  // 基础模块。
+                    .UseUnityJsonHelper()
+                    .UseDefaultTextTemplateHelper();
+                AddModule<EventModule>(); // 事件模块。
+                AddModule<RemoteRequestModule>(); // 远程请求模块。
+                AddModule<NetworkModule>(); // 网络模块。
+                AddModule<WebRequestModule>().UseUnityWebRequest(); // Web请求模块。
+                AddModule<TimerModule>(); // 计时器模块。
+                AddModule<SettingModule>().UsePlayerPrefsSetting(); // 设置模块。
+                AddModule<SafeAreaModule>(); // 安全区域模块。
+                AddModule<ResModule>().UseYooAsset(); // 资源模块。
+                AddModule<SceneModule>(); // 场景模块。
+                AddModule<CameraModule>(); // 相机模块。
+                AddModule<SoundModule>().UseAudioClipSound(); // 声音模块。
+                AddModule<GameObjectPoolModule>(); // 游戏对象池模块。
+                AddModule<DataTableModule>(); // 配置表模块。
+                AddModule<LocalizationModule>(); // 本地化模块。
+                AddModule<BehaviorModule>(); // 行为树模块。
+                AddModule<SystemModule>(); // 系统模块。
+                AddModule<UIModule>(); // UI模块。
+                AddModule<ProcedureModule>(); // 流程模块。
+            }
+            catch
+            {
+                try
+                {
+                    Destroy();
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"GameApp 构造失败后销毁模块时发生异常：{e.Message}\n{e.StackTrace}");
+                }
+
+                throw;
+            }
         }
 
         /// <summary>

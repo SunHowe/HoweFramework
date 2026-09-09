@@ -49,17 +49,16 @@ namespace HoweFramework
             try
             {
                 OnInit();
+                if (RegisterIOC)
+                {
+                    IOCModule.Instance.Register(Instance);
+                }
             }
             catch
             {
-                // OnInit 失败时回滚，避免留下未注册却不可重建的僵尸状态。
+                // OnInit / Register 失败时回滚，避免留下未注册却不可重建的僵尸状态。
                 Instance = null;
                 throw;
-            }
-
-            if (RegisterIOC)
-            {
-                IOCModule.Instance.Register(Instance);
             }
         }
 
@@ -73,13 +72,19 @@ namespace HoweFramework
                 throw new ErrorCodeException(FrameworkErrorCode.FrameworkException, $"{typeof(T)} 模块未初始化。");
             }
 
-            if (RegisterIOC)
+            try
             {
-                IOCModule.Instance.UnRegister(Instance);
-            }
+                if (RegisterIOC)
+                {
+                    IOCModule.Instance.UnRegister(Instance);
+                }
 
-            OnDestroy();
-            Instance = null;
+                OnDestroy();
+            }
+            finally
+            {
+                Instance = null;
+            }
         }
 
         /// <summary>

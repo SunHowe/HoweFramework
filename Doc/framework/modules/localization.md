@@ -26,7 +26,8 @@ LocalizationModule.Instance.Language = Language.English;
 
 ## 约束与坑
 
-- 语言变化走事件，UI 需要订阅才能刷新。
+- 语言变化会先 `LoadAsync`（内部 `ClearText` 再加载源）再派发事件，订阅后立刻 `GetText` 能拿到新语言文本。
+- `Language` setter 会 `SettingModule.Save()`，避免异常退出时语言未落盘。
 - 缺 key 时 `GetText` 返回 `"<NoKey>{key}"`，不会抛错。
 - 生成本地化表用 `DataTable/gen_client_localization.sh`，与主表脚本分开。
 - `LoadAsync` 开始前会先 `ClearText`，重复加载/切换语言不会残留旧语言文本。

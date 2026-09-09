@@ -119,12 +119,25 @@ namespace HoweFramework
                     throw;
                 }
 
+                if (!ReferenceEquals(socketUserData.Socket, m_Socket))
+                {
+                    try
+                    {
+                        socketUserData.Socket.Close();
+                    }
+                    catch
+                    {
+                    }
+
+                    return;
+                }
+
                 m_SentPacketCount = 0;
                 m_ReceivedPacketCount = 0;
 
                 lock (m_SendPacketPool)
                 {
-                    m_SendPacketPool.Clear();
+                    ClearSendPacketPoolNoLock();
                 }
 
                 m_ReceivePacketPool.ClearEvents();
@@ -166,18 +179,22 @@ namespace HoweFramework
             private void SendCallback(IAsyncResult ar)
             {
                 Socket socket = (Socket)ar.AsyncState;
-                if (!socket.Connected)
-                {
-                    return;
-                }
-
                 int bytesSent = 0;
                 try
                 {
                     bytesSent = socket.EndSend(ar);
                 }
+                catch (ObjectDisposedException)
+                {
+                    return;
+                }
                 catch (Exception exception)
                 {
+                    if (!ReferenceEquals(socket, m_Socket))
+                    {
+                        return;
+                    }
+
                     m_Active = false;
                     if (NetworkChannelError != null)
                     {
@@ -187,6 +204,11 @@ namespace HoweFramework
                     }
 
                     throw;
+                }
+
+                if (!ReferenceEquals(socket, m_Socket))
+                {
+                    return;
                 }
 
                 m_SendState.Stream.Position += bytesSent;
@@ -223,18 +245,22 @@ namespace HoweFramework
             private void ReceiveCallback(IAsyncResult ar)
             {
                 Socket socket = (Socket)ar.AsyncState;
-                if (!socket.Connected)
-                {
-                    return;
-                }
-
                 int bytesReceived = 0;
                 try
                 {
                     bytesReceived = socket.EndReceive(ar);
                 }
+                catch (ObjectDisposedException)
+                {
+                    return;
+                }
                 catch (Exception exception)
                 {
+                    if (!ReferenceEquals(socket, m_Socket))
+                    {
+                        return;
+                    }
+
                     m_Active = false;
                     if (NetworkChannelError != null)
                     {
@@ -244,6 +270,11 @@ namespace HoweFramework
                     }
 
                     throw;
+                }
+
+                if (!ReferenceEquals(socket, m_Socket))
+                {
+                    return;
                 }
 
                 if (bytesReceived <= 0)

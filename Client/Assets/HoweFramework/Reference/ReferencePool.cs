@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace HoweFramework
 {
@@ -129,6 +130,28 @@ namespace HoweFramework
             m_ReferenceCacheDict[type] = cache;
 
             return cache;
+        }
+    }
+
+    /// <summary>
+    /// 按对象引用比较，避免 IReference 重写 Equals 后误判重复入池。
+    /// </summary>
+    internal sealed class ReferenceIdentityComparer : IEqualityComparer<IReference>
+    {
+        public static readonly ReferenceIdentityComparer Instance = new();
+
+        private ReferenceIdentityComparer()
+        {
+        }
+
+        public bool Equals(IReference x, IReference y)
+        {
+            return ReferenceEquals(x, y);
+        }
+
+        public int GetHashCode(IReference obj)
+        {
+            return RuntimeHelpers.GetHashCode(obj);
         }
     }
 }

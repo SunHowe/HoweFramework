@@ -14,14 +14,21 @@ namespace HoweFramework
         private readonly MultiSortedDictionary<int, PriorityEventHandler> m_EventHandlerDict = new();
 
         /// <summary>
-        /// 缓存的事件处理器节点。
+        /// 缓存的事件处理器节点。key 为派发序号，避免同一事件实例重入 Dispatch 时互相覆盖。
         /// </summary>
-        private readonly Dictionary<object, LinkedListNode<PriorityEventHandler>> m_CachedNodes = new();
+        private readonly Dictionary<int, LinkedListNode<PriorityEventHandler>> m_CachedNodes = new();
+
+        /// <summary>
+        /// 派发序号对应的事件 Id，供 Unsubscribe 过滤。
+        /// </summary>
+        private readonly Dictionary<int, int> m_CachedEventIds = new();
 
         /// <summary>
         /// 临时的事件处理器节点。
         /// </summary>
-        private readonly Dictionary<object, LinkedListNode<PriorityEventHandler>> m_TempNodes = new();
+        private readonly Dictionary<int, LinkedListNode<PriorityEventHandler>> m_TempNodes = new();
+
+        private int m_DispatchSerial;
 
         private GameEventHandlerFunc m_DefaultHandler;
         private EventDispatcherMode m_Mode;
@@ -120,10 +127,9 @@ namespace HoweFramework
 
             if (m_CachedNodes.Count > 0)
             {
-                foreach (KeyValuePair<object, LinkedListNode<PriorityEventHandler>> cachedNode in m_CachedNodes)
+                foreach (KeyValuePair<int, LinkedListNode<PriorityEventHandler>> cachedNode in m_CachedNodes)
                 {
-                    // 只处理与待退订事件 id 相同的派发缓存，避免同一委托订阅多个事件时跨事件误伤。
-                    if (cachedNode.Key is GameEventArgs eventArgs && eventArgs.Id != id)
+                    if (m_CachedEventIds.TryGetValue(cachedNode.Key, out var eventId) && eventId != id)
                     {
                         continue;
                     }
@@ -136,7 +142,7 @@ namespace HoweFramework
 
                 if (m_TempNodes.Count > 0)
                 {
-                    foreach (KeyValuePair<object, LinkedListNode<PriorityEventHandler>> cachedNode in m_TempNodes)
+                    foreach (KeyValuePair<int, LinkedListNode<PriorityEventHandler>> cachedNode in m_TempNodes)
                     {
                         m_CachedNodes[cachedNode.Key] = cachedNode.Value;
                     }
@@ -185,40 +191,57 @@ namespace HoweFramework
             }
 
             m_EventHandlerDict.Clear();
+            m_CachedNodes.Clear();
+            m_CachedEventIds.Clear();
+            m_TempNodes.Clear();
         }
         
         private void HandleEvent(object sender, GameEventArgs e)
         {
             bool noHandlerException = true;
-            if (m_EventHandlerDict.TryGetValue(e.Id, out var range))
+            int dispatchToken = ++m_DispatchSerial;
+            m_CachedEventIds[dispatchToken] = e.Id;
+            try
             {
-                noHandlerException = false;
-                
-                LinkedListNode<PriorityEventHandler> current = range.First;
-                while (current != null && current != range.Terminal)
+                if (m_EventHandlerDict.TryGetValue(e.Id, out var range))
                 {
-                    m_CachedNodes[e] = current.Next != range.Terminal ? current.Next : null;
+                    noHandlerException = false;
 
-                    try
+                    LinkedListNode<PriorityEventHandler> current = range.First;
+                    while (current != null && current != range.Terminal)
                     {
-                        current.Value.Handler(sender, e);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error($"Handle event '{e.Id}' error: {ex.Message}\n{ex.StackTrace}");
+                        m_CachedNodes[dispatchToken] = current.Next != range.Terminal ? current.Next : null;
+
+                        try
+                        {
+                            current.Value.Handler(sender, e);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error($"Handle event '{e.Id}' error: {ex.Message}\n{ex.StackTrace}");
+                        }
+
+                        current = m_CachedNodes[dispatchToken];
                     }
 
-                    current = m_CachedNodes[e];
+                    // 如果存在默认事件处理函数，并且事件调度器模式为总是触发默认事件处理函数，则触发默认事件处理函数。
+                    if (m_DefaultHandler != null && (m_Mode & EventDispatcherMode.AlwaysInvokeDefaultHandler) == EventDispatcherMode.AlwaysInvokeDefaultHandler)
+                    {
+                        try
+                        {
+                            m_DefaultHandler(sender, e);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error($"Handle event '{e.Id}' error: {ex.Message}\n{ex.StackTrace}");
+                        }
+                    }
                 }
-
-                m_CachedNodes.Remove(e);
-
-                // 如果存在默认事件处理函数，并且事件调度器模式为总是触发默认事件处理函数，则触发默认事件处理函数。
-                if (m_DefaultHandler != null && (m_Mode & EventDispatcherMode.AlwaysInvokeDefaultHandler) == EventDispatcherMode.AlwaysInvokeDefaultHandler)
+                else if (m_DefaultHandler != null)
                 {
                     try
                     {
-                        m_DefaultHandler(sender, e);
+                        noHandlerException = !m_DefaultHandler(sender, e);
                     }
                     catch (Exception ex)
                     {
@@ -226,16 +249,10 @@ namespace HoweFramework
                     }
                 }
             }
-            else if (m_DefaultHandler != null)
+            finally
             {
-                try
-                {
-                    noHandlerException = !m_DefaultHandler(sender, e);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error($"Handle event '{e.Id}' error: {ex.Message}\n{ex.StackTrace}");
-                }
+                m_CachedNodes.Remove(dispatchToken);
+                m_CachedEventIds.Remove(dispatchToken);
             }
 
             // 无人处理事件，检测是否需要抛异常。
@@ -244,14 +261,14 @@ namespace HoweFramework
                 noHandlerException = false;
             }
 
-            if (e.IsReleaseAfterFire)
-            {
-                ReferencePool.Release(e);
-            }
-
             if (noHandlerException)
             {
                 throw new ErrorCodeException(FrameworkErrorCode.InvalidOperationException, $"Event '{e.Id}' not allow no handler.");
+            }
+
+            if (e.IsReleaseAfterFire)
+            {
+                ReferencePool.Release(e);
             }
         }
     }

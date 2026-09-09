@@ -38,6 +38,11 @@ namespace HoweFramework
         private int m_PendingProcedureId;
 
         /// <summary>
+        /// 切换流程期间是否收到 Stop。
+        /// </summary>
+        private bool m_PendingStop;
+
+        /// <summary>
         /// 启动流程状态机。
         /// </summary>
         /// <typeparam name="T">初始流程类型。</typeparam>
@@ -79,9 +84,20 @@ namespace HoweFramework
             {
                 Procedure.Enter();
 
-                // 处理 Enter 期间重入的切换请求。
-                while (m_PendingProcedureId != 0)
+                while (true)
                 {
+                    if (m_PendingStop)
+                    {
+                        Procedure.Leave();
+                        Procedure = null;
+                        break;
+                    }
+
+                    if (m_PendingProcedureId == 0)
+                    {
+                        break;
+                    }
+
                     var pendingProcedure = m_ProcedureDict[m_PendingProcedureId];
                     m_PendingProcedureId = 0;
 
@@ -94,6 +110,7 @@ namespace HoweFramework
             {
                 m_IsChangingProcedure = false;
                 m_PendingProcedureId = 0;
+                m_PendingStop = false;
             }
         }
 
@@ -102,8 +119,15 @@ namespace HoweFramework
         /// </summary>
         public void Stop()
         {
-            if (Procedure == null)
+            if (Procedure == null && !m_IsChangingProcedure)
             {
+                return;
+            }
+
+            if (m_IsChangingProcedure)
+            {
+                m_PendingStop = true;
+                m_PendingProcedureId = 0;
                 return;
             }
 
@@ -142,10 +166,23 @@ namespace HoweFramework
                     m_PendingProcedureId = 0;
 
                     Procedure.Leave();
+
+                    if (m_PendingStop)
+                    {
+                        Procedure = null;
+                        break;
+                    }
+
                     Procedure = newProcedure;
                     Procedure.Enter();
 
-                    // 处理切换期间重入的切换请求。
+                    if (m_PendingStop)
+                    {
+                        Procedure.Leave();
+                        Procedure = null;
+                        break;
+                    }
+
                     if (m_PendingProcedureId == 0)
                     {
                         break;
@@ -158,6 +195,7 @@ namespace HoweFramework
             {
                 m_IsChangingProcedure = false;
                 m_PendingProcedureId = 0;
+                m_PendingStop = false;
             }
         }
 
@@ -186,11 +224,7 @@ namespace HoweFramework
 
         protected override void OnDestroy()
         {
-            if (Procedure != null)
-            {
-                Procedure.Leave();
-                Procedure = null;
-            }
+            Stop();
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)

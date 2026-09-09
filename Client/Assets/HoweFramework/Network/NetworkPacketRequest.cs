@@ -18,7 +18,7 @@ namespace HoweFramework
         /// </summary>
         public INetworkChannel NetworkChannel { get; set; }
 
-        protected override UniTask<IResponse> OnExecute(CancellationToken token)
+        protected override async UniTask<IResponse> OnExecute(CancellationToken token)
         {
             if (NetworkChannel == null)
             {
@@ -33,7 +33,8 @@ namespace HoweFramework
             var packet = Packet;
             Packet = null;
 
-            var (requestId, task) = NetworkChannel.Helper.RequestDispatcher.CreateRemoteRequest();
+            var dispatcher = NetworkChannel.Helper.RequestDispatcher;
+            var (requestId, task) = dispatcher.CreateRemoteRequest();
 
             // 设置请求id。
             remoteRequest.RequestId = requestId;
@@ -46,12 +47,20 @@ namespace HoweFramework
             catch
             {
                 // 发送失败：注销请求注册项并归还协议包，避免注册项残留与包泄漏。
-                NetworkChannel.Helper.RequestDispatcher.Remove(requestId);
+                dispatcher.Remove(requestId);
                 ReferencePool.Release(packet);
                 throw;
             }
 
-            return task;
+            if (!token.CanBeCanceled)
+            {
+                return await task;
+            }
+
+            using (token.Register(() => dispatcher.Remove(requestId)))
+            {
+                return await task;
+            }
         }
 
         public override void Clear()

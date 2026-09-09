@@ -166,6 +166,7 @@ namespace HoweFramework
             }
 
             m_UIFormOpenedList.Remove(uiForm);
+            RemoveUIFormFromCache(uiForm);
 
             if (uiForm.IsOpen)
             {
@@ -239,6 +240,17 @@ namespace HoweFramework
                     ((UIFormGroup)uiForm.FormGroup).RemoveUIForm(uiForm);
                     m_UIFormOpenedList.Remove(uiForm);
                     uiForm.AssignSerialId(++m_UIFormSerialId);
+
+                    try
+                    {
+                        BeforeUIFormOpen(uiForm);
+                    }
+                    catch
+                    {
+                        m_UIFormOpenedList.AddLast(uiForm);
+                        ((UIFormGroup)uiForm.FormGroup).AddUIForm(uiForm);
+                        throw;
+                    }
                 }
                 else
                 {
@@ -264,10 +276,9 @@ namespace HoweFramework
 
                         uiForm.Init(++m_UIFormSerialId, GetUIFormGroup(uiFormLogic.FormGroupId), m_UIFormHelper, uiFormLogic);
                     }
-                }
 
-                // 处理界面打开前逻辑。
-                BeforeUIFormOpen(uiForm);
+                    BeforeUIFormOpen(uiForm);
+                }
 
                 // 将界面加入已打开界面列表。
                 m_UIFormOpenedList.AddLast(uiForm);
@@ -356,8 +367,23 @@ namespace HoweFramework
         /// </summary>
         private void CloseAndCacheUIForm(UIForm uiForm)
         {
-            uiForm.CloseImmediate();
-            ((UIFormGroup)uiForm.FormGroup).RemoveUIForm(uiForm);
+            if (uiForm.IsOpen)
+            {
+                try
+                {
+                    uiForm.CloseImmediate();
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"关闭界面 {uiForm.FormId} 时发生异常：{e.Message}\n{e.StackTrace}");
+                }
+            }
+
+            if (uiForm.FormGroup != null)
+            {
+                ((UIFormGroup)uiForm.FormGroup).RemoveUIForm(uiForm);
+            }
+
             m_UIFormOpenedList.Remove(uiForm);
             CacheUIForm(uiForm);
         }
@@ -425,12 +451,6 @@ namespace HoweFramework
                     uiForm.SetVisible(!foundNormalForm);
                 }
 
-                if (uiForm.FormType == UIFormType.Main)
-                {
-                    // 处理到主界面为止，不可能存在更底下的界面。
-                    break;
-                }
-
                 if (foundNormalForm)
                 {
                     continue;
@@ -486,6 +506,33 @@ namespace HoweFramework
             }
 
             return new UIForm();
+        }
+
+        /// <summary>
+        /// 从缓存队列移除指定界面（加载失败 Destroy 前必须调用，避免幽灵缓存）。
+        /// </summary>
+        private void RemoveUIFormFromCache(UIForm uiForm)
+        {
+            if (!m_UIFormCacheDict.TryGetValue(uiForm.FormId, out var cache))
+            {
+                return;
+            }
+
+            int count = cache.Count;
+            for (int i = 0; i < count; i++)
+            {
+                var form = cache.Dequeue();
+                if (form != uiForm)
+                {
+                    cache.Enqueue(form);
+                }
+            }
+
+            if (cache.Count == 0)
+            {
+                m_UIFormCacheDict.Remove(uiForm.FormId);
+                cache.Dispose();
+            }
         }
 
         /// <summary>

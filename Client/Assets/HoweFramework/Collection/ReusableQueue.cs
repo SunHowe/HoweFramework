@@ -13,8 +13,17 @@ namespace HoweFramework
         /// </summary>
         public bool DisposeItems { get; set; }
 
+        private bool m_Disposed;
+
         public void Dispose()
         {
+            if (m_Disposed)
+            {
+                return;
+            }
+
+            m_Disposed = true;
+
             if (DisposeItems)
             {
                 while (Count > 0)
@@ -32,6 +41,7 @@ namespace HoweFramework
         public static ReusableQueue<T> Create(bool disposeItems = false)
         {
             var queue = ReferencePool.Acquire<ReusableQueue<T>>();
+            queue.m_Disposed = false;
             queue.DisposeItems = disposeItems;
             return queue;
         }

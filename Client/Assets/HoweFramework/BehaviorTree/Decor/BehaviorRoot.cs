@@ -12,13 +12,21 @@ namespace HoweFramework
         /// </summary>
         private readonly Dictionary<string, object> m_Values = new();
 
+        private int m_LastResult = FrameworkErrorCode.Success;
+
         /// <summary>
         /// 执行。
         /// </summary>
         /// <returns>返回执行结果。</returns>
         public override int Execute()
         {
-            return ExecuteChild();
+            if (m_LastResult != FrameworkErrorCode.BehaviorRunningState)
+            {
+                ResetState();
+            }
+
+            m_LastResult = ExecuteChild();
+            return m_LastResult;
         }
 
         /// <summary>
@@ -28,6 +36,13 @@ namespace HoweFramework
         {
             base.Clear();
             m_Values.Clear();
+            m_LastResult = FrameworkErrorCode.Success;
+        }
+
+        public override void ResetState()
+        {
+            m_LastResult = FrameworkErrorCode.Success;
+            base.ResetState();
         }
 
         /// <summary>

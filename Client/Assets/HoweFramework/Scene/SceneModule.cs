@@ -50,10 +50,10 @@ namespace HoweFramework
         /// 卸载场景。
         /// </summary>
         /// <param name="sceneAssetName">场景资源名称。</param>
-        public UniTask UnloadSceneAsync(string sceneAssetName)
+        public async UniTask UnloadSceneAsync(string sceneAssetName)
         {
+            await ResModule.Instance.GetResCoreLoader().UnloadScene(sceneAssetName);
             m_SceneOrder.Remove(sceneAssetName);
-            return ResModule.Instance.GetResCoreLoader().UnloadScene(sceneAssetName);
         }
 
         /// <summary>

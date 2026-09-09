@@ -39,8 +39,10 @@ await UIModule.Instance.CloseUIForm(UIFormId.Xxx, closeMultiple: true);
 - 每次打开（含单例复开、缓存命中）都会分配新的 `FormSerialId`。`IUIForm.CloseForm` 带当前序列号，避免多实例时关掉最旧的那个。不指定序列号的 `CloseUIForm(formId)` 仍关最旧实例；`closeMultiple: true` 关掉该 FormId 全部打开实例。
 - 加载失败会完成打开请求、移出打开列表并 `Destroy`（不进缓存）。加载完成时若已被栈隐藏，会调 `OnInvisible`。
 - 模块销毁时先给队列剩余请求回 `UIFormWhileDestroying`，再关已打开界面；单个界面关闭/销毁异常不中断销毁链。
-- **回调重入契约**：在 `OnOpen`/`OnUpdate`/`OnInit` 回调中调用 `CloseForm` 是允许的，框架检测到界面已关闭后不再继续后续打开流程；`OnClose`/`OnInvisible` 回调中重入关闭会被忽略（不会重复执行关闭流程）。
-- FairyGUI 包字节加载失败会兜底回调（bytes=null），界面加载失败流程正常走完，不会挂起。
+- **回调重入契约**：在 `OnOpen`/`OnUpdate`/`OnInit` 回调中调用 `CloseForm` 是允许的，框架检测到界面已关闭后不再继续后续打开流程；`OnClose`/`OnInvisible` 回调中重入关闭会被忽略（不会重复执行关闭流程）。`OnClose`/`OnInvisible` 抛异常不会阻止关闭完成（仍会 `SetResponse`、从打开列表移除），避免 `await OpenUIForm` 永久挂起。
+- 加载中关闭会 `CancelLoadUIFormInstance`；加载失败会踢出缓存并复位失败标志，避免幽灵实例。
+- `UpdateUIStack` 会处理 Main 之下、`IsAllowControlCloseByFramework == false` 的保留界面（不再在 Main 处 break）。
+- FairyGUI 包字节、纹理、音频异步加载失败都会兜底 callback，避免 FairyGUI 一直等待。
 - 错误码 100–112 见 `FrameworkErrorCode` UI 段。
 
 ## 相关源码

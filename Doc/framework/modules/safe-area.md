@@ -27,6 +27,8 @@ UI 适配应订阅事件，不要只在打开界面时读一次（旋转/刘海�
 ## 约束与坑
 
 - Editor 与真机 Helper 不同，但两者产出的 `SafeArea` 语义一致：物理像素、左下原点（与 `Screen.safeArea` 相同）。Editor 调试器（`DebuggableSafeAreaHelper`）的四个偏移量中 Top/Bottom 分别对应屏幕顶部/底部 inset。
+- Helper 构造时就会写入初始安全区（Editor 为全屏，真机为 `Screen.safeArea`），不必等到第一帧 `OnUpdate`。
+- 调试偏移过大时宽高会钳制为 ≥0，不会得到非法负尺寸 Rect。
 - **FairyGUI 适配坐标换算**：`SafeArea` 是物理像素、左下原点；FairyGUI 是逻辑坐标、左上原点。框架适配器（`FairyGUISafeAreaAdaptor`/`FairyGUIFullScreenAdaptor`）内部统一经 `ConvertSafeAreaToUICoordinates` 做 Y 翻转与缩放换算，业务直接使用即可，不要自行把 `SafeArea` 的 xy 当 UI 坐标。
 - 模块销毁会 `Dispose` Helper。
 

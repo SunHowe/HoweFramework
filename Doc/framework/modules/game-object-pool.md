@@ -31,6 +31,8 @@ pool.Dispose();
 - 模块级 Instantiate 走内部全局池；Destroy 模块时会释放该池。
 - 局部池不 Dispose 会拖住 ResLoader。
 - `Release` 有重复归还检测（同一实例重复入池会被拒绝并告警），池销毁后归还的对象直接 `Destroy`，不会泄漏。
+- **预制体引用**：每个 `assetKey` 在池生命周期内只 `LoadAssetAsync` 一次（并发加载会卸掉多余引用）。`ClearCache` 只销毁缓存实例，不卸载预制体（场上可能还有已取出对象）。预制体随池 `Dispose`（内部 `ResLoader.Dispose`）释放。
+- `ClearCache`/`ClearAllCache` 会 `Dispose` 内部 `ReusableQueue`，避免队列实例流失。
 
 ## 相关源码
 

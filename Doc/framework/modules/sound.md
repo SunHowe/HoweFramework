@@ -31,6 +31,9 @@ SoundModule.Instance.StopSound(id);
 - **组编号 0 是全组通配**：`StopAllSounds()` / `StopSound(assetName)` 默认参数 0 表示遍历所有声音组。
 - 播放中的声音计时使用真实流逝时间（`realElapseSeconds`），`timeScale=0` 暂停游戏不会截断声音播放。
 - 加载中的声音可以 `PauseSound`/`ResumeSound`/`StopSound`，加载完成后生效或取消；加载失败（资源缺失）会静默清理并卸载空引用，不会残留记录。
+- `StopAllSounds` / `StopSound(assetName)` 会同时取消加载队列中的对应项，加载完成后不会再播放。
+- 取消加载时若资源已返回，会 `UnloadAsset`，避免引用泄漏。
+- `SetSoundHelper` 替换时会 `Dispose` 旧 helper。
 - `DestroySoundGroup` 会先停止组内所有播放中的声音并归还资源引用。
 
 ## 相关源码

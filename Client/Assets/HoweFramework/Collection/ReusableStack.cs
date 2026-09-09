@@ -13,8 +13,17 @@ namespace HoweFramework
         /// </summary>
         public bool DisposeItems { get; set; }
 
+        private bool m_Disposed;
+
         public void Dispose()
         {
+            if (m_Disposed)
+            {
+                return;
+            }
+
+            m_Disposed = true;
+
             if (DisposeItems)
             {
                 while (Count > 0)
@@ -29,9 +38,10 @@ namespace HoweFramework
             ReferencePool.Release(this);
         }
 
-        public static ReusableStack<T> Create(bool disposeItems = false )
+        public static ReusableStack<T> Create(bool disposeItems = false)
         {
             var stack = ReferencePool.Acquire<ReusableStack<T>>();
+            stack.m_Disposed = false;
             stack.DisposeItems = disposeItems;
             return stack;
         }

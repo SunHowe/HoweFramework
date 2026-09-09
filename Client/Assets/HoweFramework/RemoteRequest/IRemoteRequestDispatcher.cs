@@ -32,5 +32,10 @@ namespace HoweFramework
         /// </summary>
         /// <param name="errorCode">错误码。</param>
         void InterruptAllRequests(int errorCode = FrameworkErrorCode.RequestCanceled);
+
+        /// <summary>
+        /// 扫描并完成超时请求。由模块每帧调用；创建新请求时也会惰性扫描。
+        /// </summary>
+        void ScanTimeoutRequests();
     }
 }

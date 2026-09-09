@@ -9,6 +9,7 @@ namespace HoweFramework
     {
         public UnitySafeAreaHelper()
         {
+            SetSafeArea(Screen.safeArea);
         }
 
         public override void Dispose()

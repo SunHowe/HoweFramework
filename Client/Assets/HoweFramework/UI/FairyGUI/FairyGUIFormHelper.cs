@@ -394,15 +394,23 @@ namespace HoweFramework
 
             async UniTask LoadMethod()
             {
-                string assetPath = string.Format(m_Settings.UIAssetPathFormat, packageName, assetName, extension);
-                var texture = await m_ResLoader.LoadAssetAsync<Texture>(assetPath);
-
-                if (texture != null)
+                try
                 {
-                    m_TextureAssetKeyDict[texture.GetInstanceID()] = assetPath;
-                }
+                    string assetPath = string.Format(m_Settings.UIAssetPathFormat, packageName, assetName, extension);
+                    var texture = await m_ResLoader.LoadAssetAsync<Texture>(assetPath);
 
-                callback(texture);
+                    if (texture != null)
+                    {
+                        m_TextureAssetKeyDict[texture.GetInstanceID()] = assetPath;
+                    }
+
+                    callback(texture);
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"加载UI纹理[{packageName}/{assetName}]失败：{e.Message}\n{e.StackTrace}");
+                    callback(null);
+                }
             }
         }
 
@@ -426,15 +434,23 @@ namespace HoweFramework
 
             async UniTask LoadMethod()
             {
-                string assetPath = string.Format(m_Settings.UIAssetPathFormat, packageName, assetName, extension);
-                var audioClip = await m_ResLoader.LoadAssetAsync<AudioClip>(assetPath);
-
-                if (audioClip != null)
+                try
                 {
-                    m_AudioClipAssetKeyDict[audioClip.GetInstanceID()] = assetPath;
-                }
+                    string assetPath = string.Format(m_Settings.UIAssetPathFormat, packageName, assetName, extension);
+                    var audioClip = await m_ResLoader.LoadAssetAsync<AudioClip>(assetPath);
 
-                callback(audioClip);
+                    if (audioClip != null)
+                    {
+                        m_AudioClipAssetKeyDict[audioClip.GetInstanceID()] = assetPath;
+                    }
+
+                    callback(audioClip);
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"加载UI音频[{packageName}/{assetName}]失败：{e.Message}\n{e.StackTrace}");
+                    callback(null);
+                }
             }
         }
 

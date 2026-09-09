@@ -37,8 +37,7 @@ namespace HoweFramework
                 // 保存到本地。
                 SaveLanguage(value);
 
-                // 分发语言更新事件。
-                EventModule.Instance.Dispatch(this, LocalizationLanguageUpdateEventArgs.Create(value));
+                ReloadLanguageAsync(value).Forget();
             }
         }
 
@@ -200,6 +199,20 @@ namespace HoweFramework
         private void SaveLanguage(Language language)
         {
             SettingModule.Instance.SetInt(FrameworkSettings.Language, (int)language);
+            SettingModule.Instance.Save();
+        }
+
+        private async UniTaskVoid ReloadLanguageAsync(Language language)
+        {
+            try
+            {
+                await LoadAsync();
+                EventModule.Instance.Dispatch(this, LocalizationLanguageUpdateEventArgs.Create(language));
+            }
+            catch (System.Exception e)
+            {
+                Log.Error($"切换语言失败：{e.Message}\n{e.StackTrace}");
+            }
         }
 
         /// <summary>

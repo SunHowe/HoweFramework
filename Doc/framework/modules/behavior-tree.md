@@ -30,6 +30,8 @@
 - **Context 注入**：配置路径（`BehaviorTreeConfig.CreateBehaviorTree`）创建树时会自动把根节点设为全树 Context（`AddChild` 逐层传播），节点可直接访问黑板。旧版本配置路径不注入 Context，访问黑板必 NRE，已修复。
 - `BehaviorRepeat` 每次迭代前会重置子节点状态，带记忆的子树（如 Sequence）每次迭代都从头执行。
 - 配置错误路径只释放根节点（根 `Dispose` 递归整棵子树），不会二次释放污染引用池。
+- 配置存在环（A→B→A）时建树会抛 `BehaviorNodeInvalid`，不会死循环。
+- 根节点 `Execute` 在上一拍已是成功/失败终态时会自动 `ResetState`，再跑一遍整棵树；Running（901）时不复位，从断点继续。仍可手动 `ResetState`。
 - 节点配置中的属性名与节点类不匹配时会打 `Log.Warning` 并忽略该项（旧版本静默忽略）。
 
 ## 相关源码

@@ -63,6 +63,12 @@ namespace HoweFramework
                 throw new ErrorCodeException(FrameworkErrorCode.BehaviorNodeCreateFailed);
             }
 
+            if (HasCycle(RootNodeId))
+            {
+                rootNode.Dispose();
+                throw new ErrorCodeException(FrameworkErrorCode.BehaviorNodeInvalid, "Behavior tree config contains a cycle.");
+            }
+
             // 配置路径不会经过 BehaviorRoot.Create，需要手动注入上下文（AddChild 会沿树逐层传播）。
             rootNode.SetContext(rootNode);
 
@@ -209,6 +215,42 @@ namespace HoweFramework
             foreach (var node in Nodes)
             {
                 NodeMap[node.Id] = node;
+            }
+        }
+
+        private bool HasCycle(string rootId)
+        {
+            var visiting = new HashSet<string>();
+            var visited = new HashSet<string>();
+            return Dfs(rootId);
+
+            bool Dfs(string id)
+            {
+                if (visiting.Contains(id))
+                {
+                    return true;
+                }
+
+                if (visited.Contains(id))
+                {
+                    return false;
+                }
+
+                visiting.Add(id);
+                if (NodeMap.TryGetValue(id, out var config))
+                {
+                    foreach (var childId in config.ChildrenIds)
+                    {
+                        if (Dfs(childId))
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                visiting.Remove(id);
+                visited.Add(id);
+                return false;
             }
         }
     }

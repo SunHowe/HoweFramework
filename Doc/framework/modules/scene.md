@@ -26,7 +26,7 @@ await SceneModule.Instance.UnloadSceneAsync("MyScene");
 ## 约束与坑
 
 - 依赖 Res 核心加载器已设置。
-- 卸载会从 order 表移除。
+- 卸载成功后才从 order 表移除；卸载失败时顺序表与场景状态保持一致。
 
 ## 相关源码
 

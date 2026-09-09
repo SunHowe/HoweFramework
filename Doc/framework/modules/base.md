@@ -30,8 +30,9 @@ var id = TypeId<MyType>.Id;
 
 - 模块销毁会 Dispose Json/文本 Helper 并 `AssemblyUtility.Clear`。
 - `GameEventArgs.Id` 与静态 `EventId` 都走 `TypeId`，订阅用 `TypeId<T>.Id` 或 `T.EventId`，不要再用 `GetHashCode()`。
-- **模块生命周期容错**：`ModuleBase.Init` 中 `OnInit` 抛异常会回滚 `Instance`（可重建，不留僵尸状态）；`GameApp.Destroy` 逐模块 try-catch，单个模块销毁异常不中断销毁链。
+- **模块生命周期容错**：`ModuleBase.Init` 中 `OnInit`/`IOC Register` 抛异常会回滚 `Instance`；`Destroy` 中 `OnDestroy` 抛异常也会清空 `Instance`。`GameApp` 构造失败会销毁已成功模块；`GameApp.Destroy` 逐模块 try-catch，单个模块销毁异常不中断销毁链。
 - `LoadableGroup.LoadAsync` 的进度回调按各任务权重加权（`WeightRate`），修复了旧版本绕过权重包装导致进度失真的问题。
+- 空 `LoadableGroup`（未添加任务）`LoadAsync` 直接完成并回报进度 1，不会除零。
 
 ## 相关源码
 

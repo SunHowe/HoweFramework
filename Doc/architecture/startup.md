@@ -9,7 +9,7 @@
 3. `Update`：`m_GameApp.Update(Time.deltaTime, Time.unscaledDeltaTime)`，驱动所有模块 `OnUpdate`。
 4. `OnDestroy`：`m_GameApp.Destroy()`，模块按注册**逆序**销毁。
 
-`GameApp` 是单例；重复构造会抛 `FrameworkErrorCode.InvalidOperationException`。`RestartGame()` 加载场景 0。
+`GameApp` 是单例；重复构造会抛 `FrameworkErrorCode.InvalidOperationException`。构造中途某模块 `Init` 失败会销毁已注册模块并清空单例。`RestartGame()` 加载场景 0。
 
 ## 模块注册顺序
 

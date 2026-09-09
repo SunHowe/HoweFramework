@@ -128,6 +128,11 @@ namespace HoweFramework
 
         public void Dispose()
         {
+            if (!m_IsReferenced)
+            {
+                return;
+            }
+
             ReferencePool.Release(this);
         }
 

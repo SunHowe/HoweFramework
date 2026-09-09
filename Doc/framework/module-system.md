@@ -38,6 +38,8 @@ IOCModule.Instance.Inject(this);
 - `RegisterIOC = false` 的模块不会进容器，`[Inject]` 拿不到。
 - 属性注入要求 setter 存在且不是 private。
 - 模块 `OnUpdate` 顺序等于注册顺序。
+- `OnDestroy` 抛异常时仍会把 `Instance` 置空，避免半销毁僵尸单例。
+- `GameApp` 构造中途某模块 `Init` 失败会销毁已成功模块并清空 `GameApp.Instance`，可再次启动。
 
 ## 相关源码
 

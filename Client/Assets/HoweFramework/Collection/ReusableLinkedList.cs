@@ -12,8 +12,17 @@ namespace HoweFramework
         /// </summary>
         public bool DisposeItems { get; set; }
 
+        private bool m_Disposed;
+
         public void Dispose()
         {
+            if (m_Disposed)
+            {
+                return;
+            }
+
+            m_Disposed = true;
+
             if (DisposeItems)
             {
                 foreach (var item in this)
@@ -31,6 +40,7 @@ namespace HoweFramework
         public static ReusableLinkedList<T> Create(bool disposeItems = false)
         {
             var list = ReferencePool.Acquire<ReusableLinkedList<T>>();
+            list.m_Disposed = false;
             list.DisposeItems = disposeItems;
             return list;
         }

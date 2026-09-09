@@ -37,6 +37,8 @@ local.Dispose();
 - `Packet` 继承 `GameEventArgs`，可用同一套调度；`Packet.Id` 同样是 TypeId。
 - 优先级调度器（`CreatePriorityEventDispatcher`）按优先级从高到低派发，同优先级按订阅先后（FIFO）。其底层 `MultiSortedDictionary` 的排序插入曾整体失效（[5,3] 插 4 得 [4,5,3]），已修复；升级框架后若业务曾依赖错误顺序需复查。
 - `Unsubscribe(id, handler)` 在派发进行中调用是安全的（缓存节点延迟跳过）；同一委托订阅多个不同事件时，退订只影响指定 id 的事件，不会跨事件误伤。
+- **重入派发**：处理器内对同一 `GameEventArgs` 实例再 `Dispatch` 是安全的（派发游标按序号隔离，不再用事件实例当字典 key）。
+- 无人处理且未设 `AllowNoHandler` 时先抛异常、再回收事件参数，避免调用方 catch 后读到已入池对象。
 - `ThreadSafeEventDispatcher` 单事件派发异常只记日志并继续处理队列剩余事件，不上抛主循环；`ClearEvents`/`Dispose` 会把队列中未处理的事件项与事件参数一并归还引用池。
 - `SimpleEvent` 在最后一个订阅者的 Handler 内 `Unsubscribe` 自身是安全的（一次性订阅写法）。
 

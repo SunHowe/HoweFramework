@@ -27,7 +27,8 @@ fsm.Dispose(); // 内部 ChangeState(0) 再入池
 
 - 与 `ProcedureModule` 职责不同：Procedure 是全局唯一运行中的应用阶段。
 - 玩法状态机可以自建 Fsm，不要改 Procedure 去模拟技能状态。
-- **重入约定**：在状态进入/退出回调（`OnStateEnter`/`OnStateExit`、注册的 enter/exit handler）中调用 `ChangeState` 是允许的，切换请求会延迟到本次切换完成后生效；多次重入以最后一次为准。不要依赖"回调中立即完成切换"的旧行为（旧行为会重复执行 exit 甚至无限递归）。
+- **重入约定**：在状态进入/退出回调（`OnStateEnter`/`OnStateExit`、注册的 enter/exit handler）中调用 `ChangeState` 是允许的，切换请求会延迟到本次切换完成后生效；多次重入以最后一次为准。同一次切换最多 32 次重入切换，超出打错误日志并停止，防止回调互相切换卡死主线程。
+- **回调中 Dispose**：若在进入/退出回调里 `Dispose`，会先切到停机（状态 0），再延迟 `Release`，避免使用中的实例入池污染下一个租用者。
 - `FsmMachine` 走引用池：`Dispose` 后必须重新 `Create`；`Clear` 会清空 `OnStateEnter`/`OnStateExit` 订阅与黑板，复用实例不会残留旧订阅。
 
 ## 相关源码

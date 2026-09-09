@@ -35,6 +35,11 @@ namespace HoweFramework
         /// <param name="soundHelper">声音辅助器。</param>
         public void SetSoundHelper(ISoundHelper soundHelper)
         {
+            if (m_SoundHelper != null && !ReferenceEquals(m_SoundHelper, soundHelper))
+            {
+                m_SoundHelper.Dispose();
+            }
+
             m_SoundHelper = soundHelper;
             m_SoundHelper.SetResLoader(m_ResLoader);
             m_SoundHelper.SetVolume(m_Volume);

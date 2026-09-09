@@ -302,7 +302,7 @@ namespace HoweFramework
         /// <param name="value">要写入的字符串值。</param>
         public void SetString(string settingName, string value)
         {
-            m_Settings[settingName] = value;
+            m_Settings[settingName] = value ?? string.Empty;
         }
 
         /// <summary>
@@ -311,7 +311,7 @@ namespace HoweFramework
         /// <param name="stream">目标流。</param>
         public void Serialize(Stream stream)
         {
-            using (BinaryWriter binaryWriter = new BinaryWriter(stream, Encoding.UTF8))
+            using (BinaryWriter binaryWriter = new BinaryWriter(stream, Encoding.UTF8, true))
             {
                 binaryWriter.Write7BitEncodedInt32(m_Settings.Count);
                 foreach (KeyValuePair<string, string> setting in m_Settings)
@@ -323,19 +323,30 @@ namespace HoweFramework
         }
 
         /// <summary>
-        /// 反序列化数据。
+        /// 反序列化数据。失败时不修改当前内存配置。
         /// </summary>
         /// <param name="stream">指定流。</param>
         public void Deserialize(Stream stream)
         {
-            m_Settings.Clear();
-            using (BinaryReader binaryReader = new BinaryReader(stream, Encoding.UTF8))
+            var settings = new SortedDictionary<string, string>(StringComparer.Ordinal);
+            using (BinaryReader binaryReader = new BinaryReader(stream, Encoding.UTF8, true))
             {
                 int settingCount = binaryReader.Read7BitEncodedInt32();
+                if (settingCount < 0)
+                {
+                    throw new InvalidDataException("Setting count is invalid.");
+                }
+
                 for (int i = 0; i < settingCount; i++)
                 {
-                    m_Settings.Add(binaryReader.ReadString(), binaryReader.ReadString());
+                    settings.Add(binaryReader.ReadString(), binaryReader.ReadString());
                 }
+            }
+
+            m_Settings.Clear();
+            foreach (KeyValuePair<string, string> setting in settings)
+            {
+                m_Settings.Add(setting.Key, setting.Value);
             }
         }
     }
