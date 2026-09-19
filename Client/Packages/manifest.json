@@ -4,6 +4,7 @@
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.howegame.fariygui.dynamic": "https://github.com/SunHowe/FairyGUI-Dynamic.git",
     "com.howegame.fariygui.generator": "https://github.com/SunHowe/FairyGUI-CodeGenerator.git",
+    "com.ivanmurzak.unity.mcp": "0.91.0",
     "com.smkplus.custom-toolbar": "https://github.com/smkplus/CustomToolbar.git",
     "com.tuyoogame.yooasset": "3.0.5",
     "com.unity.collab-proxy": "2.11.4",
@@ -45,8 +46,7 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0",
-    "com.ivanmurzak.unity.mcp": "0.90.0"
+    "com.unity.modules.xr": "1.0.0"
   },
   "scopedRegistries": [
     {
