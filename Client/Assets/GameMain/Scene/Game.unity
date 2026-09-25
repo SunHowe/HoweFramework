@@ -228,6 +228,7 @@ GameObject:
   - component: {fileID: 2076065093}
   - component: {fileID: 2076065092}
   - component: {fileID: 2076065095}
+  - component: {fileID: 2076065096}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -322,6 +323,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Priority: 0
+--- !u!114 &2076065096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2076065091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a160d838ff8b4b4693ac20007e008c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.2D.PixelPerfect::UnityEngine.U2D.PixelPerfectCamera
+  m_AssetsPPU: 100
+  m_RefResolutionX: 320
+  m_RefResolutionY: 180
+  m_UpscaleRT: 0
+  m_PixelSnapping: 0
+  m_CropFrameX: 0
+  m_CropFrameY: 0
+  m_StretchFill: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

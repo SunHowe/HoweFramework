@@ -17,6 +17,7 @@ namespace GameMain.UI
     {
         public static readonly FairyGUIFormBinding[] Bindings = new FairyGUIFormBinding[]
         {
+            new FairyGUIFormBinding((int)UIFormId.LoginForm, GameMain.UI.login.LoginForm.URL, () => new GameMain.UI.login.LoginForm()),
         };
     }
 }

@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using GameMain.UI;
 using HoweFramework;
 using UnityEngine;
+using FairyGUI;
 
 namespace GameMain
 {
@@ -54,7 +55,14 @@ namespace GameMain
             SoundUtility.InitSoundGroup();
             // NetworkModule.Instance.CreateDefaultNetworkChannel(NetworkConst.GatewayChannelName, ServiceType.Tcp, new OrleansNetworkChannelHelper());
 
-            await UIModule.Instance.UseFairyGUI(new FairyGUISettings());
+            UIConfig.defaultFont = "fusion-pixel-10px-proportional-zh_hans"; // 设置默认字体.
+            await UIModule.Instance.UseFairyGUI(new FairyGUISettings{
+                ContentScaleFactor = new FairyGUIContentScaleFactor{
+                    DesignResolutionX = 320,
+                    DesignResolutionY = 180,
+                    ScreenMatchMode = UIContentScaler.ScreenMatchMode.MatchWidthOrHeight,
+                },
+            });
             UIModule.Instance.SetPreloadPackageMode(enablePreloadPackageMode);
             await UIModule.Instance.LoadFairyGUIPackagesAsync(UIConst.UIPackageMappingAssetPath);
             UIModule.Instance.AddFairyGUIFormBindings(UIFormBindings.Bindings);
