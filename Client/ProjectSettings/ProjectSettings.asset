@@ -66,6 +66,9 @@ PlayerSettings:
   useOSAutorotation: 1
   use32BitDisplayBuffer: 1
   preserveFramebufferAlpha: 0
+  adjustIOSFPSUsingThermalState: 1
+  thermalStateSeriousIOSFPS: 30
+  thermalStateCriticalIOSFPS: 15
   disableDepthAndStencilBuffers: 0
   androidStartInFullscreen: 1
   androidRenderOutsideSafeArea: 1
@@ -114,6 +117,7 @@ PlayerSettings:
   xboxEnableGuest: 0
   xboxEnablePIXSampling: 0
   metalFramebufferOnly: 0
+  metalUseMetalDisplayLink: 0
   xboxOneResolution: 0
   xboxOneSResolution: 0
   xboxOneXResolution: 3
@@ -864,25 +868,25 @@ PlayerSettings:
   webWasm2023: 0
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
-    Android: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    EmbeddedLinux: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    GameCoreScarlett: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    GameCoreXboxOne: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    Kepler: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    LinuxHeadlessSimulation: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    Nintendo Switch: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    Nintendo Switch 2: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    PS4: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    PS5: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    QNX: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    Server: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    Standalone: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    VisionOS: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    WebGL: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    Windows Store Apps: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    XboxOne: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    iPhone: UNITY_MCP_READY;UNITY_MCP_DEPS_3
-    tvOS: UNITY_MCP_READY;UNITY_MCP_DEPS_3
+    Android: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    EmbeddedLinux: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    GameCoreScarlett: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    GameCoreXboxOne: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    Kepler: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    LinuxHeadlessSimulation: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    Nintendo Switch: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    Nintendo Switch 2: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    PS4: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    PS5: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    QNX: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    Server: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    Standalone: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    VisionOS: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    WebGL: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    Windows Store Apps: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    XboxOne: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    iPhone: UNITY_MCP_READY;UNITY_MCP_DEPS_4
+    tvOS: UNITY_MCP_READY;UNITY_MCP_DEPS_4
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

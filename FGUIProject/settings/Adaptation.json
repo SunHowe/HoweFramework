@@ -1,8 +1,8 @@
 {
   "scaleMode": "ScaleWithScreenSize",
   "screenMathMode": "MatchWidthOrHeight",
-  "designResolutionX": 1280,
-  "designResolutionY": 720,
+  "designResolutionX": 320,
+  "designResolutionY": 180,
   "devices": [],
   "fileName": "Adaptation"
 }
