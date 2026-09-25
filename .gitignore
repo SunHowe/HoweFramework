@@ -1,4 +1,4 @@
-﻿.history/
+.history/
 .idea
 .vscode/
 .DS_Store
@@ -16,3 +16,4 @@ Client/Build
 Tools/fgui/node_modules/
 *.openfairygui.backend.lock
 .openfairygui.backend.lock
+FGUIProject/mockup
