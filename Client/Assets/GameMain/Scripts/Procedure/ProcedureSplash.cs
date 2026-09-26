@@ -55,11 +55,11 @@ namespace GameMain
             SoundUtility.InitSoundGroup();
             // NetworkModule.Instance.CreateDefaultNetworkChannel(NetworkConst.GatewayChannelName, ServiceType.Tcp, new OrleansNetworkChannelHelper());
 
-            UIConfig.defaultFont = "fusion-pixel-10px-proportional-zh_hans"; // 设置默认字体.
+            // UIConfig.defaultFont = "fusion-pixel-10px-proportional-zh_hans"; // 设置默认字体.
             await UIModule.Instance.UseFairyGUI(new FairyGUISettings{
                 ContentScaleFactor = new FairyGUIContentScaleFactor{
-                    DesignResolutionX = 320,
-                    DesignResolutionY = 180,
+                    DesignResolutionX = 640,
+                    DesignResolutionY = 360,
                     ScreenMatchMode = UIContentScaler.ScreenMatchMode.MatchWidthOrHeight,
                 },
             });

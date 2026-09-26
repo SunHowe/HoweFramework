@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<component size="64,16" extention="Button">
+<component size="128,32" extention="Button">
   <controller name="button" pages="0,up,1,down,2,over,3,selectedOver" selected="0"/>
   <displayList>
-    <image id="n0_fycf" name="n0" src="qxqh2r" fileName="textures/tile_0037.png" xy="0,0" size="64,16">
+    <image id="n0_fycf" name="n0" src="qxqh2r" fileName="textures/tile_0037.png" xy="0,0" size="128,32">
       <relation target="" sidePair="width-width,height-height"/>
     </image>
-    <text id="n1_fycf" name="title" xy="0,0" size="64,16" fontSize="10" color="#fff1d2" align="center" vAlign="middle" autoSize="none" singleLine="true" autoClearText="true" text="Text">
+    <text id="n1_fycf" name="title" xy="0,0" size="128,32" fontSize="16" color="#fff1d2" align="center" vAlign="middle" autoSize="none" singleLine="true" autoClearText="true" text="Text">
       <relation target="" sidePair="width-width,height-height"/>
     </text>
   </displayList>

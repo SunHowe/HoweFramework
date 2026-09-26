@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<component size="320,180">
+<component size="640,360">
   <displayList>
-    <component id="n0_fycf" name="n0" src="fycf4i" fileName="button/CommonButton_tile_0037.xml" pkg="hze8k9ky" xy="128,80" size="64,20">
+    <component id="n0_fycf" name="n0" src="fycf4i" fileName="button/CommonButton_tile_0037.xml" pkg="hze8k9ky" xy="256,164" size="128,32">
       <relation target="" sidePair="center-center,middle-middle"/>
-      <Button title="开始游戏"/>
+      <Button title="开始游戏" titleFontSize="14"/>
     </component>
   </displayList>
 </component>

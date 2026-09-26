@@ -1,7 +1,7 @@
 {
-  "font": "ui://hze8k9kyfycf4k",
-  "fontSize": 10,
-  "textColor": "#000000",
+  "font": "",
+  "fontSize": 16,
+  "textColor": "#fff1d2",
   "fontAdjustment": false,
   "colorScheme": [
     "自定义颜色 #FF0000"
